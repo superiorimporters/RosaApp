@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Rosa's Learning App</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:sans-serif;background:#f9f0ff;min-height:100vh;max-width:500px;margin:0 auto}
+.nav{position:sticky;top:0;z-index:50;background:#f9f0ff;border-bottom:1px solid #e8d4f8;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.nav-back{font-size:18px;cursor:pointer;color:#a07cb8;background:none;border:none;padding:2px 6px}
+.nav-title{font-size:14px;font-weight:600;color:#6b3fa0;flex:1}
+.nav-home{font-size:11px;color:#a07cb8;cursor:pointer;background:none;border:none}
+.home{padding:20px 16px}
+.home-header{text-align:center;margin-bottom:20px}
+.home-header .logo{font-size:36px;margin-bottom:6px}
+.home-header h1{font-size:20px;color:#6b3fa0;font-weight:600;margin-bottom:2px}
+.home-header p{font-size:12px;color:#a07cb8}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.home-card{background:#fff;border-radius:16px;padding:18px 14px;cursor:pointer;border:1.5px solid #e8d4f8;transition:all .15s;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px #f0e4f8}
+.home-card:hover{border-color:#a07cb8;box-shadow:0 4px 16px #e0c8f0}
+.home-card .icon{font-size:26px}
+.home-card .label{font-size:13px;font-weight:700;color:#3a2050}
+.home-card .desc{font-size:11px;color:#a07cb8;line-height:1.5}
+.game-card{grid-column:1/-1;background:linear-gradient(135deg,#3a1060,#6b3fa0);border-color:#6b3fa0}
+.game-card .label{color:#e8d4f8;font-size:15px}
+.game-card .desc{color:#c9a8e8}
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+.wl-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.wl-btn{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid #d8b4f8;background:#f3e4ff;color:#6b3fa0;cursor:pointer;font-weight:600}
+.wl-btn.hiding{background:#fce4f0;border-color:#e8a0c8;color:#a0306a}
+.wl-btn.green{background:#e4fce8;border-color:#80c890;color:#1a6b2a}
+.save-row{display:flex;gap:6px;align-items:center;margin-bottom:10px}
+.save-row input{flex:1;font-size:11px;padding:5px 8px;border-radius:20px;border:1px solid #d8b4f8;background:#fff;color:#3a2050;min-width:0}
+#wl-msg{font-size:10px;color:#2a9d2a;font-weight:700}
+.wl-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.wl-tab{font-size:11px;padding:5px 12px;border-radius:20px;border:1.5px solid #d8b4f8;background:#f3e4ff;color:#6b3fa0;cursor:pointer;font-weight:700}
+.wl-tab.active{background:#6b3fa0;color:#fff;border-color:#6b3fa0}
+.wl-hint{font-size:11px;color:#a07cb8;margin-bottom:8px;font-style:italic}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 6px 2px;color:#a07cb8}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px #e0c8f0;margin-bottom:10px}
+th{font-size:10px;color:#a07cb8;text-align:left;padding:5px 8px;border-bottom:2px solid #f0d8ff;background:#faf0ff}
+td{font-size:13px;padding:5px 8px;border-bottom:1px solid #f3e8ff;color:#3a2050;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#fdf6ff}
+.num{color:#c9a8e8;font-size:11px;width:20px}
+.hw{color:#f0e4ff;background:#f0e4ff;border-radius:4px;cursor:pointer;user-select:none}
+.marks{display:flex;gap:2px;justify-content:flex-end}
+.mk{border:none;background:none;font-size:13px;cursor:pointer;opacity:.25;padding:1px;line-height:1}
+.mk:hover{opacity:.7}.mk.on{opacity:1}
+tr.expert td{background:#edfff3!important}
+tr.challenge td{background:#fff4f0!important}
+.prog-txt{font-size:11px;color:#a07cb8;text-align:right;margin-bottom:4px}
+.prog-bar{background:#e8d4f8;border-radius:20px;height:6px;margin-bottom:14px;overflow:hidden}
+.prog-fill{height:100%;background:#6b3fa0;border-radius:20px;transition:width .4s}
+.q-cat{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;margin-bottom:8px}
+.cat-verb{background:#E6F1FB;color:#0C447C}.cat-adj{background:#FAEEDA;color:#633806}
+.cat-noun{background:#E1F5EE;color:#085041}.cat-conn{background:#EEEDFE;color:#3C3489}
+.q-card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px #e0c8f0;margin-bottom:12px}
+.q-sentence{font-size:16px;color:#3a2050;line-height:1.7;margin-bottom:6px}
+.q-hint{font-size:12px;color:#a07cb8}.q-hint span{font-weight:700;color:#6b3fa0}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ans{border:1.5px solid #d8b4f8;background:#faf4ff;color:#3a2050;font-size:14px;padding:10px 8px;border-radius:10px;cursor:pointer;font-weight:500;text-align:center;transition:all .15s}
+.ans:hover:not(:disabled){background:#f0e0ff}
+.ans.correct{background:#edfff3;border-color:#3aaa6a;color:#1a6b2a}
+.ans.wrong{background:#fff0f0;border-color:#e87070;color:#a02020}
+.ans:disabled{cursor:default}
+.feedback{font-size:14px;text-align:center;padding:7px;border-radius:8px;margin-bottom:8px;font-weight:600;min-height:34px}
+.feedback.correct{background:#edfff3;color:#1a6b2a}
+.feedback.wrong{background:#fff0f0;color:#a02020}
+.next-btn{width:100%;padding:11px;background:#6b3fa0;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:none}
+.score-box{text-align:center;background:#fff;border-radius:14px;padding:28px 20px;box-shadow:0 2px 10px #e0c8f0}
+.restart-btn{background:#6b3fa0;color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:700;cursor:pointer}
+.g-bar-wrap{height:10px;background:#e8d4f8;border-radius:20px;overflow:hidden;margin-bottom:6px}
+.g-bar{height:100%;border-radius:20px;background:#6b3fa0;transition:width .05s linear}
+.g-bar.warn{background:#E8A020}.g-bar.danger{background:#e87070}
+.g-time{font-size:44px;font-weight:700;text-align:center;transition:color .2s;margin-bottom:2px}
+.g-time.cl1{color:#c07010;animation:clP .9s infinite}
+.g-time.cl2{color:#cc3300;animation:clP .5s infinite}
+.g-time.cl3{color:#cc0000;font-size:52px;animation:clP .25s infinite}
+@keyframes clP{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.cl-banner{text-align:center;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:8px;animation:clP .6s infinite}
+.cl-banner.cl1{background:#fff8e0;color:#c07010}
+.cl-banner.cl2{background:#ffe4d0;color:#cc3300;animation-duration:.4s}
+.cl-banner.cl3{background:#ffe0e0;color:#cc0000;font-size:14px;animation-duration:.25s;box-shadow:0 0 12px rgba(200,0,0,.3)}
+.g-meta{display:flex;justify-content:space-between;font-size:12px;color:#a07cb8;margin-bottom:10px}
+.g-word-card{background:#fff;border-radius:16px;padding:20px;text-align:center;margin-bottom:14px;box-shadow:0 2px 10px #e0c8f0}
+.g-word{font-size:32px;font-weight:700;color:#3a2050;margin-bottom:4px}
+.g-word-sub{font-size:12px;color:#a07cb8}
+.g-answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g-ans{border:2px solid #d8b4f8;background:#fff;color:#3a2050;font-size:15px;padding:14px 8px;border-radius:12px;cursor:pointer;font-weight:600;text-align:center;transition:all .1s}
+.g-ans:hover:not(:disabled){background:#f0e0ff;border-color:#a07cb8}
+.g-ans.correct{background:#edfff3;border-color:#3aaa6a;color:#1a6b2a}
+.g-ans.wrong{background:#fff0f0;border-color:#e87070;color:#a02020}
+.g-ans:disabled{cursor:default}
+.key-badge{display:inline-block;background:#ede0ff;color:#6b3fa0;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-right:5px;vertical-align:middle}
+.g-flash{position:fixed;top:40%;left:50%;transform:translateX(-50%);font-size:20px;font-weight:700;padding:8px 20px;border-radius:12px;pointer-events:none;opacity:0;z-index:300}
+.g-flash.pos{animation:gfp .7s ease-out forwards;background:#edfff3;color:#1a6b2a}
+.g-flash.neg{animation:gfp .7s ease-out forwards;background:#fff0f0;color:#a02020}
+@keyframes gfp{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-40px)}}
+#g-popup{position:fixed;top:28%;left:0;right:0;text-align:center;pointer-events:none;z-index:400}
+.bpop{display:inline-block;padding:12px 24px;border-radius:16px;font-weight:700;animation:bpA 1.5s ease-out forwards;white-space:nowrap}
+.bpop-normal{background:#6b3fa0;color:#fff;font-size:15px}
+.bpop-new{background:#1a6b2a;color:#fff;font-size:18px;box-shadow:0 4px 20px rgba(26,107,42,.5)}
+.bpop-super{background:#b35000;color:#fff;font-size:22px;box-shadow:0 4px 24px rgba(179,80,0,.6)}
+.bpop-clutch{background:#cc0000;color:#fff;font-size:20px;box-shadow:0 4px 24px rgba(200,0,0,.6)}
+.bpop-mega{background:linear-gradient(135deg,#cc0000,#6b3fa0);color:#fff;font-size:24px;box-shadow:0 6px 30px rgba(100,0,100,.6)}
+@keyframes bpA{0%{opacity:0;transform:scale(.6)}15%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:translateY(-10px) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(.9)}}
+#g-flash-bg{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:0}
+@keyframes shakIt{0%,100%{transform:translateX(0)}15%{transform:translateX(-10px)}30%{transform:translateX(10px)}45%{transform:translateX(-7px)}60%{transform:translateX(7px)}80%{transform:translateX(-3px)}}
+.shake-it{animation:shakIt .45s ease-out}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-card{background:#fff;border-radius:12px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px #e0c8f0}
+.stat-e{font-size:18px;margin-bottom:2px}
+.stat-v{font-size:15px;font-weight:700;color:#6b3fa0}
+.stat-l{font-size:9px;color:#a07cb8;margin-top:1px}
+.chart-wrap{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 6px #e0c8f0}
+.chart-lbl{font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.word-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.wchip{background:#fff;border-radius:10px;padding:9px 10px;box-shadow:0 1px 4px #e0c8f0;border:1.5px solid #f0e4ff}
+.wchip.wr{border-color:#3aaa6a;background:#f4fff7}
+.wchip.wn{border-color:#1a6b2a;background:#edfff3}
+.wchip.ws{border-color:#b35000;background:#fff8f0}
+.wc-p{font-size:11px;font-weight:600;color:#3a2050}
+.wc-s{font-size:12px;margin-top:2px}
+.wc-b{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-top:2px}
+.bn{background:#edfff3;color:#1a6b2a}.bs{background:#fff3e0;color:#b35000}.be{background:#ede0ff;color:#6b3fa0}
+.lb-wrap{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 6px #e0c8f0}
+.lb-lbl{font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.lb-row{display:flex;align-items:center;gap:8px;padding:5px 6px;border-bottom:1px solid #f3e8ff;font-size:11px;color:#3a2050;border-radius:6px}
+.lb-row:last-child{border-bottom:none}
+.lb-me{background:#f9f0ff}
+.lb-rk{width:22px;font-weight:700;color:#a07cb8;font-size:12px}
+.lb-sc{font-size:16px;font-weight:700;color:#6b3fa0;min-width:28px}
+.lb-mt{color:#a07cb8;flex:1;font-size:10px}
+.set-group{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 6px #e0c8f0}
+.set-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#a07cb8;margin-bottom:10px}
+.set-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:12px;padding:7px 14px;border-radius:20px;border:1.5px solid #d8b4f8;background:#f9f0ff;color:#6b3fa0;cursor:pointer;font-weight:600}
+.chip.active{background:#6b3fa0;color:#fff;border-color:#6b3fa0}
+.chip:hover:not(.active){background:#ede0ff}
+.picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.story-card{background:#fff;border-radius:14px;padding:14px 12px;cursor:pointer;border:1.5px solid #e8d4f8;transition:all .15s;display:flex;flex-direction:column;gap:5px}
+.story-card:hover{border-color:#a07cb8;box-shadow:0 2px 10px #e0c8f0}
+.sc-emoji{font-size:24px}.sc-title{font-size:12px;font-weight:700;color:#3a2050}
+.sc-sub{font-size:10px;color:#a07cb8;font-style:italic}
+.sc-desc{font-size:10px;color:#6b5080;line-height:1.5;flex:1;margin-top:2px}
+.story-bar{position:sticky;top:53px;z-index:30;background:#f9f0ff;padding:6px 0 8px;display:flex;gap:6px;margin-bottom:8px}
+.s-btn{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid #d8b4f8;background:#f9f0ff;color:#a07cb8;cursor:pointer}
+.s-btn:hover{background:#ede0ff}
+.s-hint{font-size:11px;color:#a07cb8;text-align:center;margin-bottom:12px}
+.s-hint span{background:#ede0ff;color:#5a2e8f;border-radius:3px;padding:1px 5px}
+.ch-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c9a8e8;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #f0e4ff}
+.ch{margin-bottom:22px}.lp{margin-bottom:12px}
+.en-l{font-family:Georgia,serif;font-size:16px;color:#2a1040;line-height:2}
+.es-l{font-size:12px;color:#c4aad8;font-style:italic;line-height:1.5;margin-top:1px;transition:opacity .2s}
+.es-l.hidden{opacity:0;pointer-events:none}
+.w{cursor:pointer;border-radius:4px;padding:1px 3px;border-bottom:1px dashed #c9a8e8;display:inline-block;line-height:1.6;transition:all .15s}
+.w:hover{background:#f3e8ff}
+.w.flipped{background:#ede0ff;color:#5a2e8f;border-bottom:1px solid #a07cb8}
+.s-ending{text-align:center;padding:16px 0 6px;border-top:1px solid #f0e4ff;font-style:italic;font-size:13px;color:#c9a8e8;font-family:Georgia,serif}
+</style>
+</head>
+<body>
+<div id="g-flash-bg"></div>
+<div id="g-popup"></div>
+<div class="nav">
+  <button class="nav-back" id="nav-back" onclick="goBack()" style="display:none">←</button>
+  <span class="nav-title" id="nav-title">🌟 Rosa's Learning App</span>
+  <button class="nav-home" id="nav-home" onclick="goHome()" style="display:none">Home</button>
+</div>
+
+<div class="screen active" id="screen-home">
+  <div class="home">
+    <div class="home-header"><div class="logo">🌟</div><h1>Rosa's Learning App</h1><p>Tu app de inglés personal</p></div>
+    <div class="home-grid">
+      <div class="home-card game-card" onclick="openScreen('game','🎮 Speed Game')">
+        <div class="icon">🎮</div><div class="label">Speed Game</div><div class="desc">Race the clock — clutch bonuses when time runs low!</div>
+      </div>
+      <div class="home-card" onclick="openScreen('wordlist','📖 Word List')">
+        <div class="icon">📖</div><div class="label">Word List</div><div class="desc">All your words with ✅ tracking and save code</div>
+      </div>
+      <div class="home-card" onclick="openScreen('quiz','✏️ Practice Quiz')">
+        <div class="icon">✏️</div><div class="label">Practice Quiz</div><div class="desc">Fill-in-the-blank drills from your vocabulary</div>
+      </div>
+      <div class="home-card" onclick="openScreen('stories','📚 Stories')">
+        <div class="icon">📚</div><div class="label">Stories</div><div class="desc">Bilingual stories — tap phrases to translate</div>
+      </div>
+      <div class="home-card" onclick="openScreen('settings','⚙️ Settings')">
+        <div class="icon">⚙️</div><div class="label">Settings</div><div class="desc">Quiz, game rules, language, effects</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-wordlist">
+  <div class="wl-controls" id="wl-controls"></div>
+  <div class="save-row">
+    <button class="wl-btn green" onclick="wlCopy()">📋 Copy Code</button>
+    <input id="wl-code-in" placeholder="Paste code to restore…" oninput="wlRestore(this.value)">
+    <span id="wl-msg"></span>
+  </div>
+  <div class="wl-tabs" id="wl-tabs"></div>
+  <p class="wl-hint">Toca ✅ experta · ⚠️ difícil · toca palabra oculta para verla</p>
+  <div id="wl-content"></div>
+</div>
+
+<div class="screen" id="screen-quiz">
+  <div id="quiz-area"></div>
+  <div class="score-box" id="quiz-score" style="display:none"></div>
+</div>
+
+<div class="screen" id="screen-game">
+  <div id="game-area"></div>
+  <div class="g-flash" id="g-flash"></div>
+</div>
+
+<div class="screen" id="screen-settings"><div id="settings-form"></div></div>
+
+<div class="screen" id="screen-stories">
+  <div id="story-picker"></div>
+  <div id="story-reader" style="display:none"></div>
+</div>
+
+<script>
+const LANGS=[
+  {code:'es',label:'🇪🇸 Spanish',hint:'Pista',correct:['¡Perfecto! 🎉','¡Excelente! ⭐','¡Muy bien! 💪','¡Correcto! 🌟'],tryAgain:'Intenta de nuevo',expert:'¡Experta! ¡3 seguidas!'},
+  {code:'en',label:'🇺🇸 English',hint:'Hint',correct:['Perfect! 🎉','Excellent! ⭐','Well done! 💪','Correct! 🌟'],tryAgain:'Try again!',expert:'Expert! 3 in a row! 🏆'},
+  {code:'fr',label:'🇫🇷 French',hint:'Indice',correct:['Parfait! 🎉','Excellent! ⭐','Très bien! 💪','Correct! 🌟'],tryAgain:'Réessaie!',expert:'Experte! 3 de suite! 🏆'},
+  {code:'ar',label:'🇸🇦 Arabic',hint:'تلميح',correct:['ممتاز! 🎉','رائع! ⭐','أحسنت! 💪','صحيح! 🌟'],tryAgain:'حاولي مجددًا!',expert:'خبيرة! 3 متتالية! 🏆'},
+];
+const KEY_LAYOUTS={'1234':['1','2','3','4'],'asdf':['a','s','d','f'],'zxcv':['z','x','c','v'],'qwer':['q','w','e','r']};
+let settings={advanceSec:2,quizLen:20,langCode:'es',gameStartSec:30,gameRightBonus:1,gameWrongPenalty:5,flashOnWrong:true,shakeOnWrong:true,keyLayout:'1234'};
+const getLang=()=>LANGS.find(l=>l.code===settings.langCode)||LANGS[0];
+
+function openScreen(id,title){
+  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('nav-title').textContent=title;
+  document.getElementById('nav-back').style.display='';
+  document.getElementById('nav-home').style.display='';
+  if(id==='quiz')startQuiz();if(id==='wordlist')wlRender();
+  if(id==='stories')buildPicker();if(id==='settings')renderSettings();
+  if(id==='game')startGame();
+}
+function goBack(){goHome();}
+function goHome(){
+  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-home').classList.add('active');
+  document.getElementById('nav-title').textContent='🌟 Rosa\'s Learning App';
+  document.getElementById('nav-back').style.display='none';
+  document.getElementById('nav-home').style.display='none';
+  document.getElementById('story-picker').style.display='';
+  document.getElementById('story-reader').style.display='none';
+}
+
+const ALL_Q=[
+  {cat:'verb',sentence:'El café está muy ___.',hint:'caliente',answer:'Hot',wrong:['Cold','Good','Big']},
+  {cat:'verb',sentence:'Yo te ___.',hint:'amar',answer:'Love',wrong:['Know','Want','Help']},
+  {cat:'verb',sentence:'¿Puedes ___ la puerta?',hint:'abrir',answer:'Open',wrong:['Close','Find','Send']},
+  {cat:'verb',sentence:'Necesito ___ agua.',hint:'beber',answer:'Drink',wrong:['Eat','Buy','Pay']},
+  {cat:'verb',sentence:'Quiero ___ contigo.',hint:'hablar',answer:'Talk',wrong:['Walk','Run','Sit']},
+  {cat:'verb',sentence:'Vamos a ___ juntos.',hint:'comer',answer:'Eat',wrong:['Sleep','Drink','Go']},
+  {cat:'verb',sentence:'Tengo que ___ mi teléfono.',hint:'cargar',answer:'Charge',wrong:['Fix','Send','Buy']},
+  {cat:'verb',sentence:'¿Puedes ___ mi número?',hint:'recordar',answer:'Remember',wrong:['Find','Write','Know']},
+  {cat:'verb',sentence:'Ella quiere ___ en la playa.',hint:'correr',answer:'Run',wrong:['Walk','Dance','Drive']},
+  {cat:'verb',sentence:'Él necesita ___ temprano.',hint:'dormir',answer:'Sleep',wrong:['Eat','Go','Come']},
+  {cat:'verb',sentence:'¿Puedes ___ el problema?',hint:'arreglar',answer:'Fix',wrong:['Find','Use','Send']},
+  {cat:'verb',sentence:'Voy a ___ algo bonito.',hint:'comprar',answer:'Buy',wrong:['Pay','Send','Get']},
+  {cat:'verb',sentence:'¿Me puedes ___ tu dirección?',hint:'enviar',answer:'Send',wrong:['Give','Show','Tell']},
+  {cat:'verb',sentence:'Quiero ___ contigo mañana.',hint:'reunirse',answer:'Meet',wrong:['Go','Wait','Come']},
+  {cat:'adj',sentence:'La sopa está muy ___.',hint:'fría',answer:'Cold',wrong:['Hot','Good','Small']},
+  {cat:'adj',sentence:'Ella está muy ___ hoy.',hint:'feliz',answer:'Happy',wrong:['Sad','Good','Fast']},
+  {cat:'adj',sentence:'El perro es muy ___.',hint:'pequeño',answer:'Small',wrong:['Big','Fast','Good']},
+  {cat:'adj',sentence:'El carro es muy ___.',hint:'rápido',answer:'Fast',wrong:['Slow','Big','Good']},
+  {cat:'adj',sentence:'El día es muy ___.',hint:'bueno',answer:'Good',wrong:['Bad','Slow','Cold']},
+  {cat:'noun',sentence:'Me gusta el ___ en Colombia.',hint:'día',answer:'Day',wrong:['Night','Inside','Outside']},
+  {cat:'noun',sentence:'Las estrellas brillan de ___.',hint:'noche',answer:'Night',wrong:['Day','Outside','Inside']},
+  {cat:'noun',sentence:'Está lloviendo, vamos ___.',hint:'adentro',answer:'Inside',wrong:['Outside','Here','There']},
+  {cat:'conn',sentence:'___ quiero ir, pero estoy cansada.',hint:'yo',answer:'I',wrong:['She','He','We']},
+  {cat:'conn',sentence:'¿___ es tu ciudad favorita?',hint:'dónde',answer:'Where',wrong:['What','Who','When']},
+  {cat:'conn',sentence:'Me gusta el café ___ el té.',hint:'y',answer:'And',wrong:['Or','But','So']},
+  {cat:'conn',sentence:'Quiero ir ___ estoy cansada.',hint:'pero',answer:'But',wrong:['And','So','Because']},
+  {cat:'conn',sentence:'¿___ se llama tu mamá?',hint:'cómo',answer:'How',wrong:['What','Who','Why']},
+  {cat:'conn',sentence:'___ vez puedo visitarte.',hint:'tal vez',answer:'Maybe',wrong:['Yes','No','So']},
+  {cat:'conn',sentence:'___ estás aquí, hablemos.',hint:'entonces',answer:'So',wrong:['But','And','Because']},
+];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+
+const WL_SECTIONS=[
+  {id:'verbs',label:'🔵 Verbos',groups:[{name:null,words:[["Mostrar","Show"],["Decir","Say"],["Llamar","Call"],["Dar","Give"],["Saber","Know"],["Encontrar","Find"],["Ver","See"],["Usar","Use"],["Mantener","Keep"],["Poner","Put"],["Recordar","Remember"],["Vivir","Live"],["Ganar","Win"],["Perder","Lose"],["Escribir","Write"],["Escuchar","Hear"],["Hacer","Make / Do"],["Cargar","Charge"],["Arreglar","Fix"],["Ayudar","Help"],["Querer","Want"],["Necesitar","Need"],["Ir","Go"],["Venir","Come"],["Comer","Eat"],["Dormir","Sleep"],["Amar","Love"],["Ser / Estar","Be"],["Tener","Have"],["Pensar","Think"],["Oración / Frase","Sentence"],["Bailar","Dance"],["Manejar","Drive"],["Correr","Run"],["Caminar","Walk"],["Reír","Laugh"],["Ducharse","Shower"],["Limpiar","Clean"],["Beber","Drink"],["Llorar","Cry"],["Leer","Read"],["Obtener","Get"],["Tomar","Take"],["Contar","Tell"],["Preguntar","Ask"],["Sentir","Feel"],["Trabajar","Work"],["Intentar","Try"],["Hablar","Talk / Speak"],["Comprar","Buy"],["Pagar","Pay"],["Abrir","Open"],["Cerrar","Close"],["Esperar","Wait"],["Mirar","Watch"],["Sentarse","Sit"],["Salir / Irse","Leave"],["Traer","Bring"],["Enviar","Send"],["Conocer / Reunirse","Meet"],["Gustar","Like"]]}]},
+  {id:'adj',label:'🟡 Adjetivos',groups:[{name:null,words:[["Caliente","Hot"],["Frío","Cold"],["Grande","Big"],["Pequeño","Small"],["Rápido","Fast"],["Despacio","Slow"],["Bueno","Good"],["Malo","Bad"],["Feliz","Happy"],["Triste","Sad"],["Arriba","Up"],["Abajo","Down"]]}]},
+  {id:'nouns',label:'🟢 Sustantivos',groups:[{name:null,words:[["Día","Day"],["Noche","Night"],["Adentro","Inside"],["Afuera","Outside"]]}]},
+  {id:'connect',label:'🟣 Conectores',groups:[
+    {name:'Pronombres',words:[["Yo","I"],["Tú","You"],["Él","He"],["Ella","She"],["Nosotros","We"],["Ellos","They"]]},
+    {name:'Sí/No',words:[["Sí","Yes"],["No","No"],["Tal vez","Maybe"]]},
+    {name:'Esto/Eso',words:[["Esto","This"],["Eso","That"],["Aquí","Here"],["Allí","There"]]},
+    {name:'Conectores',words:[["Y","And"],["O","Or"],["Pero","But"],["Porque","Because"],["Entonces","So"]]},
+    {name:'Preguntas',words:[["Qué","What"],["Quién","Who"],["Dónde","Where"],["Cuándo","When"],["Por qué","Why"],["Cómo","How"]]}
+  ]}
+];
+let wlS=WL_SECTIONS.map(s=>Array(s.groups.reduce((a,g)=>a+g.words.length,0)).fill(''));
+let wlHideEs=false,wlHideEn=false,wlTab=0;
+const wlEncode=()=>btoa(wlS.map(a=>a.map(x=>x||'_').join('')).join('|'));
+function wlDecode(s){try{const p=atob(s).split('|');if(p.length!==WL_SECTIONS.length)return false;const n=p.map((x,i)=>{const t=WL_SECTIONS[i].groups.reduce((a,g)=>a+g.words.length,0);if(x.length!==t)return null;return x.split('').map(c=>(c==='e'||c==='c')?c:'');});if(n.some(x=>x===null))return false;wlS=n;return true;}catch(e){return false;}}
+function wlCopy(){const c=wlEncode();navigator.clipboard?.writeText?.(c).then(()=>wlFlash('✓ Copiado!')).catch(()=>wlFallCopy(c))||wlFallCopy(c);}
+function wlFallCopy(c){const ta=document.createElement('textarea');ta.value=c;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);wlFlash('✓ Copiado!');}
+function wlRestore(v){v=v.trim();if(v.length<4)return;if(wlDecode(v)){wlFlash('✓ Restaurado!');document.getElementById('wl-code-in').value='';wlRender();}}
+let _wft;const wlFlash=m=>{const e=document.getElementById('wl-msg');e.textContent=m;clearTimeout(_wft);_wft=setTimeout(()=>e.textContent='',2000);};
+function wlToggle(l){if(l==='es'){wlHideEs=!wlHideEs;const b=document.getElementById('wl-es');b.textContent=wlHideEs?'Mostrar Español':'Esconder Español';b.classList.toggle('hiding',wlHideEs);}else{wlHideEn=!wlHideEn;const b=document.getElementById('wl-en');b.textContent=wlHideEn?'Mostrar Inglés':'Esconder Inglés';b.classList.toggle('hiding',wlHideEn);}wlRender();}
+const wlReveal=(td,w)=>{td.className='';td.onclick=null;td.textContent=w;};
+const wlSet=(si,wi,v)=>{wlS[si][wi]=(wlS[si][wi]===v)?'':v;wlRender();};
+function wlMkTbl(items,start,si){const tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th class="num">#</th><th>Español</th><th>English</th><th></th></tr></thead>';const tb=document.createElement('tbody');items.forEach(([wi,g,j],off)=>{const[es,en]=g.words[j],st=wlS[si][wi];const tr=document.createElement('tr');if(st==='e')tr.classList.add('expert');else if(st==='c')tr.classList.add('challenge');const tn=document.createElement('td');tn.className='num';tn.textContent=start+off;tr.appendChild(tn);const te=document.createElement('td');if(wlHideEs){te.className='hw';te.textContent=es;te.onclick=()=>wlReveal(te,es);}else te.textContent=es;tr.appendChild(te);const tE=document.createElement('td');if(wlHideEn){tE.className='hw';tE.textContent=en;tE.onclick=()=>wlReveal(tE,en);}else tE.textContent=en;tr.appendChild(tE);const tm=document.createElement('td');tm.innerHTML=`<div class="marks"><button class="mk ${st==='e'?'on':''}" onclick="wlSet(${si},${wi},'e')">✅</button><button class="mk ${st==='c'?'on':''}" onclick="wlSet(${si},${wi},'c')">⚠️</button></div>`;tr.appendChild(tm);tb.appendChild(tr);});tbl.appendChild(tb);return tbl;}
+function wlRender(){document.getElementById('wl-controls').innerHTML=`<button class="wl-btn ${wlHideEs?'hiding':''}" id="wl-es" onclick="wlToggle('es')">${wlHideEs?'Mostrar Español':'Esconder Español'}</button><button class="wl-btn ${wlHideEn?'hiding':''}" id="wl-en" onclick="wlToggle('en')">${wlHideEn?'Mostrar Inglés':'Esconder Inglés'}</button>`;document.getElementById('wl-tabs').innerHTML=WL_SECTIONS.map((s,i)=>`<button class="wl-tab${i===wlTab?' active':''}" onclick="wlTab=${i};wlRender()">${s.label}</button>`).join('');const si=wlTab,sec=WL_SECTIONS[si],st=wlS[si];const ex=[],ch=[],le=[];let wi=0;sec.groups.forEach(g=>{g.words.forEach((_,j)=>{const s=st[wi+j]||'';if(s==='e')ex.push([wi+j,g,j]);else if(s==='c')ch.push([wi+j,g,j]);else le.push([wi+j,g,j]);});wi+=g.words.length;});const c=document.getElementById('wl-content');c.innerHTML='';const addS=(items,lbl,s)=>{const l=document.createElement('div');l.className='sec-label';l.textContent=lbl;c.appendChild(l);c.appendChild(wlMkTbl(items,s,si));};if(ch.length)addS(ch,`⚠️ Difficult — ${ch.length}`,1);if(le.length)addS(le,`📖 Working — ${le.length}`,ch.length+1);if(ex.length)addS(ex,`✅ Expert — ${ex.length}`,ch.length+le.length+1);}
+
+let qQueue=[],qPos=0,qExpert=0,qAnswered=false;
+function startQuiz(){qQueue=shuffle(ALL_Q).slice(0,settings.quizLen).map(q=>({q,streak:0}));qPos=0;qExpert=0;qAnswered=false;document.getElementById('quiz-area').style.display='';document.getElementById('quiz-score').style.display='none';renderQ();}
+function renderQ(){const item=qQueue[qPos],q=item.q,rem=qQueue.length,lang=getLang();const cats={verb:['cat-verb','Verbo'],adj:['cat-adj','Adjetivo'],noun:['cat-noun','Sustantivo'],conn:['cat-conn','Conector']};const opts=shuffle([q.answer,...q.wrong]);const dots=[0,1,2].map(i=>`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px;background:${i<item.streak?'#6b3fa0':'#e0c8f0'}"></span>`).join('');document.getElementById('quiz-area').innerHTML=`<div class="prog-txt">${qPos+1}/${rem} · ✅ ${qExpert}</div><div class="prog-bar"><div class="prog-fill" style="width:${(qPos+1)/rem*100}%"></div></div><div class="q-card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="q-cat ${cats[q.cat][0]}">${cats[q.cat][1]}</div><div>${dots}</div></div><div class="q-sentence">${q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')}</div><div class="q-hint">${lang.hint}: <span>${q.hint}</span></div></div><div class="answers">${opts.map(o=>`<button class="ans" onclick="pickQ(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div><div class="feedback" id="q-fb"></div><button class="next-btn" id="q-next" onclick="nextQ()" style="display:none">Siguiente →</button>`;qAnswered=false;}
+function pickQ(btn,chosen,correct){if(qAnswered)return;const item=qQueue[qPos],lang=getLang(),fb=document.getElementById('q-fb');document.querySelectorAll('.ans').forEach(b=>b.disabled=true);if(chosen===correct){btn.classList.add('correct');item.streak++;if(item.streak>=3){fb.innerHTML=`<span style="color:#1a6b2a">🏆 ${lang.expert}</span>`;fb.className='feedback correct';qExpert++;qQueue.splice(qPos,1);if(qPos>=qQueue.length)qPos=0;setTimeout(()=>nextQ(),settings.advanceSec*1000);}else{fb.textContent=lang.correct[Math.floor(Math.random()*lang.correct.length)];fb.className='feedback correct';setTimeout(()=>nextQ(),settings.advanceSec*1000);}qAnswered=true;}else{btn.classList.add('wrong');item.streak=0;fb.innerHTML=`${lang.tryAgain} <span style="color:#a07cb8;font-size:11px">(${lang.hint}: ${item.q.hint})</span>`;fb.className='feedback wrong';document.querySelectorAll('.ans').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false;});qQueue.push({q:item.q,streak:0});}}
+function nextQ(){qAnswered=false;if(!qQueue.length){showQScore();return;}qPos++;if(qPos>=qQueue.length)qPos=0;if(!qQueue.length){showQScore();return;}renderQ();}
+function showQScore(){document.getElementById('quiz-area').style.display='none';const s=document.getElementById('quiz-score');let e,m;if(qExpert>=18){e='🏆';m='¡Increíble!';}else if(qExpert>=12){e='⭐';m=`${qExpert} words mastered!`;}else if(qExpert>=6){e='💪';m=`${qExpert} experts. Keep going!`;}else{e='📖';m='Practice makes perfect!';}s.innerHTML=`<div style="font-size:48px">${e}</div><div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 ${qExpert}</div><div style="font-size:13px;color:#5a4070;margin-bottom:16px">${m}</div><button class="restart-btn" onclick="startQuiz()">🔄 Jugar de nuevo</button>`;s.style.display='block';}
+
+const lwS=()=>{try{return JSON.parse(localStorage.getItem('rgws')||'{}');}catch(e){return{};}};
+const swS=d=>{try{localStorage.setItem('rgws',JSON.stringify(d));}catch(e){}};
+const lHi=()=>{try{return JSON.parse(localStorage.getItem('rghi')||'[]');}catch(e){return[];}};
+const sHi=d=>{try{localStorage.setItem('rghi',JSON.stringify(d));}catch(e){}};
+let gTimer=null,gTime=0,gMaxTime=0,gScore=0,gLastHint='';
+let gClickTimes=[],gQStart=0,gResults=[],gHistory=[];
+let gWordsRight=new Set(),gStreak=0,gMaxStreak=0;
+let gNewWords=0,gSuperBonus=0,gClutchSaves=0,gNewHints=new Set(),gSuperHints=new Set();
+const gBon=sc=>parseFloat((settings.gameRightBonus*[1,.7,.5,.3,.2][Math.min(Math.floor(sc/5),4)]).toFixed(1));
+const gPen=sc=>parseFloat((settings.gameWrongPenalty*[1,1.3,1.7,2.1,2.5][Math.min(Math.floor(sc/5),4)]).toFixed(1));
+const clv=()=>gTime<=3000?3:gTime<=5000?2:gTime<=8000?1:0;
+function eBon(){const b=gBon(gScore),c=clv();return c===3?parseFloat((b*4).toFixed(1)):c===2?parseFloat((b*2.5).toFixed(1)):c===1?parseFloat((b*1.5).toFixed(1)):b;}
+function ePen(){const p=gPen(gScore),c=clv();return c>=2?parseFloat((p*0.5).toFixed(1)):c?parseFloat((p*0.7).toFixed(1)):p;}
+function startGame(){
+  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
+  gTime=settings.gameStartSec*1000;gMaxTime=gTime;gScore=0;gLastHint='';
+  gClickTimes=[];gResults=[];gHistory=[];gWordsRight=new Set();
+  gStreak=0;gMaxStreak=0;gNewWords=0;gSuperBonus=0;gClutchSaves=0;
+  gNewHints=new Set();gSuperHints=new Set();
+  document.addEventListener('keydown',gKeyH);
+  renderGQ();
+  gTimer=setInterval(()=>{gTime=Math.max(0,gTime-50);updateGBar();if(gTime<=0){clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);gameOver();}},50);
+}
+function gKeyH(e){const keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];const idx=keys.indexOf(e.key.toLowerCase());if(idx>=0){const btns=[...document.querySelectorAll('#game-area .g-ans:not(:disabled)')];if(btns[idx])btns[idx].click();}}
+function renderGQ(){
+  let q,att=0;do{q=ALL_Q[Math.floor(Math.random()*ALL_Q.length)];att++;}while(q.hint===gLastHint&&att<10);
+  gLastHint=q.hint;gQStart=Date.now();
+  const cl=clv(),bon=eBon(),pen=ePen(),pct=gTime/gMaxTime*100;
+  const keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];
+  const opts=shuffle([q.answer,...q.wrong]);
+  let clHTML='';
+  if(cl===3)clHTML=`<div class="cl-banner cl3">🚨 OVERTIME!! ×4 BONUS!</div>`;
+  else if(cl===2)clHTML=`<div class="cl-banner cl2">🔥 LAST CHANCE! ×2.5 BONUS!</div>`;
+  else if(cl===1)clHTML=`<div class="cl-banner cl1">⚡ CLUTCH MODE ×1.5</div>`;
+  document.getElementById('game-area').innerHTML=`
+    <div class="g-bar-wrap"><div class="${cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar'}" id="g-bar" style="width:${pct}%"></div></div>
+    ${clHTML}
+    <div class="g-time ${cl?'cl'+cl:''}" id="g-time">${(gTime/1000).toFixed(1)}s</div>
+    <div class="g-meta">
+      <span>✅ <b>${gScore}</b></span>
+      <span>🔥 <b>${gStreak}</b> streak</span>
+      <span><span style="color:#1a6b2a;font-weight:700">+${bon}s</span> / <span style="color:#a02020;font-weight:700">-${pen}s</span></span>
+    </div>
+    <div class="g-word-card"><div class="g-word">${q.hint}</div><div class="g-word-sub">→ English?</div></div>
+    <div class="g-answers" id="g-ans-wrap">
+      ${opts.map((o,i)=>`<button class="g-ans" data-ans="${o}" onclick="pickG(this,'${o}','${q.answer}','${q.hint}')"><span class="key-badge">${keys[i].toUpperCase()}</span>${o}</button>`).join('')}
+    </div>`;
+}
+function updateGBar(){const bar=document.getElementById('g-bar'),te=document.getElementById('g-time');if(!bar||!te)return;const cl=clv();bar.style.width=(gTime/gMaxTime*100)+'%';bar.className=cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar';te.textContent=(gTime/1000).toFixed(1)+'s';te.className=cl?'g-time cl'+cl:'g-time';}
+function showPop(html,cls,dur=1600){const w=document.getElementById('g-popup');if(!w)return;w.innerHTML=`<div class="bpop ${cls}">${html}</div>`;setTimeout(()=>{if(w)w.innerHTML='';},dur);}
+function flashBg(col,op=0.35){const ov=document.getElementById('g-flash-bg');ov.style.cssText=`position:fixed;inset:0;pointer-events:none;z-index:90;background:${col};opacity:${op};transition:none`;setTimeout(()=>{ov.style.transition='opacity .6s';ov.style.opacity=0;},120);}
+function pickG(btn,chosen,correct,hint){
+  document.querySelectorAll('#game-area .g-ans').forEach(b=>b.disabled=true);
+  const cl=clv(),bon=eBon(),pen=ePen(),ms=Date.now()-gQStart;
+  gClickTimes.push(ms);
+  if(chosen===correct){
+    btn.classList.add('correct');
+    gScore++;gStreak++;if(gStreak>gMaxStreak)gMaxStreak=gStreak;
+    gWordsRight.add(hint);
+    gResults.push({hint,answer:correct,correct:true,ms,timeLeft:gTime});
+    gHistory.push({score:gScore,timeLeft:gTime});
+    const ws=lwS();if(!ws[hint])ws[hint]={right:0,wrong:0};
+    const wasR=ws[hint].right,wasW=ws[hint].wrong;
+    let extra=0,popCls='bpop-normal',popTxt=`+${bon}s`;
+    if(wasR===0){gNewWords++;gNewHints.add(hint);extra=settings.gameRightBonus*2;popCls='bpop-new';popTxt=`🆕 NEW WORD!<br><b>+${(bon+extra).toFixed(1)}s</b>`;showPop(popTxt,popCls,1800);flashBg('#00cc44');}
+    else if(wasW>wasR*1.5&&wasW>=2){gSuperBonus++;gSuperHints.add(hint);extra=settings.gameRightBonus*3.5;popCls='bpop-super';popTxt=`💥 SUPER BONUS!<br><b>+${(bon+extra).toFixed(1)}s</b>`;showPop(popTxt,popCls,2000);flashBg('#ff8800');}
+    else if(cl>=2){gClutchSaves++;if(cl===3){popCls='bpop-mega';popTxt=`🚨🚨 MEGA SAVE!!<br><b>+${bon}s</b>`;}else{popCls='bpop-clutch';popTxt=`🚨 CLUTCH SAVE!<br><b>+${bon}s</b>`;}showPop(popTxt,popCls,1800);flashBg('#6600cc');}
+    else{const fl=document.getElementById('g-flash');if(fl){fl.textContent='+'+bon+'s';fl.className='g-flash pos';setTimeout(()=>fl.className='g-flash',650);}}
+    ws[hint].right++;swS(ws);
+    gTime=Math.min(gTime+(bon+extra)*1000,gMaxTime*4);
+    setTimeout(()=>renderGQ(),360);
+  } else {
+    btn.classList.add('wrong');gStreak=0;
+    gResults.push({hint,answer:correct,correct:false,ms,timeLeft:gTime});
+    document.querySelectorAll('#game-area .g-ans').forEach(b=>{if(b.dataset.ans===correct)b.classList.add('correct');});
+    const ws=lwS();if(!ws[hint])ws[hint]={right:0,wrong:0};ws[hint].wrong++;swS(ws);
+    const fl=document.getElementById('g-flash');if(fl){fl.textContent='-'+pen+'s';fl.className='g-flash neg';setTimeout(()=>fl.className='g-flash',650);}
+    if(settings.flashOnWrong)flashBg('#ff2222');
+    if(settings.shakeOnWrong){const w=document.getElementById('g-ans-wrap');if(w){w.classList.add('shake-it');setTimeout(()=>w.classList.remove('shake-it'),500);}}
+    gTime=Math.max(0,gTime-pen*1000);
+    if(gTime<=0)setTimeout(()=>{clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);gameOver();},500);
+    else setTimeout(()=>renderGQ(),560);
+  }
+}
+function gameOver(){
+  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
+  document.getElementById('g-popup').innerHTML='';
+  const corrR=gResults.filter(r=>r.correct);
+  const avgMs=corrR.length?corrR.reduce((s,r)=>s+r.ms,0)/corrR.length:0;
+  const fastR=corrR.reduce((f,r)=>(!f||r.ms<f.ms)?r:f,null);
+  const slowR=corrR.reduce((s,r)=>(!s||r.ms>s.ms)?r:s,null);
+  const acc=gResults.length?Math.round(corrR.length/gResults.length*100):0;
+  const entry={score:gScore,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),avgMs:Math.round(avgMs),streak:gMaxStreak,ts:Date.now()};
+  let hs=lHi();hs.push(entry);hs.sort((a,b)=>b.score-a.score);
+  const rank=hs.findIndex(h=>h.ts===entry.ts)+1;
+  sHi(hs.slice(0,10));
+  document.getElementById('game-area').innerHTML=buildGOver({score:gScore,avgMs,fastR,slowR,acc,streak:gMaxStreak,newWords:gNewWords,superBonus:gSuperBonus,clutchSaves:gClutchSaves,wordsRight:[...gWordsRight],newHints:gNewHints,superHints:gSuperHints,history:gHistory,rank:rank<=10?rank:-1,leaderboard:hs.slice(0,10),entry});
+}
+function buildChart(history){
+  if(!history.length)return`<div style="text-align:center;color:#a07cb8;padding:16px;font-size:12px">Play longer to see your journey!</div>`;
+  const W=300,H=130,px=26,py=14,iW=W-px*2,iH=H-py*2;
+  const maxS=Math.max(...history.map(h=>h.score),1),n=history.length;
+  const pts=history.map((h,i)=>({x:px+i/(Math.max(n-1,1))*iW,y:py+iH-(h.score/maxS)*iH,score:h.score,tl:h.timeLeft}));
+  const pl=pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const fp=`${px},${py+iH} ${pl} ${pts[pts.length-1].x.toFixed(1)},${py+iH}`;
+  const grids=[...Array(4)].map((_,i)=>{const y=py+i*(iH/3);const v=Math.round(maxS*(1-i/3));return`<line x1="${px}" y1="${y.toFixed(1)}" x2="${W-px}" y2="${y.toFixed(1)}" stroke="#f0e4ff" stroke-width="1"/><text x="${(px-3)}" y="${(y+3).toFixed(0)}" font-size="9" fill="#c9a8e8" text-anchor="end">${v}</text>`;}).join('');
+  const dots=pts.map(p=>{const pct=p.tl/gMaxTime;const c=pct>0.3?'#3aaa6a':pct>0.15?'#E8A020':'#e87070';return`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${c}" stroke="#fff" stroke-width="1.5"/>`;}).join('');
+  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b3fa0" stop-opacity="0.35"/><stop offset="100%" stop-color="#6b3fa0" stop-opacity="0.03"/></linearGradient></defs>${grids}<line x1="${px}" y1="${py}" x2="${px}" y2="${py+iH}" stroke="#e8d4f8" stroke-width="1"/><line x1="${px}" y1="${py+iH}" x2="${W-px}" y2="${py+iH}" stroke="#e8d4f8" stroke-width="1"/><polygon points="${fp}" fill="url(#cg)"/><polyline points="${pl}" fill="none" stroke="#6b3fa0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}<text x="${px}" y="${H}" font-size="9" fill="#c9a8e8">Q1</text><text x="${W-px}" y="${H}" font-size="9" fill="#c9a8e8" text-anchor="end">Q${n}</text></svg>`;
+}
+function buildGOver({score,avgMs,fastR,slowR,acc,streak,newWords,superBonus,clutchSaves,wordsRight,newHints,superHints,history,rank,leaderboard,entry}){
+  let em,msg;
+  if(score>=25){em='🏆';msg='Incredible! Vocabulary machine!';}
+  else if(score>=18){em='🌟';msg='Amazing speed!';}
+  else if(score>=12){em='💪';msg='Great game! Keep pushing!';}
+  else if(score>=6){em='😊';msg='Good start! Try again!';}
+  else{em='📖';msg='Practice more and come back!';}
+  const rankTxt=rank>0?`🏅 Rank #${rank} on leaderboard!`:'';
+  const stats=[{e:'⚡',v:avgMs?(avgMs/1000).toFixed(2)+'s':'—',l:'Avg speed'},{e:'🔥',v:streak,l:'Best streak'},{e:'🎯',v:acc+'%',l:'Accuracy'},{e:'🆕',v:newWords,l:'New words'},{e:'💥',v:superBonus,l:'Super bonuses'},{e:'🚨',v:clutchSaves,l:'Clutch saves'}];
+  const ws=lwS();
+  const wordHTML=wordsRight.map(hint=>{
+    const q=ALL_Q.find(q=>q.hint===hint);if(!q)return'';
+    const s=ws[hint]||{right:0,wrong:0};
+    const stars=s.right>=6?'⭐⭐⭐':s.right>=3?'⭐⭐':s.right>=1?'⭐':'✨';
+    const isN=newHints.has(hint),isS=superHints.has(hint),isE=s.right>=6;
+    const cls=isN?'wchip wn':isS?'wchip ws':'wchip wr';
+    const badge=isE?'<span class="wc-b be">EXPERT</span>':isN?'<span class="wc-b bn">🆕 NEW</span>':isS?'<span class="wc-b bs">💥 SUPER</span>':'';
+    return`<div class="${cls}"><div class="wc-p">${hint} → ${q.answer}</div><div class="wc-s">${stars} <span style="font-size:9px;color:#a07cb8">×${s.right} total</span></div>${badge}</div>`;
+  }).join('');
+  const lbHTML=leaderboard.map((h,i)=>{const me=h.ts===entry.ts;return`<div class="lb-row ${me?'lb-me':''}"><span class="lb-rk">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`}</span><span class="lb-sc">${h.score}</span><span class="lb-mt">${h.date} · ${h.avgMs?h.avgMs+'ms':'—'} · ${h.streak||0} streak</span>${me?'<b style="font-size:10px;color:#6b3fa0">← you</b>':''}</div>`;}).join('');
+  return`<div style="text-align:center;padding:16px 0 10px">
+    <div style="font-size:52px;margin-bottom:6px">${em}</div>
+    <div style="font-size:48px;font-weight:700;color:#6b3fa0">${score}</div>
+    <div style="font-size:13px;color:#6b3fa0;font-weight:600;margin-bottom:3px">words matched!</div>
+    <div style="font-size:12px;color:#a07cb8;margin-bottom:2px">${msg}</div>
+    <div style="font-size:12px;color:#c9a8e8">${rankTxt}</div>
+  </div>
+  <div class="stat-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-e">${s.e}</div><div class="stat-v">${s.v}</div><div class="stat-l">${s.l}</div></div>`).join('')}</div>
+  <div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 4px #e0c8f0;display:flex;justify-content:space-around;text-align:center">
+    <div><div style="font-size:10px;color:#a07cb8">⚡ Fastest</div><div style="font-weight:700;color:#1a6b2a;font-size:12px">${fastR?(fastR.ms/1000).toFixed(2)+'s ('+fastR.hint+')':'—'}</div></div>
+    <div style="width:1px;background:#f0e4ff"></div>
+    <div><div style="font-size:10px;color:#a07cb8">🐢 Slowest</div><div style="font-weight:700;color:#a02020;font-size:12px">${slowR?(slowR.ms/1000).toFixed(2)+'s ('+slowR.hint+')':'—'}</div></div>
+  </div>
+  <div class="chart-wrap"><div class="chart-lbl">⚡ Response Speed Per Question</div>${buildChart(gResults)}<div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:10px;color:#a07cb8"><span>🟢 Fast</span><span>🟣 Average</span><span>🔴 Slow</span><span>- - avg line</span></div></div>
+  ${wordsRight.length?`<div class="lb-wrap"><div class="lb-lbl">✅ Words you got right (${wordsRight.length})</div><div class="word-grid">${wordHTML}</div></div>`:''}
+  <div class="lb-wrap"><div class="lb-lbl">🏆 Top 10 Leaderboard</div>${lbHTML||'<div style="color:#a07cb8;font-size:12px;text-align:center;padding:10px">No scores yet!</div>'}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px">
+    <button onclick="startGame()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🎮 Play Again</button>
+    <button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🏠 Home</button>
+  </div>`;
+}
+function renderSettings(){document.getElementById('settings-form').innerHTML=`
+  <div class="set-group"><div class="set-label">⏱ Quiz auto-advance</div><div class="set-chips">${[1,2,3,5].map(s=>`<div class="chip${settings.advanceSec===s?' active':''}" onclick="setSetting('advanceSec',${s})">${s}s</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">❓ Questions per quiz</div><div class="set-chips">${[10,15,20,25,30].map(l=>`<div class="chip${settings.quizLen===l?' active':''}" onclick="setSetting('quizLen',${l})">${l}</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">🌍 My language</div><div class="set-chips">${LANGS.map(l=>`<div class="chip${settings.langCode===l.code?' active':''}" onclick="setSetting('langCode','${l.code}')">${l.label}</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">🎮 Game starting time</div><div class="set-chips">${[15,20,30,45,60].map(s=>`<div class="chip${settings.gameStartSec===s?' active':''}" onclick="setSetting('gameStartSec',${s})">${s}s</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">✅ Seconds added on correct</div><div class="set-chips">${[0.5,1,2,3].map(s=>`<div class="chip${settings.gameRightBonus===s?' active':''}" onclick="setSetting('gameRightBonus',${s})">+${s}s</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">❌ Seconds lost on wrong</div><div class="set-chips">${[3,5,8,10].map(s=>`<div class="chip${settings.gameWrongPenalty===s?' active':''}" onclick="setSetting('gameWrongPenalty',${s})">-${s}s</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">⌨️ Keyboard shortcuts</div><div class="set-chips">${Object.keys(KEY_LAYOUTS).map(k=>`<div class="chip${settings.keyLayout===k?' active':''}" onclick="setSetting('keyLayout','${k}')">${KEY_LAYOUTS[k].join('-').toUpperCase()}</div>`).join('')}</div></div>
+  <div class="set-group"><div class="set-label">✨ Visual effects</div><div class="set-chips">
+    <div class="chip${settings.flashOnWrong?' active':''}" onclick="setSetting('flashOnWrong',${!settings.flashOnWrong})">🔴 Flash on wrong</div>
+    <div class="chip${settings.shakeOnWrong?' active':''}" onclick="setSetting('shakeOnWrong',${!settings.shakeOnWrong})">📳 Shake on wrong</div>
+  </div></div>
+  <div class="set-group" style="text-align:center"><div class="set-label">🗑 Reset leaderboard</div>
+    <button onclick="if(confirm('Clear all scores?')){localStorage.removeItem('rghi');alert('Cleared!');}" style="background:#fff0f0;color:#a02020;border:1px solid #e87070;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600">Reset Leaderboard</button>
+  </div>`;}
+function setSetting(k,v){settings[k]=v;renderSettings();}
+
+const pw=(e,s)=>({e,s}),pp=t=>({p:t});
+const STORIES=[
+  {emoji:"🎣",title:"El Príncipe Mojado",sub:"The Wet Prince",desc:"She is fishing. A prince falls in the water. He is not very impressive.",chapters:[{title:"La Pesca — Fishing",lines:[{s:[pw("She goes outside","Ella sale afuera"),pp(". "),pw("It is a good day","Es un buen día"),pp(".")],es:"Ella sale afuera. Es un buen día."},{s:[pw("She sits by the water and waits","Ella se sienta cerca del agua y espera"),pp(".")],es:"Ella se sienta cerca del agua y espera."},{s:[pw("She likes this. Slow. Quiet. Good","Le gusta esto. Despacio. Silencioso. Bueno"),pp(".")],es:"Le gusta esto. Despacio. Silencioso. Bueno."},{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("I want to find a big fish today","Yo quiero encontrar un pez grande hoy"),pp('."')],es:'Ella piensa: "Yo quiero encontrar un pez grande hoy."'},{s:[pw("Then she hears something very loud","Entonces ella escucha algo muy fuerte"),pp(".")],es:"Entonces ella escucha algo muy fuerte."}]},{title:"El Príncipe — The Prince",lines:[{s:[pw("A man falls into the water. Big splash","Un hombre cae al agua. Gran chapuzón"),pp(".")],es:"Un hombre cae al agua. Gran chapuzón."},{s:[pw("He is wet and very sad","Él está mojado y muy triste"),pp(".")],es:"Él está mojado y muy triste."},{s:[pw("He says","Él dice"),pp(': "'),pw("I am a prince! Help me","Yo soy un príncipe! Ayúdame"),pp('!"')],es:'Él dice: "¡Yo soy un príncipe! ¡Ayúdame!"'},{s:[pw("She looks at him. She does not help yet","Ella lo mira. Ella no ayuda todavía"),pp(".")],es:"Ella lo mira. Ella no ayuda todavía."},{s:[pw("She says","Ella dice"),pp(': "'),pw("Wait. I have a fish","Espera. Yo tengo un pez"),pp('."')],es:'Ella dice: "Espera. Yo tengo un pez."'},{s:[pw("He waits. Cold. Wet. And very small","Él espera. Frío. Mojado. Y muy pequeño"),pp(".")],es:"Él espera. Frío. Mojado. Y muy pequeño."},{s:[pw("She gets the fish. Then she helps him","Ella saca el pez. Entonces ella lo ayuda"),pp(".")],es:"Ella saca el pez. Entonces ella lo ayuda."}]},{title:"Después — After",lines:[{s:[pw("He says","Él dice"),pp(': "'),pw("I am very important. I have a big kingdom","Yo soy muy importante. Yo tengo un reino grande"),pp('."')],es:'Él dice: "Yo soy muy importante. Yo tengo un reino grande."'},{s:[pw("She says","Ella dice"),pp(': "'),pw("Good for you","Qué bien para ti"),pp('."')],es:'Ella dice: "Qué bien para ti."'},{s:[pw("He laughs. She laughs too","Él ríe. Ella ríe también"),pp(".")],es:"Él ríe. Ella ríe también."},{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("He is not bad. For a wet prince","Él no está mal. Para un príncipe mojado"),pp('."')],es:'Ella piensa: "Él no está mal. Para un príncipe mojado."'}]}]},
+  {emoji:"🤖",title:"Optimus en la Cocina",sub:"Optimus in the Kitchen",desc:"A giant robot is very hungry. He finds a RoboSousChef. The kitchen does not survive.",chapters:[{title:"El Robot Hambriento",lines:[{s:[pw("Optimus is big. Very big","Optimus es grande. Muy grande"),pp(".")],es:"Optimus es grande. Muy grande."},{s:[pw("He is hungry. He needs to eat","Él tiene hambre. Él necesita comer"),pp(".")],es:"Él tiene hambre. Él necesita comer."},{s:[pw("He finds a small kitchen","Él encuentra una pequeña cocina"),pp(".")],es:"Él encuentra una pequeña cocina."},{s:[pw("He goes inside. He bumps into everything","Él entra adentro. Él choca con todo"),pp(".")],es:"Él entra adentro. Él choca con todo."},{s:[pw("He says","Él dice"),pp(': "'),pw("This is too small. But I need food","Esto es muy pequeño. Pero yo necesito comida"),pp('."')],es:'Él dice: "Esto es muy pequeño. Pero yo necesito comida."'}]},{title:"La Máquina",lines:[{s:[pw("He sees a machine. Small. But fast","Él ve una máquina. Pequeña. Pero rápida"),pp(".")],es:"Él ve una máquina. Pequeña. Pero rápida."},{s:[pw("He reads: RoboSousChef. A robot that cooks","Él lee: RoboSousChef. Un robot que cocina"),pp(".")],es:"Él lee: RoboSousChef. Un robot que cocina."},{s:[pw("He thinks","Él piensa"),pp(': "'),pw("I like this","Me gusta esto"),pp('."')],es:'Él piensa: "Me gusta esto."'},{s:[pw("He opens it, puts food inside, and closes it","Él lo abre, pone comida adentro, y lo cierra"),pp(".")],es:"Él lo abre, pone comida adentro, y lo cierra."},{s:[pw("He waits two minutes. The machine is very fast","Él espera dos minutos. La máquina es muy rápida"),pp(".")],es:"Él espera dos minutos. La máquina es muy rápida."}]},{title:"La Comida",lines:[{s:[pw("The food is hot and very good","La comida está caliente y muy buena"),pp(".")],es:"La comida está caliente y muy buena."},{s:[pw("He eats everything","Él come todo"),pp(".")],es:"Él come todo."},{s:[pw("He says","Él dice"),pp(': "'),pw("Who made this machine? I need ten","¿Quién hizo esta máquina? Yo necesito diez"),pp('."')],es:'Él dice: "¿Quién hizo esta máquina? Yo necesito diez."'},{s:[pw("Then he laughs. A very big laugh","Entonces él ríe. Una muy grande carcajada"),pp(".")],es:"Entonces él ríe. Una muy grande carcajada."},{s:[pw("The walls shake. The kitchen falls down","Las paredes tiemblan. La cocina cae abajo"),pp(".")],es:"Las paredes tiemblan. La cocina cae abajo."},{s:[pw("He says","Él dice"),pp(': "'),pw("Maybe I eat outside next time","Tal vez como afuera la próxima vez"),pp('."')],es:'Él dice: "Tal vez como afuera la próxima vez."'}]}]},
+  {emoji:"🧵",title:"La Aguja y el Corazón",sub:"The Needle and the Heart",desc:"She sews alone. A man arrives with a very bad coat. He comes back — not for the coat.",chapters:[{title:"La Costurera",lines:[{s:[pw("She works every day","Ella trabaja todos los días"),pp(".")],es:"Ella trabaja todos los días."},{s:[pw("She sews. It is slow. But good","Ella cose. Es lento. Pero bueno"),pp(".")],es:"Ella cose. Es lento. Pero bueno."},{s:[pw("She makes beautiful things. Nobody sees them","Ella hace cosas hermosas. Nadie las ve"),pp(".")],es:"Ella hace cosas hermosas. Nadie las ve."},{s:[pw("She lives alone. She does not cry","Ella vive sola. Ella no llora"),pp(".")],es:"Ella vive sola. Ella no llora."},{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("One day, someone will see","Un día, alguien verá"),pp('."')],es:'Ella piensa: "Un día, alguien verá."'}]},{title:"El Hombre",lines:[{s:[pw("A man comes to the door","Un hombre viene a la puerta"),pp(".")],es:"Un hombre viene a la puerta."},{s:[pw("He says","Él dice"),pp(': "'),pw("Can you help me? I need something fixed","¿Puedes ayudarme? Yo necesito algo arreglado"),pp('."')],es:'Él dice: "¿Puedes ayudarme?"'},{s:[pw("She looks at his coat. It is very, very bad","Ella mira su abrigo. Está muy, muy malo"),pp(".")],es:"Ella mira su abrigo. Está muy, muy malo."},{s:[pw("She says: Yes. Come back tomorrow","Ella dice: Sí. Vuelve mañana"),pp(".")],es:'Ella dice: "Sí. Vuelve mañana."'},{s:[pw("She works all night. She does not sleep","Ella trabaja toda la noche. Ella no duerme"),pp(".")],es:"Ella trabaja toda la noche. Ella no duerme."},{s:[pw("She makes it beautiful","Ella lo hace hermoso"),pp(".")],es:"Ella lo hace hermoso."}]},{title:"El Regreso",lines:[{s:[pw("He comes back. He sees his coat","Él regresa. Él ve su abrigo"),pp(".")],es:"Él regresa. Él ve su abrigo."},{s:[pw("He says","Él dice"),pp(': "'),pw("Who made this","¿Quién hizo esto"),pp('?"')],es:'Él dice: "¿Quién hizo esto?"'},{s:[pw("She says: I made it","Ella dice: Yo lo hice"),pp(".")],es:'Ella dice: "Yo lo hice."'},{s:[pw("He looks at her. She looks at him","Él la mira. Ella lo mira"),pp(".")],es:"Él la mira. Ella lo mira."},{s:[pw("He says","Él dice"),pp(': "'),pw("Can I come back? Not for the coat","¿Puedo volver? No por el abrigo"),pp('."')],es:'Él dice: "¿Puedo volver? No por el abrigo."'},{s:[pw("She laughs. Maybe, she says. Maybe","Ella ríe. Tal vez, ella dice. Tal vez"),pp(".")],es:'Ella ríe. "Tal vez," ella dice. "Tal vez."'}]}]},
+  {emoji:"🪔",title:"El Genio de la Laguna",sub:"The Genie of the Lake",desc:"She finds a lamp while fishing. The genie wastes her second wish. Nobody is perfect.",chapters:[{title:"La Lámpara",lines:[{s:[pw("She is fishing. It is a good day","Ella está pescando. Es un buen día"),pp(".")],es:"Ella está pescando. Es un buen día."},{s:[pw("She finds something in the water. Not a fish","Ella encuentra algo en el agua. No un pez"),pp(".")],es:"Ella encuentra algo en el agua. No un pez."},{s:[pw("It is old and small. She opens it","Está viejo y pequeño. Ella lo abre"),pp(".")],es:"Está viejo y pequeño. Ella lo abre."},{s:[pw("A big light comes out. And then: a man","Una gran luz sale. Y entonces: un hombre"),pp(".")],es:"Una gran luz sale. Y entonces: un hombre."},{s:[pw("He says","Él dice"),pp(': "'),pw("I am a genie. I have three wishes for you","Yo soy un genio. Tengo tres deseos para ti"),pp('."')],es:'Él dice: "Yo soy un genio. Tengo tres deseos para ti."'}]},{title:"Los Deseos",lines:[{s:[pw("First wish: I want a big house","Primer deseo: Yo quiero una casa grande"),pp(".")],es:'Primer deseo: "Yo quiero una casa grande."'},{s:[pw("She cannot find her bed. It is too big","Ella no puede encontrar su cama. Está demasiado grande"),pp(".")],es:"Ella no puede encontrar su cama. Está demasiado grande."},{s:[pw("She says: Make it smaller","Ella dice: Hazla más pequeña"),pp(".")],es:'Ella dice: "Hazla más pequeña."'},{s:[pw("He says: That was your second wish","Él dice: Ese fue tu segundo deseo"),pp(".")],es:'Él dice: "Ese fue tu segundo deseo."'},{s:[pw("She says","Ella dice"),pp(': "'),pw("You are not a good genie","Tú no eres un buen genio"),pp('."')],es:'Ella dice: "Tú no eres un buen genio."'},{s:[pw("He says: Nobody is perfect","Él dice: Nadie es perfecto"),pp(".")],es:'Él dice: "Nadie es perfecto."'}]},{title:"El Tercer Deseo",lines:[{s:[pw("She says","Ella dice"),pp(': "'),pw("I want someone who makes me laugh","Yo quiero alguien que me hace reír"),pp('."')],es:'Ella dice: "Yo quiero alguien que me hace reír."'},{s:[pw("The genie looks at her. Then he laughs","El genio la mira. Entonces él ríe"),pp(".")],es:"El genio la mira. Entonces él ríe."},{s:[pw("She laughs too","Ella ríe también"),pp(".")],es:"Ella ríe también."},{s:[pw("She says","Ella dice"),pp(': "'),pw("Wait. Are you my third wish","Espera. ¿Eres tú mi tercer deseo"),pp('?"')],es:'Ella dice: "Espera. ¿Eres tú mi tercer deseo?"'},{s:[pw("He says: Maybe","Él dice: Tal vez"),pp(".")],es:'Él dice: "Tal vez."'},{s:[pw("She goes back to fishing. He sits next to her","Ella regresa a pescar. Él se sienta junto a ella"),pp(".")],es:"Ella regresa a pescar. Él se sienta junto a ella."},{s:[pw("He is not bad. For a genie","Él no está mal. Para un genio"),pp(".")],es:"Él no está mal. Para un genio."}]}]}
+];
+let storySubs=false;
+function buildPicker(){document.getElementById('story-reader').style.display='none';document.getElementById('story-picker').style.display='';document.getElementById('story-picker').innerHTML=`<div class="picker-grid">${STORIES.map((st,i)=>`<div class="story-card" onclick="openStory(${i})"><div class="sc-emoji">${st.emoji}</div><div class="sc-title">${st.title}</div><div class="sc-sub">${st.sub}</div><div class="sc-desc">${st.desc}</div></div>`).join('')}</div>`;}
+function openStory(i){storySubs=false;const st=STORIES[i];document.getElementById('story-picker').style.display='none';const rdr=document.getElementById('story-reader');rdr.innerHTML=`<div class="story-bar"><button class="s-btn" onclick="buildPicker()">← Stories</button><button class="s-btn" onclick="sReset()">↺ Reset</button><button class="s-btn" id="s-sub-btn" onclick="sToggle()">Hide subtitles</button></div><p class="s-hint">Toca cualquier <span>frase</span> para verla en español</p>${st.chapters.map(ch=>`<div class="ch"><div class="ch-title">${ch.title}</div>${ch.lines.map(ln=>`<div class="lp"><div class="en-l">${ln.s.map(seg=>seg.p!==undefined?`<span>${seg.p}</span>`:`<span class="w" data-en="${(seg.e||'').replace(/"/g,'&quot;')}" data-es="${(seg.s||'').replace(/"/g,'&quot;')}" onclick="sTap(this)">${seg.e}</span>`).join('')}</div><div class="es-l">${ln.es}</div></div>`).join('')}</div>`).join('')}<div class="s-ending">Fin — The End 🌙</div>`;rdr.style.display='';}
+function sTap(el){const f=el.classList.contains('flipped');el.textContent=f?el.dataset.en:el.dataset.es;el.classList.toggle('flipped',!f);}
+function sReset(){document.querySelectorAll('#story-reader .w.flipped').forEach(el=>{el.textContent=el.dataset.en;el.classList.remove('flipped');});}
+function sToggle(){storySubs=!storySubs;document.querySelectorAll('#story-reader .es-l').forEach(el=>el.classList.toggle('hidden',storySubs));document.getElementById('s-sub-btn').textContent=storySubs?'Show subtitles':'Hide subtitles';}
+</script>
+</body>
+</html>
