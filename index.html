@@ -201,7 +201,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-arrow">→</div>
       </div>
     </div>
-    <div class="app-ver">v1.5.1 · Built Apr 2026</div>
+    <div class="app-ver">v1.6.0 · Built Apr 2026</div>
   </div>
 </div>
 
@@ -244,8 +244,14 @@ tr.challenge td{background:#fff4f0!important}
       <div class="home-card" onclick="openScreen('stories','📚 Stories')">
         <div class="icon">📚</div><div class="label">Stories</div><div class="desc">Bilingual stories — tap to translate</div>
       </div>
-      <div class="home-card" onclick="openScreen('settings','⚙️ Settings')">
-        <div class="icon">⚙️</div><div class="label">Settings</div><div class="desc">Quiz, game, language, effects</div>
+      <div class="home-card" onclick="openScreen('words','📝 My Words')">
+        <div class="icon">📝</div><div class="label">My Words</div><div class="desc">Add words manually or paste a list</div>
+      </div>
+      <div class="home-card" onclick="openScreen('aiquiz','🤖 AI Quiz')">
+        <div class="icon">🤖</div><div class="label">AI Quiz</div><div class="desc">Auto-generates questions from your word list</div>
+      </div>
+      <div class="home-card" onclick="openScreen('suggest','✨ Suggest Words')">
+        <div class="icon">✨</div><div class="label">Suggest Words</div><div class="desc">AI picks your next words to learn</div>
       </div>
     </div>
   </div>
@@ -256,6 +262,18 @@ tr.challenge td{background:#fff4f0!important}
   <div class="wl-tabs" id="wl-tabs"></div>
   <p class="wl-hint">Toca ✅ experta · ⚠️ difícil · toca palabra oculta para verla</p>
   <div id="wl-content"></div>
+</div>
+<!-- MY WORDS -->
+<div class="screen" id="screen-words">
+  <div id="words-area"></div>
+</div>
+<!-- AI QUIZ -->
+<div class="screen" id="screen-aiquiz">
+  <div id="aiquiz-area"></div>
+</div>
+<!-- SUGGEST -->
+<div class="screen" id="screen-suggest">
+  <div id="suggest-area"></div>
 </div>
 <div class="screen" id="screen-challenge">
   <div id="challenge-area"></div>
@@ -421,6 +439,7 @@ function openScreen(id,title){
   document.getElementById('nav-back').style.display='';
   document.getElementById('nav-home').style.display='';
   if(id==='quiz')startQuiz();if(id==='challenge')startChallenge();if(id==='wordlist')wlRender();
+  if(id==='words')renderWordsManager();if(id==='aiquiz')renderAIQuiz();if(id==='suggest')renderSuggest();
   if(id==='stories')buildPicker();if(id==='settings')renderSettings();
   if(id==='game')startGame();
 }
@@ -484,6 +503,265 @@ function renderQ(){
 function pickQ(btn,chosen,correct){if(qAnswered)return;const item=qQueue[qPos],lang=getLang(),fb=document.getElementById('q-fb');document.querySelectorAll('.ans').forEach(b=>b.disabled=true);if(chosen===correct){btn.classList.add('correct');item.streak++;if(item.streak>=3){fb.innerHTML=`<span style="color:#1a6b2a">🏆 ${lang.expert}</span>`;fb.className='feedback correct';qExpert++;qQueue.splice(qPos,1);if(qPos>=qQueue.length)qPos=0;setTimeout(()=>nextQ(),settings.advanceSec*1000);}else{fb.textContent=lang.correct[Math.floor(Math.random()*lang.correct.length)];fb.className='feedback correct';setTimeout(()=>nextQ(),settings.advanceSec*1000);}qAnswered=true;}else{btn.classList.add('wrong');item.streak=0;fb.innerHTML=`${lang.tryAgain} <span style="color:#a07cb8;font-size:11px">(${lang.hint}: ${item.q.hint})</span>`;fb.className='feedback wrong';document.querySelectorAll('.ans').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false;});qQueue.push({q:item.q,streak:0});}}
 function nextQ(){qAnswered=false;if(!qQueue.length){showQScore();return;}qPos++;if(qPos>=qQueue.length)qPos=0;if(!qQueue.length){showQScore();return;}renderQ();}
 function showQScore(){document.getElementById('quiz-area').style.display='none';const s=document.getElementById('quiz-score');let e,m;if(qExpert>=18){e='🏆';m='¡Increíble!';}else if(qExpert>=12){e='⭐';m=`${qExpert} mastered!`;}else if(qExpert>=6){e='💪';m=`${qExpert} experts. Keep going!`;}else{e='📖';m='Practice makes perfect!';}s.innerHTML=`<div style="font-size:48px">${e}</div><div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 ${qExpert}</div><div style="font-size:13px;color:#5a4070;margin-bottom:16px">${m}</div><button class="restart-btn" onclick="startQuiz()">🔄 Play again</button>`;s.style.display='block';}
+
+// ═══════════════════════════════════════
+// WORD MANAGER
+// ═══════════════════════════════════════
+function getUserWords(){try{return JSON.parse(localStorage.getItem(uKey('custom_words'))||'[]');}catch(e){return[];}}
+function saveUserWords(w){try{localStorage.setItem(uKey('custom_words'),JSON.stringify(w));}catch(e){}}
+
+function renderWordsManager(){
+  const words=getUserWords();
+  const isAamir=currentUser==='Aamir';
+  document.getElementById('words-area').innerHTML=`
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:10px">➕ Add a word</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <input id="w-es" placeholder="${isAamir?'Spanish':'Español'}" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">
+        <input id="w-en" placeholder="${isAamir?'English':'English'}" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">
+      </div>
+      <select id="w-cat" style="width:100%;padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;margin-bottom:8px;background:#fff;color:#3a2050">
+        <option value="verb">Verbo / Verb</option>
+        <option value="adj">Adjetivo / Adjective</option>
+        <option value="noun">Sustantivo / Noun</option>
+        <option value="conn">Conector / Connector</option>
+      </select>
+      <button onclick="addWordManual()" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Add Word</button>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:6px">📋 Paste a list</div>
+      <div style="font-size:11px;color:#a07cb8;margin-bottom:8px">One per line: <b>Spanish, English, category</b><br>Example: Nadar, Swim, verb</div>
+      <textarea id="w-paste" placeholder="Nadar, Swim, verb&#10;Volar, Fly, verb&#10;Rápido, Fast, adj" rows="5" style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid #d8b4f8;font-size:12px;font-family:sans-serif;resize:vertical;outline:none"></textarea>
+      <button onclick="importPasted()" style="width:100%;background:#1a6b2a;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">📥 Import</button>
+      <div id="import-msg" style="font-size:11px;color:#2a9d2a;font-weight:700;text-align:center;margin-top:4px;min-height:16px"></div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:8px">📚 My word list (${words.length})</div>
+      ${words.length===0?'<div style="text-align:center;color:#a07cb8;font-size:12px;padding:16px">No custom words yet. Add some above!</div>':
+      `<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px #e0c8f0">
+        ${words.map((w,i)=>`<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #f3e8ff;gap:8px">
+          <div style="flex:1;font-size:13px;color:#3a2050"><b>${w.es}</b> → ${w.en}</div>
+          <div style="font-size:10px;color:#a07cb8;background:#f3e4ff;padding:1px 7px;border-radius:10px">${w.cat}</div>
+          <button onclick="deleteWord(${i})" style="background:none;border:none;color:#e87070;cursor:pointer;font-size:16px;padding:0 4px">×</button>
+        </div>`).join('')}
+      </div>`}
+    </div>`;
+}
+
+function addWordManual(){
+  const es=document.getElementById('w-es').value.trim();
+  const en=document.getElementById('w-en').value.trim();
+  const cat=document.getElementById('w-cat').value;
+  if(!es||!en)return;
+  const words=getUserWords();
+  words.push({es,en,cat});saveUserWords(words);
+  document.getElementById('w-es').value='';document.getElementById('w-en').value='';
+  renderWordsManager();
+}
+
+function importPasted(){
+  const raw=document.getElementById('w-paste').value.trim();
+  if(!raw)return;
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l);
+  const words=getUserWords();let added=0;
+  lines.forEach(line=>{
+    const parts=line.split(',').map(p=>p.trim());
+    if(parts.length>=2){
+      const es=parts[0],en=parts[1],cat=(parts[2]||'verb').toLowerCase();
+      const validCat=['verb','adj','noun','conn'].includes(cat)?cat:'verb';
+      words.push({es,en,cat:validCat});added++;
+    }
+  });
+  saveUserWords(words);
+  document.getElementById('import-msg').textContent=`✓ Added ${added} word${added!==1?'s':''}!`;
+  document.getElementById('w-paste').value='';
+  setTimeout(()=>renderWordsManager(),800);
+}
+
+function deleteWord(i){
+  const words=getUserWords();words.splice(i,1);saveUserWords(words);renderWordsManager();
+}
+
+// ═══════════════════════════════════════
+// AI QUIZ GENERATOR
+// ═══════════════════════════════════════
+let aiQuizQuestions=[],aiQIdx=0,aiAnswered=false,aiAttempts=0,aiResults=[];
+
+async function renderAIQuiz(){
+  const words=getUserWords();
+  const isAamir=currentUser==='Aamir';
+  if(words.length<3){
+    document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
+      <div style="font-size:48px;margin-bottom:12px">📝</div>
+      <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Not enough words yet!</div>
+      <div style="font-size:13px;margin-bottom:20px">Add at least 3 words to "My Words" first.</div>
+      <button onclick="openScreen('words','📝 My Words')" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">Go to My Words</button>
+    </div>`;return;
+  }
+  document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px">
+    <div style="font-size:48px;margin-bottom:12px">🤖</div>
+    <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Generating your quiz...</div>
+    <div style="font-size:12px;color:#a07cb8">Claude is creating questions from your ${words.length} words</div>
+    <div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  </div>`;
+  try{
+    const wordList=words.slice(0,30).map(w=>`${w.es}=${w.en}(${w.cat})`).join(', ');
+    const userLang=isAamir?'Spanish':'English';
+    const prompt=`You are a language quiz generator. Generate exactly ${Math.min(settings.quizLen,words.length*2)} fill-in-the-blank questions from these word pairs: ${wordList}.
+    
+    Rules:
+    - Each question tests one word from the list
+    - Sentence is in Spanish with a blank ___
+    - The answer is the ${userLang} translation
+    - Provide 3 plausible wrong answers in ${userLang}
+    - Keep sentences simple and natural
+    - cat should be the category from the word pair
+    
+    Return ONLY a JSON array, no other text:
+    [{"sentence":"Spanish sentence with ___","hint":"spanish word","answer":"${userLang} answer","wrong":["w1","w2","w3"],"cat":"verb"}]`;
+    
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content[0].text.replace(/```json|```/g,'').trim();
+    aiQuizQuestions=JSON.parse(text);
+    aiQIdx=0;aiAnswered=false;aiAttempts=0;aiResults=[];
+    renderAIQuestion();
+  }catch(e){
+    document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>
+      <div style="font-size:12px;margin-bottom:20px">Check your connection and try again.</div>
+      <button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>
+    </div>`;
+  }
+}
+
+function renderAIQuestion(){
+  const q=aiQuizQuestions[aiQIdx],total=aiQuizQuestions.length;
+  const isAamir=currentUser==='Aamir';
+  const opts=shuffle([q.answer,...q.wrong]);
+  const cats={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+  const catLbls={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+  document.getElementById('aiquiz-area').innerHTML=`
+    <div style="font-size:11px;color:#a07cb8;text-align:right;margin-bottom:4px">${aiQIdx+1} / ${total}</div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${(aiQIdx+1)/total*100}%"></div></div>
+    <div style="text-align:center;font-size:11px;color:#6b3fa0;font-weight:600;margin:8px 0">🤖 AI Generated Quiz</div>
+    <div class="q-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span class="q-cat ${cats[q.cat]||'cat-verb'}">${catLbls[q.cat]||q.cat}</span>
+        <span style="font-size:10px;color:#a07cb8">${aiAttempts>0?(isAamir?'🔄 Intenta de nuevo':'🔄 Try again'):'&nbsp;'}</span>
+      </div>
+      <div class="q-sentence">${q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')}</div>
+      <div class="q-hint">${isAamir?'Hint':'Pista'}: <span style="font-weight:700;color:#6b3fa0">${q.hint}</span></div>
+    </div>
+    <div class="answers">${opts.map(o=>`<button class="ans" onclick="pickAI(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div>
+    <div class="feedback" id="ai-fb"></div>`;
+  aiAnswered=false;
+}
+
+function pickAI(btn,chosen,correct){
+  if(aiAnswered)return;
+  const q=aiQuizQuestions[aiQIdx],isAamir=currentUser==='Aamir',fb=document.getElementById('ai-fb');
+  document.querySelectorAll('#aiquiz-area .ans').forEach(b=>b.disabled=true);
+  if(chosen===correct){
+    btn.classList.add('correct');
+    const firstTry=aiAttempts===0;
+    aiResults.push({q,firstTry,hint:q.hint,cat:q.cat});
+    const praise=getPraise();
+    fb.textContent=firstTry?praise[Math.floor(Math.random()*praise.length)]:(isAamir?'¡Lo tienes! 👍':'Got it! 👍');
+    fb.className='feedback correct';
+    aiAnswered=true;aiAttempts=0;
+    setTimeout(()=>{aiQIdx++;if(aiQIdx>=aiQuizQuestions.length)showAIScore();else renderAIQuestion();},settings.advanceSec*1000);
+  } else {
+    btn.classList.add('wrong');aiAttempts++;
+    fb.innerHTML=isAamir?`¡Inténtalo de nuevo! <span style="color:#a07cb8;font-size:11px">(${q.hint})</span>`:`Try again! <span style="color:#a07cb8;font-size:11px">(${q.hint})</span>`;
+    fb.className='feedback wrong';
+    document.querySelectorAll('#aiquiz-area .ans').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false;});
+  }
+}
+
+function showAIScore(){
+  const total=aiResults.length,first=aiResults.filter(r=>r.firstTry).length,pct=Math.round(first/total*100);
+  const isAamir=currentUser==='Aamir';
+  let em,msg;
+  if(pct===100){em='🏆';msg=isAamir?'¡Perfecto!':'Perfect score!';}
+  else if(pct>=80){em='⭐';msg=isAamir?'¡Muy bien!':'Really well done!';}
+  else if(pct>=60){em='💪';msg=isAamir?'¡Bien!':'Good effort!';}
+  else{em='📖';msg=isAamir?'Sigue practicando.':'Keep practicing.';}
+  const wrong=aiResults.filter(r=>!r.firstTry);
+  document.getElementById('aiquiz-area').innerHTML=`
+    <div style="text-align:center;padding:20px 0 14px">
+      <div style="font-size:48px">${em}</div>
+      <div style="font-size:34px;font-weight:700;color:#6b3fa0">${first}/${total}</div>
+      <div style="font-size:12px;color:#a07cb8;margin-bottom:6px">${isAamir?'a la primera':'first try'}</div>
+      <div style="font-size:13px;color:#5a4070;margin-bottom:14px">${msg}</div>
+    </div>
+    ${wrong.length?`<div class="lb-wrap"><div class="lb-lbl">🔧 ${isAamir?'Para practicar':'Needs work'}</div>${wrong.map(r=>`<div style="padding:6px;border-bottom:1px solid #f3e8ff;font-size:12px;color:#3a2050">${r.hint} → <b>${r.q.answer}</b></div>`).join('')}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px;margin-top:10px">
+      <button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🤖 New AI Quiz</button>
+      <button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🏠 Home</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════
+// AI WORD SUGGESTIONS
+// ═══════════════════════════════════════
+async function renderSuggest(){
+  const isAamir=currentUser==='Aamir';
+  const existing=[...getUserWords().map(w=>w.en),...(isAamir?AAMIR_Q.map(q=>q.answer):ALL_Q.map(q=>q.answer))];
+  document.getElementById('suggest-area').innerHTML=`<div style="text-align:center;padding:40px 20px">
+    <div style="font-size:48px;margin-bottom:12px">✨</div>
+    <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Finding suggestions...</div>
+    <div style="font-size:12px;color:#a07cb8">Claude is picking your next words to learn</div>
+    <div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  </div>`;
+  try{
+    const goal=isAamir?'learning Spanish verb conjugations (presente, pretérito, futuro) as an English speaker':'learning English as a Spanish speaker';
+    const prompt=`A language learner is ${goal}. They already know these words/concepts: ${[...new Set(existing)].slice(0,50).join(', ')}.
+    
+    Suggest exactly 15 new words they should learn next. Choose high-frequency, practical words appropriate for their level.
+    
+    Return ONLY a JSON array, no other text:
+    [{"es":"Spanish word","en":"English word","cat":"verb|adj|noun|conn","why":"One sentence explaining why this word is useful"}]`;
+    
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content[0].text.replace(/```json|```/g,'').trim();
+    const suggestions=JSON.parse(text);
+    const catCls={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+    const catLbl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+    document.getElementById('suggest-area').innerHTML=`
+      <div style="font-size:13px;color:#a07cb8;margin-bottom:12px;text-align:center">Tap ➕ to add to your word list</div>
+      <div id="sug-list">
+        ${suggestions.map((s,i)=>`
+          <div id="sug-${i}" style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 6px #e0c8f0;display:flex;align-items:center;gap:10px">
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:700;color:#3a2050">${s.es} <span style="color:#a07cb8">→</span> ${s.en}</div>
+              <div style="font-size:10px;color:#a07cb8;margin-top:2px">${s.why}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+              <span class="q-cat ${catCls[s.cat]||'cat-verb'}" style="margin-bottom:0">${catLbl[s.cat]||s.cat}</span>
+              <button onclick="addSuggestion(${i},'${s.es.replace(/'/g,"\\'")}','${s.en.replace(/'/g,"\\'")}','${s.cat}')" id="sug-btn-${i}" style="background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer">➕ Add</button>
+            </div>
+          </div>`).join('')}
+      </div>
+      <button onclick="renderSuggest()" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;margin-bottom:20px">🔄 Suggest more</button>`;
+  }catch(e){
+    document.getElementById('suggest-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>
+      <button onclick="renderSuggest()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>
+    </div>`;
+  }
+}
+
+function addSuggestion(i,es,en,cat){
+  const words=getUserWords();words.push({es,en,cat});saveUserWords(words);
+  const btn=document.getElementById(`sug-btn-${i}`);
+  if(btn){btn.textContent='✅ Added';btn.style.background='#1a6b2a';btn.disabled=true;}
+}
 
 // ── CHALLENGE QUIZ ──
 let cStreak=0,cBest=0,cAnswered=false,cResults=[];
