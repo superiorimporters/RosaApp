@@ -399,91 +399,284 @@ var WL_SECTIONS = [
 
 // ═══════════════════════════════════════
 // 3. STORIES DATA
+// Rendering direction:
+//   Aamir (learning Spanish) → main=Spanish, subtitle=English, tap reveals English
+//   Rosa  (learning English) → main=English, subtitle=Spanish, tap reveals Spanish
+// Each line: s=segments(pw/pp), en=full English, es=full Spanish
 // ═══════════════════════════════════════
 function pw(e,s){return {e:e,s:s};}
 function pp(t){return {p:t};}
 var STORIES = [
-  {emoji:'🎣',title:'El Príncipe Mojado',sub:'The Wet Prince',desc:'She is fishing. A prince falls in the water. He is not very impressive.',
+  // ── LEVEL 1 ─────────────────────────────
+  // L1-1
+  {level:1,emoji:'🎣',title:'El Príncipe Mojado',sub:'The Wet Prince',desc:'She is fishing. A wet prince falls in. Not very impressive.',
    chapters:[
-    {title:'La Pesca',lines:[
-      {s:[pw('She goes outside','Ella sale afuera'),pp('. '),pw('It is a good day','Es un buen día'),pp('.')],es:'Ella sale afuera. Es un buen día.'},
-      {s:[pw('She sits by the water and waits','Ella se sienta cerca del agua y espera'),pp('.')],es:'Ella se sienta y espera.'},
-      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('I want to find a big fish today','Yo quiero encontrar un pez grande hoy'),pp('."')],es:'Ella piensa: "Yo quiero un pez grande."'},
-      {s:[pw('Then she hears something very loud','Entonces ella escucha algo muy fuerte'),pp('.')],es:'Entonces ella escucha algo muy fuerte.'}
+    {title:'La Pesca',titleEn:'The Fishing',lines:[
+      {s:[pw('She goes outside','Ella sale afuera'),pp('. '),pw('It is a good day','Es un buen día'),pp('.')],en:'She goes outside. It is a good day.',es:'Ella sale afuera. Es un buen día.'},
+      {s:[pw('She sits by the water','Ella se sienta cerca del agua'),pp(' '),pw('and waits','y espera'),pp('.')],en:'She sits by the water and waits.',es:'Ella se sienta cerca del agua y espera.'},
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('I want to find a big fish today','Yo quiero encontrar un pez grande hoy'),pp('."')],en:'She thinks: "I want to find a big fish today."',es:'Ella piensa: "Yo quiero encontrar un pez grande hoy."'},
+      {s:[pw('Then she hears','Entonces ella escucha'),pp(' '),pw('something very loud','algo muy fuerte'),pp('.')],en:'Then she hears something very loud.',es:'Entonces ella escucha algo muy fuerte.'}
     ]},
-    {title:'El Príncipe',lines:[
-      {s:[pw('A man falls into the water','Un hombre cae al agua'),pp('. '),pw('Big splash','Gran chapuzón'),pp('.')],es:'Un hombre cae al agua. Gran chapuzón.'},
-      {s:[pw('He is wet and very sad','Él está mojado y muy triste'),pp('.')],es:'Él está mojado y muy triste.'},
-      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a prince! Help me','Yo soy un príncipe! Ayúdame'),pp('!"')],es:'Él dice: "¡Yo soy un príncipe!"'},
-      {s:[pw('She says','Ella dice'),pp(': "'),pw('Wait. I have a fish','Espera. Yo tengo un pez'),pp('."')],es:'Ella dice: "Espera. Yo tengo un pez."'},
-      {s:[pw('He waits. Cold. Wet. And very small','Él espera. Frío. Mojado. Y muy pequeño'),pp('.')],es:'Él espera. Frío. Mojado. Y muy pequeño.'}
+    {title:'El Príncipe',titleEn:'The Prince',lines:[
+      {s:[pw('A man falls into the water','Un hombre cae al agua'),pp('. '),pw('Big splash','Gran chapuzón'),pp('.')],en:'A man falls into the water. Big splash.',es:'Un hombre cae al agua. Gran chapuzón.'},
+      {s:[pw('He is wet','Él está mojado'),pp(' '),pw('and very sad','y muy triste'),pp('.')],en:'He is wet and very sad.',es:'Él está mojado y muy triste.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a prince! Help me','¡Yo soy un príncipe! Ayúdame'),pp('!"')],en:'He says: "I am a prince! Help me!"',es:'Él dice: "¡Yo soy un príncipe! Ayúdame."'},
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('Wait. I have a fish','Espera. Yo tengo un pez'),pp('."')],en:'She says: "Wait. I have a fish."',es:'Ella dice: "Espera. Yo tengo un pez."'},
+      {s:[pw('He waits. Cold. Wet.','Él espera. Frío. Mojado.'),pp(' '),pw('And very small','Y muy pequeño'),pp('.')],en:'He waits. Cold. Wet. And very small.',es:'Él espera. Frío. Mojado. Y muy pequeño.'}
     ]},
-    {title:'Después',lines:[
-      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('He is not bad. For a wet prince','Él no está mal. Para un príncipe mojado'),pp('."')],es:'Ella piensa: "Él no está mal."'},
-      {s:[pw('He asks','Él pregunta'),pp(': "'),pw('Can I come back tomorrow','¿Puedo volver mañana'),pp('?"')],es:'Él pregunta: "¿Puedo volver mañana?"'},
-      {s:[pw('She says','Ella dice'),pp(': "'),pw('Maybe. But bring food','Tal vez. Pero trae comida'),pp('."')],es:'Ella dice: "Tal vez. Pero trae comida."'}
+    {title:'Después',titleEn:'After',lines:[
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('He is not bad','Él no está mal'),pp('. '),pw('For a wet prince','Para un príncipe mojado'),pp('."')],en:'She thinks: "He is not bad. For a wet prince."',es:'Ella piensa: "Él no está mal. Para un príncipe mojado."'},
+      {s:[pw('He asks','Él pregunta'),pp(': "'),pw('Can I come back tomorrow','¿Puedo volver mañana'),pp('?"')],en:'He asks: "Can I come back tomorrow?"',es:'Él pregunta: "¿Puedo volver mañana?"'},
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('Maybe. But bring food','Tal vez. Pero trae comida'),pp('."')],en:'She says: "Maybe. But bring food."',es:'Ella dice: "Tal vez. Pero trae comida."'}
     ]}
   ]},
-  {emoji:'🤖',title:'Optimus en la Cocina',sub:'Optimus in the Kitchen',desc:'A giant robot is very hungry. He finds a RoboSousChef. The kitchen does not survive.',
+  // L1-2
+  {level:1,emoji:'🤖',title:'Optimus en la Cocina',sub:'Optimus in the Kitchen',desc:'A giant robot is very hungry. He finds a RoboSousChef. The kitchen does not survive.',
    chapters:[
-    {title:'El Robot Hambriento',lines:[
-      {s:[pw('Optimus is big. Very big','Optimus es grande. Muy grande'),pp('.')],es:'Optimus es grande. Muy grande.'},
-      {s:[pw('He is hungry. He needs to eat','Él tiene hambre. Él necesita comer'),pp('.')],es:'Él tiene hambre. Él necesita comer.'},
-      {s:[pw('He goes inside. He bumps into everything','Él entra adentro. Él choca con todo'),pp('.')],es:'Él entra adentro. Él choca con todo.'}
+    {title:'El Robot Hambriento',titleEn:'The Hungry Robot',lines:[
+      {s:[pw('Optimus is big. Very big','Optimus es grande. Muy grande'),pp('.')],en:'Optimus is big. Very big.',es:'Optimus es grande. Muy grande.'},
+      {s:[pw('He is hungry','Él tiene hambre'),pp('. '),pw('He needs to eat','Él necesita comer'),pp('.')],en:'He is hungry. He needs to eat.',es:'Él tiene hambre. Él necesita comer.'},
+      {s:[pw('He goes inside','Él entra adentro'),pp('. '),pw('He bumps into everything','Él choca con todo'),pp('.')],en:'He goes inside. He bumps into everything.',es:'Él entra adentro. Él choca con todo.'}
     ]},
-    {title:'La Máquina',lines:[
-      {s:[pw('He sees a machine. Small. But fast','Él ve una máquina. Pequeña. Pero rápida'),pp('.')],es:'Él ve una máquina. Pequeña. Pero rápida.'},
-      {s:[pw('He reads: RoboSousChef. A robot that cooks','Él lee: RoboSousChef. Un robot que cocina'),pp('.')],es:'Él lee: RoboSousChef. Un robot que cocina.'},
-      {s:[pw('He opens it, puts food inside, and closes it','Él lo abre, pone comida adentro, y lo cierra'),pp('.')],es:'Él lo abre, pone comida adentro, y lo cierra.'},
-      {s:[pw('He watches. He waits. He does not blink','Él mira. Él espera. Él no parpadea'),pp('.')],es:'Él mira. Él espera. Él no parpadea.'}
+    {title:'La Máquina',titleEn:'The Machine',lines:[
+      {s:[pw('He sees a machine','Él ve una máquina'),pp('. '),pw('Small. But fast','Pequeña. Pero rápida'),pp('.')],en:'He sees a machine. Small. But fast.',es:'Él ve una máquina. Pequeña. Pero rápida.'},
+      {s:[pw('He reads: RoboSousChef','Él lee: RoboSousChef'),pp('. '),pw('A robot that cooks','Un robot que cocina'),pp('.')],en:'He reads: RoboSousChef. A robot that cooks.',es:'Él lee: RoboSousChef. Un robot que cocina.'},
+      {s:[pw('He opens it','Él lo abre'),pp(', '),pw('puts food inside','pone comida adentro'),pp(', '),pw('and closes it','y lo cierra'),pp('.')],en:'He opens it, puts food inside, and closes it.',es:'Él lo abre, pone comida adentro, y lo cierra.'},
+      {s:[pw('He watches. He waits.','Él mira. Él espera.'),pp(' '),pw('He does not blink','Él no parpadea'),pp('.')],en:'He watches. He waits. He does not blink.',es:'Él mira. Él espera. Él no parpadea.'}
     ]},
-    {title:'La Comida',lines:[
-      {s:[pw('The food is hot and very good','La comida está caliente y muy buena'),pp('.')],es:'La comida está caliente y muy buena.'},
-      {s:[pw('He eats everything','Él come todo'),pp('.')],es:'Él come todo.'},
-      {s:[pw('Then he laughs. A very big laugh','Entonces él ríe. Una muy grande carcajada'),pp('.')],es:'Entonces él ríe. Una muy grande carcajada.'},
-      {s:[pw('The walls shake. The kitchen falls down','Las paredes tiemblan. La cocina cae abajo'),pp('.')],es:'Las paredes tiemblan. La cocina cae abajo.'},
-      {s:[pw('He says','Él dice'),pp(': "'),pw('Maybe I eat outside next time','Tal vez como afuera la próxima vez'),pp('."')],es:'Él dice: "Tal vez como afuera la próxima vez."'}
+    {title:'La Comida',titleEn:'The Food',lines:[
+      {s:[pw('The food is hot','La comida está caliente'),pp(' '),pw('and very good','y muy buena'),pp('.')],en:'The food is hot and very good.',es:'La comida está caliente y muy buena.'},
+      {s:[pw('He eats everything','Él come todo'),pp('.')],en:'He eats everything.',es:'Él come todo.'},
+      {s:[pw('Then he laughs','Entonces él ríe'),pp('. '),pw('A very big laugh','Una muy grande carcajada'),pp('.')],en:'Then he laughs. A very big laugh.',es:'Entonces él ríe. Una muy grande carcajada.'},
+      {s:[pw('The walls shake','Las paredes tiemblan'),pp('. '),pw('The kitchen falls down','La cocina cae abajo'),pp('.')],en:'The walls shake. The kitchen falls down.',es:'Las paredes tiemblan. La cocina cae abajo.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Maybe I eat outside next time','Tal vez como afuera la próxima vez'),pp('."')],en:'He says: "Maybe I eat outside next time."',es:'Él dice: "Tal vez como afuera la próxima vez."'}
     ]}
   ]},
-  {emoji:'🧵',title:'La Aguja y el Corazón',sub:'The Needle and the Heart',desc:'She sews alone. A man arrives with a very bad coat.',
+  // L1-3
+  {level:1,emoji:'🧵',title:'La Aguja y el Corazón',sub:'The Needle and the Heart',desc:'She sews alone. A man comes with a very bad coat.',
    chapters:[
-    {title:'La Costurera',lines:[
-      {s:[pw('She works every day','Ella trabaja todos los días'),pp('.')],es:'Ella trabaja todos los días.'},
-      {s:[pw('She makes beautiful things. Nobody sees them','Ella hace cosas hermosas. Nadie las ve'),pp('.')],es:'Ella hace cosas hermosas. Nadie las ve.'},
-      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('One day, someone will see','Un día, alguien verá'),pp('."')],es:'Ella piensa: "Un día, alguien verá."'}
+    {title:'La Costurera',titleEn:'The Seamstress',lines:[
+      {s:[pw('She works every day','Ella trabaja todos los días'),pp('.')],en:'She works every day.',es:'Ella trabaja todos los días.'},
+      {s:[pw('She makes beautiful things','Ella hace cosas hermosas'),pp('. '),pw('Nobody sees them','Nadie las ve'),pp('.')],en:'She makes beautiful things. Nobody sees them.',es:'Ella hace cosas hermosas. Nadie las ve.'},
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('One day, someone will see','Un día, alguien verá'),pp('."')],en:'She thinks: "One day, someone will see."',es:'Ella piensa: "Un día, alguien verá."'}
     ]},
-    {title:'El Hombre',lines:[
-      {s:[pw('He says','Él dice'),pp(': "'),pw('Can you help me? I need something fixed','¿Puedes ayudarme? Necesito algo arreglado'),pp('."')],es:'Él dice: "¿Puedes ayudarme?"'},
-      {s:[pw('She looks at his coat. It is very, very bad','Ella mira su abrigo. Está muy, muy malo'),pp('.')],es:'Está muy, muy malo.'},
-      {s:[pw('She works all night. She does not sleep','Ella trabaja toda la noche. Ella no duerme'),pp('.')],es:'Ella trabaja toda la noche.'},
-      {s:[pw('She makes it beautiful','Ella lo hace hermoso'),pp('.')],es:'Ella lo hace hermoso.'}
+    {title:'El Hombre',titleEn:'The Man',lines:[
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Can you help me? I need something fixed','¿Puedes ayudarme? Necesito algo arreglado'),pp('."')],en:'He says: "Can you help me? I need something fixed."',es:'Él dice: "¿Puedes ayudarme? Necesito algo arreglado."'},
+      {s:[pw('She looks at his coat','Ella mira su abrigo'),pp('. '),pw('It is very, very bad','Está muy, muy malo'),pp('.')],en:'She looks at his coat. It is very, very bad.',es:'Ella mira su abrigo. Está muy, muy malo.'},
+      {s:[pw('She works all night','Ella trabaja toda la noche'),pp('. '),pw('She does not sleep','Ella no duerme'),pp('.')],en:'She works all night. She does not sleep.',es:'Ella trabaja toda la noche. Ella no duerme.'},
+      {s:[pw('She makes it beautiful','Ella lo hace hermoso'),pp('.')],en:'She makes it beautiful.',es:'Ella lo hace hermoso.'}
     ]},
-    {title:'El Regreso',lines:[
-      {s:[pw('He says','Él dice'),pp(': "'),pw('Who made this','¿Quién hizo esto'),pp('?"')],es:'Él dice: "¿Quién hizo esto?"'},
-      {s:[pw('She says: I made it','Ella dice: Yo lo hice'),pp('.')],es:'Ella dice: "Yo lo hice."'},
-      {s:[pw('He says','Él dice'),pp(': "'),pw('Can I come back? Not for the coat','¿Puedo volver? No por el abrigo'),pp('."')],es:'Él dice: "¿Puedo volver? No por el abrigo."'},
-      {s:[pw('She laughs. Maybe, she says. Maybe','Ella ríe. Tal vez, ella dice. Tal vez'),pp('.')],es:'Ella ríe. "Tal vez," ella dice.'}
+    {title:'El Regreso',titleEn:'The Return',lines:[
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Who made this','¿Quién hizo esto'),pp('?"')],en:'He says: "Who made this?"',es:'Él dice: "¿Quién hizo esto?"'},
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('I made it','Yo lo hice'),pp('."')],en:'She says: "I made it."',es:'Ella dice: "Yo lo hice."'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Can I come back? Not for the coat','¿Puedo volver? No por el abrigo'),pp('."')],en:'He says: "Can I come back? Not for the coat."',es:'Él dice: "¿Puedo volver? No por el abrigo."'},
+      {s:[pw('She laughs','Ella ríe'),pp('. '),pw('Maybe, she says. Maybe','Tal vez, ella dice. Tal vez'),pp('.')],en:'She laughs. Maybe, she says. Maybe.',es:'Ella ríe. "Tal vez," ella dice. Tal vez.'}
     ]}
   ]},
-  {emoji:'🪔',title:'El Genio de la Laguna',sub:'The Genie of the Lake',desc:'She finds a lamp while fishing. The genie wastes her second wish.',
+  // L1-4
+  {level:1,emoji:'🪔',title:'El Genio de la Laguna',sub:'The Genie of the Lake',desc:'She finds a lamp while fishing. The genie wastes her second wish.',
    chapters:[
-    {title:'La Lámpara',lines:[
-      {s:[pw('She is fishing. It is a good day','Ella está pescando. Es un buen día'),pp('.')],es:'Ella está pescando. Es un buen día.'},
-      {s:[pw('She finds something in the water. Not a fish','Ella encuentra algo en el agua. No un pez'),pp('.')],es:'Ella encuentra algo. No un pez.'},
-      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a genie. I have three wishes for you','Yo soy un genio. Tengo tres deseos para ti'),pp('."')],es:'Él dice: "Yo soy un genio."'}
+    {title:'La Lámpara',titleEn:'The Lamp',lines:[
+      {s:[pw('She is fishing','Ella está pescando'),pp('. '),pw('It is a good day','Es un buen día'),pp('.')],en:'She is fishing. It is a good day.',es:'Ella está pescando. Es un buen día.'},
+      {s:[pw('She finds something in the water','Ella encuentra algo en el agua'),pp('. '),pw('Not a fish','No un pez'),pp('.')],en:'She finds something in the water. Not a fish.',es:'Ella encuentra algo en el agua. No un pez.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a genie. I have three wishes for you','Yo soy un genio. Tengo tres deseos para ti'),pp('."')],en:'He says: "I am a genie. I have three wishes for you."',es:'Él dice: "Yo soy un genio. Tengo tres deseos para ti."'}
     ]},
-    {title:'Los Deseos',lines:[
-      {s:[pw('First wish: I want a big house','Primer deseo: Yo quiero una casa grande'),pp('.')],es:'Primer deseo: "Yo quiero una casa grande."'},
-      {s:[pw('She cannot find her bed. It is too big','Ella no puede encontrar su cama. Está demasiado grande'),pp('.')],es:'Ella no puede encontrar su cama.'},
-      {s:[pw('He says','Él dice'),pp(': "'),pw('That was your second wish','Ese fue tu segundo deseo'),pp('."')],es:'Él dice: "Ese fue tu segundo deseo."'},
-      {s:[pw('He says: Nobody is perfect','Él dice: Nadie es perfecto'),pp('.')],es:'Él dice: "Nadie es perfecto."'}
+    {title:'Los Deseos',titleEn:'The Wishes',lines:[
+      {s:[pw('First wish','Primer deseo'),pp(': '),pw('I want a big house','Yo quiero una casa grande'),pp('.')],en:'First wish: I want a big house.',es:'Primer deseo: Yo quiero una casa grande.'},
+      {s:[pw('She cannot find her bed','Ella no puede encontrar su cama'),pp('. '),pw('It is too big','Está demasiado grande'),pp('.')],en:'She cannot find her bed. It is too big.',es:'Ella no puede encontrar su cama. Está demasiado grande.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('That was your second wish','Ese fue tu segundo deseo'),pp('."')],en:'He says: "That was your second wish."',es:'Él dice: "Ese fue tu segundo deseo."'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Nobody is perfect','Nadie es perfecto'),pp('."')],en:'He says: "Nobody is perfect."',es:'Él dice: "Nadie es perfecto."'}
     ]},
-    {title:'El Tercer Deseo',lines:[
-      {s:[pw('She says','Ella dice'),pp(': "'),pw('I want someone who makes me laugh','Yo quiero alguien que me hace reír'),pp('."')],es:'Ella dice: "Yo quiero alguien que me hace reír."'},
-      {s:[pw('The genie looks at her. Then he laughs','El genio la mira. Entonces él ríe'),pp('.')],es:'El genio la mira. Entonces él ríe.'},
-      {s:[pw('She laughs too','Ella ríe también'),pp('.')],es:'Ella ríe también.'},
-      {s:[pw('He says: Maybe','Él dice: Tal vez'),pp('.')],es:'Él dice: "Tal vez."'},
-      {s:[pw('She goes back to fishing. He sits next to her','Ella regresa a pescar. Él se sienta junto a ella'),pp('.')],es:'Ella regresa a pescar. Él se sienta junto a ella.'}
+    {title:'El Tercer Deseo',titleEn:'The Third Wish',lines:[
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('I want someone who makes me laugh','Yo quiero alguien que me hace reír'),pp('."')],en:'She says: "I want someone who makes me laugh."',es:'Ella dice: "Yo quiero alguien que me hace reír."'},
+      {s:[pw('The genie looks at her','El genio la mira'),pp('. '),pw('Then he laughs','Entonces él ríe'),pp('.')],en:'The genie looks at her. Then he laughs.',es:'El genio la mira. Entonces él ríe.'},
+      {s:[pw('She laughs too','Ella ríe también'),pp('.')],en:'She laughs too.',es:'Ella ríe también.'},
+      {s:[pw('He says: Maybe','Él dice: Tal vez'),pp('.')],en:'He says: Maybe.',es:'Él dice: Tal vez.'},
+      {s:[pw('She goes back to fishing','Ella regresa a pescar'),pp('. '),pw('He sits next to her','Él se sienta junto a ella'),pp('.')],en:'She goes back to fishing. He sits next to her.',es:'Ella regresa a pescar. Él se sienta junto a ella.'}
+    ]}
+  ]},
+
+  // ── LEVEL 2 ─────────────────────────────
+  // L2-1: Past irregular verbs — llamó, supo, fue, trajo, puso, dijo, pudo, dio
+  {level:2,emoji:'💘',title:'La Cita Perfecta',sub:'The Perfect Date',desc:'A date that started badly. Somehow it became a good story.',
+   chapters:[
+    {title:'Antes',titleEn:'Before',lines:[
+      {s:[pw('He called her','Él la llamó'),pp(', '),pw('on a Tuesday night','el martes por la noche'),pp('.')],en:'He called her on a Tuesday night.',es:'Él la llamó el martes por la noche.'},
+      {s:[pw('He said','Él dijo'),pp(': "'),pw('I want to see you','Yo quiero verte'),pp('. '),pw('Can you go out','¿Puedes salir'),pp('?"')],en:'He said: "I want to see you. Can you go out?"',es:'Él dijo: "Yo quiero verte. ¿Puedes salir?"'},
+      {s:[pw('She knew','Ella supo'),pp(' '),pw('it was a bad idea','que era una mala idea'),pp('.')],en:'She knew it was a bad idea.',es:'Ella supo que era una mala idea.'},
+      {s:[pw('But she went anyway','Pero ella fue de todas formas'),pp('.')],en:'But she went anyway.',es:'Pero ella fue de todas formas.'}
+    ]},
+    {title:'La Cita',titleEn:'The Date',lines:[
+      {s:[pw('He arrived late','Él llegó tarde'),pp('. '),pw('Very, very late','Muy, muy tarde'),pp('.')],en:'He arrived late. Very, very late.',es:'Él llegó tarde. Muy, muy tarde.'},
+      {s:[pw('He brought','Él trajo'),pp(' '),pw('sad, small flowers','flores tristes y pequeñas'),pp('.')],en:'He brought sad, small flowers.',es:'Él trajo flores tristes y pequeñas.'},
+      {s:[pw('He put them on the table','Él las puso en la mesa'),pp(' '),pw('and smiled','y sonrió'),pp('.')],en:'He put them on the table and smiled.',es:'Él las puso en la mesa y sonrió.'},
+      {s:[pw('She said nothing','Ella no dijo nada'),pp('. '),pw('She just watched','Ella solo miró'),pp('.')],en:'She said nothing. She just watched.',es:'Ella no dijo nada. Ella solo miró.'}
+    ]},
+    {title:'El Giro',titleEn:'The Turn',lines:[
+      {s:[pw('He tried to be funny','Él intentó ser gracioso'),pp('. '),pw('He really tried','Él realmente lo intentó'),pp('.')],en:'He tried to be funny. He really tried.',es:'Él intentó ser gracioso. Él realmente lo intentó.'},
+      {s:[pw('She could not stop laughing','Ella no pudo dejar de reírse'),pp('.')],en:'She could not stop laughing.',es:'Ella no pudo dejar de reírse.'},
+      {s:[pw('He gave her his number again','Él le dio su número otra vez'),pp('.')],en:'He gave her his number again.',es:'Él le dio su número otra vez.'},
+      {s:[pw('She already had it','Ella ya lo tenía'),pp('. '),pw('But she did not say so','Pero no lo dijo'),pp('.')],en:'She already had it. But she did not say so.',es:'Ella ya lo tenía. Pero no lo dijo.'}
+    ]}
+  ]},
+  // L2-2: Future tense — iré, será, veré, hablaré, dirá/diré, haré, sabré, querré
+  {level:2,emoji:'✈️',title:'El Viaje Soñado',sub:'The Dream Trip',desc:'Next month. Colombia. Future tense everywhere.',
+   chapters:[
+    {title:'El Plan',titleEn:'The Plan',lines:[
+      {s:[pw('Next month','El próximo mes'),pp(', '),pw('I will go to Colombia','yo iré a Colombia'),pp('.')],en:'Next month, I will go to Colombia.',es:'El próximo mes, yo iré a Colombia.'},
+      {s:[pw('It will be','Será'),pp(' '),pw('my first trip there','mi primer viaje allá'),pp('.')],en:'It will be my first trip there.',es:'Será mi primer viaje allá.'},
+      {s:[pw('I will see the ocean','Yo veré el mar'),pp(' '),pw('for the first time','por primera vez'),pp('.')],en:'I will see the ocean for the first time.',es:'Yo veré el mar por primera vez.'},
+      {s:[pw('And I will eat','Y yo comeré'),pp(' '),pw('everything I can','todo lo que pueda'),pp('.')],en:'And I will eat everything I can.',es:'Y yo comeré todo lo que pueda.'}
+    ]},
+    {title:'Los Sueños',titleEn:'The Dreams',lines:[
+      {s:[pw('I will speak Spanish all day','Yo hablaré español todo el día'),pp('.')],en:'I will speak Spanish all day.',es:'Yo hablaré español todo el día.'},
+      {s:[pw('She will say to me','Ella me dirá'),pp(': "'),pw('Your Spanish is good','Tu español es bueno'),pp('."')],en:'She will say to me: "Your Spanish is good."',es:'Ella me dirá: "Tu español es bueno."'},
+      {s:[pw('I will say','Yo le diré'),pp(': "'),pw('I learned it for you','Lo aprendí por ti'),pp('."')],en:'I will say: "I learned it for you."',es:'Yo le diré: "Lo aprendí por ti."'},
+      {s:[pw('She will laugh','Ella se reirá'),pp('. '),pw('But it will be true','Pero será verdad'),pp('.')],en:'She will laugh. But it will be true.',es:'Ella se reirá. Pero será verdad.'}
+    ]},
+    {title:'La Llegada',titleEn:'The Arrival',lines:[
+      {s:[pw('When I arrive','Cuando llegue'),pp(', '),pw('I will do just one thing','haré una sola cosa'),pp('.')],en:'When I arrive, I will do just one thing.',es:'Cuando llegue, haré una sola cosa.'},
+      {s:[pw('I will look for her','La buscaré'),pp(' '),pw('at the airport','en el aeropuerto'),pp('.')],en:'I will look for her at the airport.',es:'La buscaré en el aeropuerto.'},
+      {s:[pw('She will be there','Ella estará allí'),pp('. '),pw('I will know it','Yo lo sabré'),pp('.')],en:'She will be there. I will know it.',es:'Ella estará allí. Yo lo sabré.'},
+      {s:[pw('And I will never want to leave','Y no querré irme nunca'),pp('.')],en:'And I will never want to leave.',es:'Y no querré irme nunca.'}
+    ]}
+  ]},
+  // L2-3: Mixed tenses + irregular — hizo, sabía, vino, dijo, fue, trajo, dio
+  {level:2,emoji:'🍲',title:'La Chef y el Crítico',sub:'The Chef and the Critic',desc:'The best soup in the world. A critic who says nobody can surprise him. He is wrong.',
+   chapters:[
+    {title:'La Reputación',titleEn:'The Reputation',lines:[
+      {s:[pw('María made','María hizo'),pp(' '),pw('the best soup in the world','la mejor sopa del mundo'),pp('.')],en:'María made the best soup in the world.',es:'María hizo la mejor sopa del mundo.'},
+      {s:[pw('Everyone in town','Todo el pueblo'),pp(' '),pw('knew it','lo sabía'),pp('.')],en:'Everyone in town knew it.',es:'Todo el pueblo lo sabía.'},
+      {s:[pw('One day','Un día'),pp(', '),pw('a famous critic came to eat','un crítico famoso vino a comer'),pp('.')],en:'One day, a famous critic came to eat.',es:'Un día, un crítico famoso vino a comer.'},
+      {s:[pw('He said','Él dijo'),pp(' '),pw('nobody could surprise him','que nadie podía sorprenderlo'),pp('.')],en:'He said nobody could surprise him.',es:'Él dijo que nadie podía sorprenderlo.'}
+    ]},
+    {title:'La Sopa',titleEn:'The Soup',lines:[
+      {s:[pw('María went to the kitchen','María fue a la cocina'),pp(' '),pw('and closed the door','y cerró la puerta'),pp('.')],en:'María went to the kitchen and closed the door.',es:'María fue a la cocina y cerró la puerta.'},
+      {s:[pw('She brought','Ella trajo'),pp(' '),pw('the best ingredients','los mejores ingredientes'),pp('.')],en:'She brought the best ingredients.',es:'Ella trajo los mejores ingredientes.'},
+      {s:[pw('The critic waited','El crítico esperó'),pp('. '),pw('One hour. Two hours','Una hora. Dos horas'),pp('.')],en:'The critic waited. One hour. Two hours.',es:'El crítico esperó. Una hora. Dos horas.'},
+      {s:[pw('When the soup arrived','Cuando la sopa llegó'),pp(', '),pw('he said nothing','él no dijo nada'),pp('.')],en:'When the soup arrived, he said nothing.',es:'Cuando la sopa llegó, él no dijo nada.'}
+    ]},
+    {title:'El Veredicto',titleEn:'The Verdict',lines:[
+      {s:[pw('He ate everything','Él comió todo'),pp('. '),pw('Down to the last drop','Hasta la última gota'),pp('.')],en:'He ate everything. Down to the last drop.',es:'Él comió todo. Hasta la última gota.'},
+      {s:[pw('Then he got up','Luego él se levantó'),pp(' '),pw('and looked for her','y la buscó'),pp('.')],en:'Then he got up and looked for her.',es:'Luego él se levantó y la buscó.'},
+      {s:[pw('He gave her his hand','Él le dio la mano'),pp(' '),pw('and said','y dijo'),pp(': "'),pw('Who are you','¿Quién eres tú'),pp('?"')],en:'He gave her his hand and said: "Who are you?"',es:'Él le dio la mano y dijo: "¿Quién eres tú?"'},
+      {s:[pw('She said','Ella dijo'),pp(': "'),pw('I am nobody','Yo soy nadie'),pp('. '),pw('Do you want more soup','¿Quiere más sopa'),pp('?"')],en:'She said: "I am nobody. Do you want more soup?"',es:'Ella dijo: "Yo soy nadie. ¿Quiere más sopa?"'}
+    ]}
+  ]},
+  // L2-4: Past irregular — fueron, quiso, fue, pudieron, vio, hizo, supieron
+  {level:2,emoji:'⚽',title:'El Gran Partido',sub:'The Big Game',desc:'The team had lost three games. Nobody believed in them. Nobody except one small player.',
+   chapters:[
+    {title:'El Día',titleEn:'The Day',lines:[
+      {s:[pw('Everyone went to the stadium','Todos fueron al estadio'),pp(' '),pw('that Sunday','ese domingo'),pp('.')],en:'Everyone went to the stadium that Sunday.',es:'Todos fueron al estadio ese domingo.'},
+      {s:[pw('The team had lost','El equipo había perdido'),pp(' '),pw('its last three games','sus últimos tres partidos'),pp('.')],en:'The team had lost its last three games.',es:'El equipo había perdido sus últimos tres partidos.'},
+      {s:[pw('Nobody wanted to bet on them','Nadie quiso apostar por ellos'),pp('.')],en:'Nobody wanted to bet on them.',es:'Nadie quiso apostar por ellos.'},
+      {s:[pw('Nobody except','Nadie excepto'),pp(' '),pw('one small player','un jugador pequeño'),pp('.')],en:'Nobody except one small player.',es:'Nadie excepto un jugador pequeño.'}
+    ]},
+    {title:'El Partido',titleEn:'The Game',lines:[
+      {s:[pw('The first half was terrible','El primer tiempo fue terrible'),pp('.')],en:'The first half was terrible.',es:'El primer tiempo fue terrible.'},
+      {s:[pw('They could not score','No pudieron marcar'),pp(' '),pw('a single goal','ni un solo gol'),pp('.')],en:'They could not score a single goal.',es:'No pudieron marcar ni un solo gol.'},
+      {s:[pw('But in the second half','Pero en el segundo tiempo'),pp(', '),pw('something changed','algo cambió'),pp('.')],en:'But in the second half, something changed.',es:'Pero en el segundo tiempo, algo cambió.'},
+      {s:[pw('The smallest player','El jugador más pequeño'),pp(' '),pw('ran faster than ever','corrió más rápido que nunca'),pp('.')],en:'The smallest player ran faster than ever.',es:'El jugador más pequeño corrió más rápido que nunca.'}
+    ]},
+    {title:'El Gol',titleEn:'The Goal',lines:[
+      {s:[pw('He saw the ball coming','Él vio la pelota venir'),pp('.')],en:'He saw the ball coming.',es:'Él vio la pelota venir.'},
+      {s:[pw('He did','Él hizo'),pp(' '),pw('what he had never done before','lo que nunca había hecho antes'),pp('.')],en:'He did what he had never done before.',es:'Él hizo lo que nunca había hecho antes.'},
+      {s:[pw('He jumped, turned, and kicked','Él saltó, giró, y pateó'),pp('.')],en:'He jumped, turned, and kicked.',es:'Él saltó, giró, y pateó.'},
+      {s:[pw('The ball went in','La pelota entró'),pp('. '),pw('The stadium roared','El estadio rugió'),pp('.')],en:'The ball went in. The stadium roared.',es:'La pelota entró. El estadio rugió.'},
+      {s:[pw('That day','Ese día'),pp(', '),pw('everyone knew his name','todos supieron su nombre'),pp('.')],en:'That day, everyone knew his name.',es:'Ese día, todos supieron su nombre.'}
+    ]}
+  ]},
+
+  // ── LEVEL 3 ─────────────────────────────
+  // L3-1: New vocab — mercado, dinero, fruta, vendedor, puesto, barato, mango
+  {level:3,emoji:'🛒',title:'El Mercado',sub:'The Market',desc:'Saturday morning. Fresh fruit. A lost stranger. And three mangos.',
+   chapters:[
+    {title:'La Mañana',titleEn:'The Morning',lines:[
+      {s:[pw('On Saturdays','Los sábados'),pp(', '),pw('Rosa goes to the market early','Rosa va al mercado temprano'),pp('.')],en:'On Saturdays, Rosa goes to the market early.',es:'Los sábados, Rosa va al mercado temprano.'},
+      {s:[pw('She carries','Ella lleva'),pp(' '),pw('her green bag','su bolsa verde'),pp(' '),pw('and a little money','y poco dinero'),pp('.')],en:'She carries her green bag and a little money.',es:'Ella lleva su bolsa verde y poco dinero.'},
+      {s:[pw('She likes to arrive','Le gusta llegar'),pp(' '),pw('when the market opens','cuando el mercado abre'),pp('.')],en:'She likes to arrive when the market opens.',es:'Le gusta llegar cuando el mercado abre.'},
+      {s:[pw('The fruits','Las frutas'),pp(' '),pw('are fresher at that hour','están más frescas a esa hora'),pp('.')],en:'The fruits are fresher at that hour.',es:'Las frutas están más frescas a esa hora.'}
+    ]},
+    {title:'Las Compras',titleEn:'The Shopping',lines:[
+      {s:[pw('She finds','Ella encuentra'),pp(' '),pw('a stand with mango and papaya','un puesto con mango y papaya'),pp('.')],en:'She finds a stand with mango and papaya.',es:'Ella encuentra un puesto con mango y papaya.'},
+      {s:[pw('The seller says','El vendedor dice'),pp(': "'),pw('Everything is cheap today','¡Todo está barato hoy'),pp('!"')],en:'The seller says: "Everything is cheap today!"',es:'El vendedor dice: "¡Todo está barato hoy!"'},
+      {s:[pw('She smiles','Ella sonríe'),pp('. '),pw('She knows it is not true','Ella sabe que no es verdad'),pp('.')],en:'She smiles. She knows it is not true.',es:'Ella sonríe. Ella sabe que no es verdad.'},
+      {s:[pw('But she buys three mangos anyway','Pero ella compra tres mangos de todas formas'),pp('.')],en:'But she buys three mangos anyway.',es:'Pero ella compra tres mangos de todas formas.'}
+    ]},
+    {title:'El Encuentro',titleEn:'The Meeting',lines:[
+      {s:[pw('At the end of the market','Al final del mercado'),pp(', '),pw('she sees a man','ella ve a un hombre'),pp('.')],en:'At the end of the market, she sees a man.',es:'Al final del mercado, ella ve a un hombre.'},
+      {s:[pw('He is lost','Él está perdido'),pp('. '),pw('He does not speak Spanish','Él no habla español'),pp('.')],en:'He is lost. He does not speak Spanish.',es:'Él está perdido. Él no habla español.'},
+      {s:[pw('She helps him','Ella lo ayuda'),pp('. '),pw('She speaks a little English','Ella habla un poco de inglés'),pp('.')],en:'She helps him. She speaks a little English.',es:'Ella lo ayuda. Ella habla un poco de inglés.'},
+      {s:[pw('He gives her one of his mangos','Él le da uno de sus mangos'),pp('. '),pw('She accepts','Ella acepta'),pp('.')],en:'He gives her one of his mangos. She accepts.',es:'Él le da uno de sus mangos. Ella acepta.'},
+      {s:[pw('Sometimes the market gives','A veces el mercado da'),pp(' '),pw('more than you look for','más de lo que buscas'),pp('.')],en:'Sometimes the market gives more than you look for.',es:'A veces el mercado da más de lo que buscas.'}
+    ]}
+  ]},
+  // L3-2: New vocab — cielo, paraguas, viento, soplar, nube, gota, mojado, trueno, refugio, lluvia
+  {level:3,emoji:'🌧️',title:'La Tormenta',sub:'The Storm',desc:'No umbrella. Dark clouds. One open door.',
+   chapters:[
+    {title:'Las Nubes',titleEn:'The Clouds',lines:[
+      {s:[pw('The sky was dark','El cielo estaba oscuro'),pp(' '),pw('when she went out','cuando ella salió'),pp('.')],en:'The sky was dark when she went out.',es:'El cielo estaba oscuro cuando ella salió.'},
+      {s:[pw('She did not bring an umbrella','Ella no llevó paraguas'),pp('. '),pw('She never does','Nunca lo lleva'),pp('.')],en:'She did not bring an umbrella. She never does.',es:'Ella no llevó paraguas. Nunca lo lleva.'},
+      {s:[pw('The wind','El viento'),pp(' '),pw('started to blow hard','empezó a soplar fuerte'),pp('.')],en:'The wind started to blow hard.',es:'El viento empezó a soplar fuerte.'},
+      {s:[pw('The clouds','Las nubes'),pp(' '),pw('turned black and heavy','se pusieron negras y pesadas'),pp('.')],en:'The clouds turned black and heavy.',es:'Las nubes se pusieron negras y pesadas.'}
+    ]},
+    {title:'La Lluvia',titleEn:'The Rain',lines:[
+      {s:[pw('First it was one drop','Primero fue una gota'),pp('. '),pw('Then a thousand','Luego mil'),pp('.')],en:'First it was one drop. Then a thousand.',es:'Primero fue una gota. Luego mil.'},
+      {s:[pw('She ran','Ella corrió'),pp(', '),pw('but it was not enough','pero no fue suficiente'),pp('.')],en:'She ran, but it was not enough.',es:'Ella corrió, pero no fue suficiente.'},
+      {s:[pw('In two minutes','En dos minutos'),pp(', '),pw('she was wet and cold','estaba mojada y fría'),pp('.')],en:'In two minutes, she was wet and cold.',es:'En dos minutos, estaba mojada y fría.'},
+      {s:[pw('Thunder sounded','Un trueno sonó'),pp('. '),pw('She screamed a little','Ella gritó un poco'),pp('.')],en:'Thunder sounded. She screamed a little.',es:'Un trueno sonó. Ella gritó un poco.'}
+    ]},
+    {title:'El Refugio',titleEn:'The Shelter',lines:[
+      {s:[pw('A door opened','Una puerta se abrió'),pp('.')],en:'A door opened.',es:'Una puerta se abrió.'},
+      {s:[pw('A man said','Un hombre dijo'),pp(': "'),pw('Come in, come in','Entra, entra'),pp('. '),pw('There is coffee','Hay café'),pp('."')],en:'A man said: "Come in, come in. There is coffee."',es:'Un hombre dijo: "Entra, entra. Hay café."'},
+      {s:[pw('She went in','Ella entró'),pp('. '),pw('She was wet but happy','Estaba mojada pero feliz'),pp('.')],en:'She went in. She was wet but happy.',es:'Ella entró. Estaba mojada pero feliz.'},
+      {s:[pw('Sometimes the rain takes you','A veces la lluvia te lleva'),pp(' '),pw('to the best places','a los mejores lugares'),pp('.')],en:'Sometimes the rain takes you to the best places.',es:'A veces la lluvia te lleva a los mejores lugares.'}
+    ]}
+  ]},
+  // L3-3: New vocab — cumpleaños, regalo, fiesta, sorpresa, pastel, vela, fingir, soplar, deseo
+  // Also: pusieron (poner irregular), dijeron (decir irregular)
+  {level:3,emoji:'🎂',title:'El Cumpleaños',sub:'The Birthday',desc:'She knew it was her birthday. She pretended she did not. Her family had cake.',
+   chapters:[
+    {title:'El Secreto',titleEn:'The Secret',lines:[
+      {s:[pw('She did not know','Ella no sabía'),pp(' '),pw('it was her birthday','que era su cumpleaños'),pp('. '),pw('Well, she did','Bueno, sí lo sabía'),pp('.')],en:'She did not know it was her birthday. Well, she did.',es:'Ella no sabía que era su cumpleaños. Bueno, sí lo sabía.'},
+      {s:[pw('Her family','Su familia'),pp(' '),pw('had planned a surprise','había planeado una sorpresa'),pp('.')],en:'Her family had planned a surprise.',es:'Su familia había planeado una sorpresa.'},
+      {s:[pw('They had','Tenían'),pp(' '),pw('a big cake','un pastel grande'),pp(' '),pw('and many gifts','y muchos regalos'),pp('.')],en:'They had a big cake and many gifts.',es:'Tenían un pastel grande y muchos regalos.'}
+    ]},
+    {title:'La Fiesta',titleEn:'The Party',lines:[
+      {s:[pw('When she opened the door','Cuando ella abrió la puerta'),pp(', '),pw('everyone shouted','todos gritaron'),pp('.')],en:'When she opened the door, everyone shouted.',es:'Cuando ella abrió la puerta, todos gritaron.'},
+      {s:[pw('She pretended to be surprised','Ella fingió estar sorprendida'),pp('. '),pw('She did it well','Lo hizo bien'),pp('.')],en:'She pretended to be surprised. She did it well.',es:'Ella fingió estar sorprendida. Lo hizo bien.'},
+      {s:[pw('Her mom gave her','Su mamá le dio'),pp(' '),pw('the first gift','el primer regalo'),pp('.')],en:'Her mom gave her the first gift.',es:'Su mamá le dio el primer regalo.'},
+      {s:[pw('It was small','Era pequeño'),pp(' '),pw('but very beautiful','pero muy bonito'),pp('.')],en:'It was small but very beautiful.',es:'Era pequeño pero muy bonito.'}
+    ]},
+    {title:'El Deseo',titleEn:'The Wish',lines:[
+      {s:[pw('They put','Pusieron'),pp(' '),pw('the candles on the cake','las velas en el pastel'),pp('.')],en:'They put the candles on the cake.',es:'Pusieron las velas en el pastel.'},
+      {s:[pw('She looked at them','Ella las miró'),pp(' '),pw('for a long moment','por un momento largo'),pp('.')],en:'She looked at them for a long moment.',es:'Ella las miró por un momento largo.'},
+      {s:[pw('Everyone said','Todos dijeron'),pp(': "'),pw('Make a wish','¡Pide un deseo'),pp('!"')],en:'Everyone said: "Make a wish!"',es:'Todos dijeron: "¡Pide un deseo!"'},
+      {s:[pw('She blew','Ella sopló'),pp('. '),pw('But she did not say','Pero no dijo'),pp(' '),pw('what she wished','qué deseó'),pp('.')],en:'She blew. But she did not say what she wished.',es:'Ella sopló. Pero no dijo qué deseó.'},
+      {s:[pw('Some things','Algunas cosas'),pp(' '),pw('are just for you','son solo para ti'),pp('.')],en:'Some things are just for you.',es:'Algunas cosas son solo para ti.'}
+    ]}
+  ]},
+  // L3-4: New vocab — vecino, camión, ventana, serio, semana, tocar la puerta, poco a poco, lejos, ciudad, raro
+  {level:3,emoji:'🏠',title:'El Vecino Nuevo',sub:'The New Neighbor',desc:'A tall, serious man moves in. Nobody talks to him. Then he runs out of coffee.',
+   chapters:[
+    {title:'La Llegada',titleEn:'The Arrival',lines:[
+      {s:[pw('The truck arrived','El camión llegó'),pp(' '),pw('on a Monday morning','un lunes por la mañana'),pp('.')],en:'The truck arrived on a Monday morning.',es:'El camión llegó un lunes por la mañana.'},
+      {s:[pw('Everyone','Todos'),pp(' '),pw('looked through the window','miraron por la ventana'),pp('.')],en:'Everyone looked through the window.',es:'Todos miraron por la ventana.'},
+      {s:[pw('The new neighbor','El vecino nuevo'),pp(' '),pw('was tall and very serious','era alto y muy serio'),pp('.')],en:'The new neighbor was tall and very serious.',es:'El vecino nuevo era alto y muy serio.'},
+      {s:[pw('Nobody went','Nadie fue'),pp(' '),pw('to greet him','a saludarlo'),pp('.')],en:'Nobody went to greet him.',es:'Nadie fue a saludarlo.'}
+    ]},
+    {title:'El Problema',titleEn:'The Problem',lines:[
+      {s:[pw('One week later','Una semana después'),pp(', '),pw('he knocked on the door','él tocó la puerta'),pp('.')],en:'One week later, he knocked on the door.',es:'Una semana después, él tocó la puerta.'},
+      {s:[pw('He said','Él dijo'),pp(': "'),pw('Can you help me','¿Puedes ayudarme'),pp('? '),pw('I have no coffee','No tengo café'),pp('."')],en:'He said: "Can you help me? I have no coffee."',es:'Él dijo: "¿Puedes ayudarme? No tengo café."'},
+      {s:[pw('She gave him coffee','Ella le dio café'),pp('. '),pw('And also bread','Y también pan'),pp('.')],en:'She gave him coffee. And also bread.',es:'Ella le dio café. Y también pan.'},
+      {s:[pw('He said thank you and left','Él dijo gracias y se fue'),pp('. '),pw('Without more words','Sin más palabras'),pp('.')],en:'He said thank you and left. Without more words.',es:'Él dijo gracias y se fue. Sin más palabras.'}
+    ]},
+    {title:'La Verdad',titleEn:'The Truth',lines:[
+      {s:[pw('Little by little','Poco a poco'),pp(', '),pw('he started to talk more','él empezó a hablar más'),pp('.')],en:'Little by little, he started to talk more.',es:'Poco a poco, él empezó a hablar más.'},
+      {s:[pw('He told her','Él le contó'),pp(' '),pw('he came from far away','que venía de lejos'),pp('.')],en:'He told her he came from far away.',es:'Él le contó que venía de lejos.'},
+      {s:[pw('That he knew nobody','Que no conocía a nadie'),pp(' '),pw('in the city','en la ciudad'),pp('.')],en:'That he knew nobody in the city.',es:'Que no conocía a nadie en la ciudad.'},
+      {s:[pw('She understood','Ella entendió'),pp('. '),pw('She had also arrived alone','Ella también había llegado sola'),pp('.')],en:'She understood. She had also arrived alone.',es:'Ella entendió. Ella también había llegado sola.'},
+      {s:[pw('Sometimes the strangest neighbor','A veces el vecino más raro'),pp(' '),pw('becomes the best friend','se vuelve el mejor amigo'),pp('.')],en:'Sometimes the strangest neighbor becomes the best friend.',es:'A veces el vecino más raro se vuelve el mejor amigo.'}
     ]}
   ]}
 ];
@@ -1443,48 +1636,87 @@ function resetLeaderboard(){
 
 // ═══════════════════════════════════════
 // 16. STORIES
+// Direction: Aamir (learning Spanish) → main=Spanish, tap→English, subtitle=English
+//            Rosa  (learning English) → main=English, tap→Spanish, subtitle=Spanish
 // ═══════════════════════════════════════
 var storySubs = false;
 
 function buildPicker(){
   document.getElementById('story-reader').style.display='none';
   document.getElementById('story-picker').style.display='';
-  document.getElementById('story-picker').innerHTML =
-    '<div class="picker-grid">'
-    +STORIES.map(function(st,i){
-      return '<div class="story-card" onclick="openStory('+i+')">'
-        +'<div class="sc-emoji">'+st.emoji+'</div>'
-        +'<div class="sc-title">'+st.title+'</div>'
-        +'<div class="sc-sub">'+st.sub+'</div>'
-        +'<div class="sc-desc">'+st.desc+'</div>'
+  var isAamir = currentUser==='Aamir';
+  var byLv={1:[],2:[],3:[]};
+  STORIES.forEach(function(st,idx){byLv[st.level].push({st:st,idx:idx});});
+  var lvInfo=[null,
+    {label:'⭐ Level 1',desc:isAamir?'Cortas y sencillas':'Short &amp; simple'},
+    {label:'⭐⭐ Level 2',desc:isAamir?'Pasado, futuro, verbos irregulares':'Past, future &amp; irregular verbs'},
+    {label:'⭐⭐⭐ Level 3',desc:isAamir?'Vocabulario nuevo':'New vocabulary'}
+  ];
+  var html='';
+  [1,2,3].forEach(function(lv){
+    var info=lvInfo[lv];
+    html+='<div style="margin:'+(lv===1?'4':'20')+'px 0 6px">'
+      +'<div style="font-size:13px;font-weight:700;color:#6b3fa0">'+info.label+'</div>'
+      +'<div style="font-size:11px;color:#a07cb8;margin-bottom:8px">'+info.desc+'</div>'
+      +'</div><div class="picker-grid">';
+    byLv[lv].forEach(function(item){
+      var mainTitle=isAamir?item.st.title:item.st.sub;
+      var subTitle=isAamir?item.st.sub:item.st.title;
+      html+='<div class="story-card" onclick="openStory('+item.idx+')">'
+        +'<div class="sc-emoji">'+item.st.emoji+'</div>'
+        +'<div class="sc-title">'+mainTitle+'</div>'
+        +'<div class="sc-sub">'+subTitle+'</div>'
+        +'<div class="sc-desc">'+item.st.desc+'</div>'
         +'</div>';
-    }).join('')+'</div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('story-picker').innerHTML=html;
 }
 
 function openStory(i){
   storySubs=false;
   var st=STORIES[i];
+  var isAamir=currentUser==='Aamir';
   document.getElementById('story-picker').style.display='none';
   var rdr=document.getElementById('story-reader');
-  var chHTML=st.chapters.map(function(ch){
-    return '<div class="ch"><div class="ch-title">'+ch.title+'</div>'
+
+  var chHTML=st.chapters.map(function(ch,ci){
+    // Chapter title: Aamir reads Spanish, Rosa reads English
+    var chTitle=isAamir?ch.title:(ch.titleEn||ch.title);
+    return '<div class="ch"><div class="ch-title">'+chTitle+'</div>'
       +ch.lines.map(function(ln,li){
-        var lineId='ln_'+i+'_'+st.chapters.indexOf(ch)+'_'+li;
-        var enLine=ln.s.map(function(seg,si){
+        var lineId='ln_'+i+'_'+ci+'_'+li;
+        // Subtitle: the full sentence in the NATIVE language
+        var subtitle=isAamir?ln.en:ln.es;
+        var mainLine=ln.s.map(function(seg,si){
           if(seg.p!==undefined) return '<span>'+seg.p+'</span>';
-          var wid='w_'+i+'_'+st.chapters.indexOf(ch)+'_'+li+'_'+si;
-          return '<span class="w" id="'+wid+'" data-en="'+seg.e.replace(/"/g,'&quot;')+'" data-es="'+seg.s.replace(/"/g,'&quot;')+'" onclick="sTap(\''+wid+'\')">'+seg.e+'</span>';
+          var wid='w_'+i+'_'+ci+'_'+li+'_'+si;
+          // Main display: target language. Tap reveals native language.
+          var mainTxt=isAamir?seg.s:seg.e;
+          var otherTxt=isAamir?seg.e:seg.s;
+          return '<span class="w" id="'+wid+'"'
+            +' data-main="'+mainTxt.replace(/"/g,'&quot;')+'"'
+            +' data-other="'+otherTxt.replace(/"/g,'&quot;')+'"'
+            +' onclick="sTap(\''+wid+'\')">'+mainTxt+'</span>';
         }).join('');
-        return '<div class="lp"><div class="en-l">'+enLine+'</div><div class="es-l" id="es_'+lineId+'">'+ln.es+'</div></div>';
+        return '<div class="lp"><div class="en-l">'+mainLine+'</div>'
+          +'<div class="es-l" id="es_'+lineId+'">'+subtitle+'</div></div>';
       }).join('')+'</div>';
   }).join('');
-  rdr.innerHTML =
+
+  var backLbl=isAamir?'← Historias':'← Stories';
+  var tapHint=isAamir?'Toca cualquier <span>frase</span> para ver en inglés'
+    :'Tap any <span>phrase</span> to see it in Spanish';
+  var hideLbl=isAamir?'Ocultar subtítulos':'Hide subtitles';
+
+  rdr.innerHTML=
     '<div class="story-bar">'
-    +'<button class="s-btn" onclick="buildPicker()">← Stories</button>'
+    +'<button class="s-btn" onclick="buildPicker()">'+backLbl+'</button>'
     +'<button class="s-btn" onclick="sReset()">↺ Reset</button>'
-    +'<button class="s-btn" id="s-sub-btn" onclick="sToggle()">Hide subtitles</button>'
+    +'<button class="s-btn" id="s-sub-btn" onclick="sToggle()">'+hideLbl+'</button>'
     +'</div>'
-    +'<p class="s-hint">Toca cualquier <span>frase</span> para verla en español</p>'
+    +'<p class="s-hint">'+tapHint+'</p>'
     +chHTML
     +'<div class="s-ending">Fin — The End 🌙</div>';
   rdr.style.display='';
@@ -1493,14 +1725,14 @@ function openStory(i){
 function sTap(wid){
   var el=document.getElementById(wid);
   if(!el)return;
-  var f=el.classList.contains('flipped');
-  el.textContent=f?el.dataset.en:el.dataset.es;
-  el.classList.toggle('flipped',!f);
+  var flipped=el.classList.contains('flipped');
+  el.textContent=flipped?el.dataset.main:el.dataset.other;
+  el.classList.toggle('flipped',!flipped);
 }
 
 function sReset(){
   document.querySelectorAll('#story-reader .w.flipped').forEach(function(el){
-    el.textContent=el.dataset.en;
+    el.textContent=el.dataset.main;
     el.classList.remove('flipped');
   });
 }
@@ -1508,7 +1740,10 @@ function sReset(){
 function sToggle(){
   storySubs=!storySubs;
   document.querySelectorAll('#story-reader .es-l').forEach(function(el){el.classList.toggle('hidden',storySubs);});
-  document.getElementById('s-sub-btn').textContent=storySubs?'Show subtitles':'Hide subtitles';
+  var btn=document.getElementById('s-sub-btn');
+  if(btn) btn.textContent=storySubs
+    ?(currentUser==='Aamir'?'Mostrar subtítulos':'Show subtitles')
+    :(currentUser==='Aamir'?'Ocultar subtítulos':'Hide subtitles');
 }
 
 // ═══════════════════════════════════════
