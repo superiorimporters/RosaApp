@@ -51,7 +51,6 @@ body{font-family:sans-serif;background:#f9f0ff;min-height:100vh;max-width:500px;
 .wl-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .wl-btn{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid #d8b4f8;background:#f3e4ff;color:#6b3fa0;cursor:pointer;font-weight:600}
 .wl-btn.hiding{background:#fce4f0;border-color:#e8a0c8;color:#a0306a}
-.wl-btn.green{background:#e4fce8;border-color:#80c890;color:#1a6b2a}
 .wl-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
 .wl-tab{font-size:11px;padding:5px 12px;border-radius:20px;border:1.5px solid #d8b4f8;background:#f3e4ff;color:#6b3fa0;cursor:pointer;font-weight:700}
 .wl-tab.active{background:#6b3fa0;color:#fff;border-color:#6b3fa0}
@@ -201,7 +200,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-arrow">→</div>
       </div>
     </div>
-    <div class="app-ver">v1.6.0 · Built Apr 2026</div>
+    <div class="app-ver">v2.0.0 · Built Apr 2026</div>
   </div>
 </div>
 
@@ -220,7 +219,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-avatar pill-av" id="pill-av" style="width:28px;height:28px;font-size:13px"></div>
         <div><div class="pill-name" id="pill-name"></div><div class="pill-switch">tap to switch</div></div>
       </div>
-      <div class="ver-tag"><b>v1.5.1</b><br>Apr 2026</div>
+      <div class="ver-tag"><b>v2.0.0</b><br>Apr 2026</div>
     </div>
     <div class="home-header">
       <div class="logo">🌟</div>
@@ -236,7 +235,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="icon">📖</div><div class="label">Word List</div><div class="desc">All your words with ✅ tracking</div>
       </div>
       <div class="home-card" onclick="openScreen('quiz','✏️ Practice Quiz')">
-        <div class="icon">✏️</div><div class="label">Practice Quiz</div><div class="desc">Fill-in-the-blank — see results & weak spots</div>
+        <div class="icon">✏️</div><div class="label">Practice Quiz</div><div class="desc">Fill-in-the-blank — see results &amp; weak spots</div>
       </div>
       <div class="home-card" onclick="openScreen('challenge','⚡ Challenge Quiz')">
         <div class="icon">⚡</div><div class="label">Challenge Quiz</div><div class="desc">How many in a row without a mistake?</div>
@@ -263,21 +262,10 @@ tr.challenge td{background:#fff4f0!important}
   <p class="wl-hint">Toca ✅ experta · ⚠️ difícil · toca palabra oculta para verla</p>
   <div id="wl-content"></div>
 </div>
-<!-- MY WORDS -->
-<div class="screen" id="screen-words">
-  <div id="words-area"></div>
-</div>
-<!-- AI QUIZ -->
-<div class="screen" id="screen-aiquiz">
-  <div id="aiquiz-area"></div>
-</div>
-<!-- SUGGEST -->
-<div class="screen" id="screen-suggest">
-  <div id="suggest-area"></div>
-</div>
-<div class="screen" id="screen-challenge">
-  <div id="challenge-area"></div>
-</div>
+<div class="screen" id="screen-words"><div id="words-area"></div></div>
+<div class="screen" id="screen-aiquiz"><div id="aiquiz-area"></div></div>
+<div class="screen" id="screen-suggest"><div id="suggest-area"></div></div>
+<div class="screen" id="screen-challenge"><div id="challenge-area"></div></div>
 <div class="screen" id="screen-quiz">
   <div id="quiz-area"></div>
   <div class="score-box" id="quiz-score" style="display:none"></div>
@@ -293,10 +281,16 @@ tr.challenge td{background:#fff4f0!important}
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+// NOTE: All functions use `function` declarations so they
+// are accessible from inline onclick="" attributes.
+// Do NOT convert to const/let arrow functions at top level.
+// ═══════════════════════════════════════════════════════
+
 // ═══════════════════════════════════════
-// 1. QUESTION BANKS (defined first)
+// 1. DATA — Question Banks
 // ═══════════════════════════════════════
-const ALL_Q=[
+var ALL_Q = [
   {cat:'verb',sentence:'El café está muy ___.',hint:'caliente',answer:'Hot',wrong:['Cold','Good','Big']},
   {cat:'verb',sentence:'Yo te ___.',hint:'amar',answer:'Love',wrong:['Know','Want','Help']},
   {cat:'verb',sentence:'¿Puedes ___ la puerta?',hint:'abrir',answer:'Open',wrong:['Close','Find','Send']},
@@ -325,11 +319,10 @@ const ALL_Q=[
   {cat:'conn',sentence:'Quiero ir ___ estoy cansada.',hint:'pero',answer:'But',wrong:['And','So','Because']},
   {cat:'conn',sentence:'¿___ se llama tu mamá?',hint:'cómo',answer:'How',wrong:['What','Who','Why']},
   {cat:'conn',sentence:'___ vez puedo visitarte.',hint:'tal vez',answer:'Maybe',wrong:['Yes','No','So']},
-  {cat:'conn',sentence:'___ estás aquí, hablemos.',hint:'entonces',answer:'So',wrong:['But','And','Because']},
+  {cat:'conn',sentence:'___ estás aquí, hablemos.',hint:'entonces',answer:'So',wrong:['But','And','Because']}
 ];
 
-const AAMIR_Q=[
-  // ── PRESENTE ──
+var AAMIR_Q = [
   {cat:'presente',gameWord:'I speak',sentence:'Yo ___ con mis amigos.',hint:'hablar · yo',answer:'hablo',wrong:['hablas','habla','hablamos']},
   {cat:'presente',gameWord:'you eat',sentence:'Tú ___ pizza los viernes.',hint:'comer · tú',answer:'comes',wrong:['como','come','comen']},
   {cat:'presente',gameWord:'she lives',sentence:'Ella ___ en Colombia.',hint:'vivir · ella',answer:'vive',wrong:['vivo','vives','viven']},
@@ -340,7 +333,6 @@ const AAMIR_Q=[
   {cat:'presente',gameWord:'they go',sentence:'Ellos ___ al mercado.',hint:'ir · ellos',answer:'van',wrong:['voy','vas','va']},
   {cat:'presente',gameWord:'I come',sentence:'Yo ___ a tu casa mañana.',hint:'venir · yo',answer:'vengo',wrong:['vienes','viene','venimos']},
   {cat:'presente',gameWord:'you know',sentence:'Tú ___ la respuesta.',hint:'saber · tú',answer:'sabes',wrong:['sé','sabe','sabemos']},
-  // ── PRETÉRITO (Simple Past) ──
   {cat:'preterito',gameWord:'I spoke',sentence:'Yo ___ con Rosa ayer.',hint:'hablar · yo · ayer',answer:'hablé',wrong:['hablaste','habló','hablamos']},
   {cat:'preterito',gameWord:'she ate',sentence:'Ella ___ toda la pizza.',hint:'comer · ella · ayer',answer:'comió',wrong:['comí','comiste','comieron']},
   {cat:'preterito',gameWord:'they went',sentence:'Ellos ___ al parque.',hint:'ir · ellos · ayer',answer:'fueron',wrong:['fui','fuiste','fue']},
@@ -351,7 +343,6 @@ const AAMIR_Q=[
   {cat:'preterito',gameWord:'I was',sentence:'Yo ___ en Madrid el año pasado.',hint:'estar · yo · pasado',answer:'estuve',wrong:['estuviste','estuvo','estuvimos']},
   {cat:'preterito',gameWord:'we worked',sentence:'Nosotros ___ todo el día.',hint:'trabajar · nosotros · ayer',answer:'trabajamos',wrong:['trabajé','trabajaste','trabajaron']},
   {cat:'preterito',gameWord:'you slept',sentence:'Tú ___ muy bien anoche.',hint:'dormir · tú · anoche',answer:'dormiste',wrong:['dormí','durmió','dormimos']},
-  // ── FUTURO (Simple Future) ──
   {cat:'futuro',gameWord:'I will speak',sentence:'Yo ___ contigo mañana.',hint:'hablar · yo · mañana',answer:'hablaré',wrong:['hablarás','hablará','hablaremos']},
   {cat:'futuro',gameWord:'she will live',sentence:'Ella ___ en Nueva York.',hint:'vivir · ella · futuro',answer:'vivirá',wrong:['viviré','vivirás','viviremos']},
   {cat:'futuro',gameWord:'we will eat',sentence:'Nosotros ___ juntos el domingo.',hint:'comer · nosotros · futuro',answer:'comeremos',wrong:['comeré','comerás','comerán']},
@@ -359,675 +350,1174 @@ const AAMIR_Q=[
   {cat:'futuro',gameWord:'I will do it',sentence:'Yo lo ___ antes del viernes.',hint:'hacer · yo · futuro',answer:'haré',wrong:['harás','hará','haremos']},
   {cat:'futuro',gameWord:'you will finish',sentence:'Tú ___ el trabajo pronto.',hint:'terminar · tú · futuro',answer:'terminarás',wrong:['terminaré','terminará','terminaremos']},
   {cat:'futuro',gameWord:'he will go',sentence:'Él ___ al trabajo mañana.',hint:'ir · él · futuro',answer:'irá',wrong:['iré','irás','iremos']},
-  {cat:'futuro',gameWord:'I will have',sentence:'Yo ___ tiempo el fin de semana.',hint:'tener · yo · futuro',answer:'tendré',wrong:['tendrás','tendrá','tendremos']},
+  {cat:'futuro',gameWord:'I will have',sentence:'Yo ___ tiempo el fin de semana.',hint:'tener · yo · futuro',answer:'tendré',wrong:['tendrás','tendrá','tendremos']}
 ];
 
-const TENSE_CLR={
-  presente:{bg:'#E6F1FB',color:'#0C447C',label:'Presente'},
-  preterito:{bg:'#FAEEDA',color:'#633806',label:'Pretérito'},
+var TENSE_CLR = {
+  presente:  {bg:'#E6F1FB',color:'#0C447C',label:'Presente'},
+  preterito: {bg:'#FAEEDA',color:'#633806',label:'Pretérito'},
   imperfecto:{bg:'#E1F5EE',color:'#085041',label:'Imperfecto'},
-  futuro:{bg:'#EEEDFE',color:'#3C3489',label:'Futuro'},
-  condicional:{bg:'#FBEAF0',color:'#72243E',label:'Condicional'},
+  futuro:    {bg:'#EEEDFE',color:'#3C3489',label:'Futuro'},
+  condicional:{bg:'#FBEAF0',color:'#72243E',label:'Condicional'}
 };
 
 // ═══════════════════════════════════════
-// 2. UTILITIES
+// 2. WORD LIST DATA
 // ═══════════════════════════════════════
-function getPraise(){
-  return currentUser==='Aamir'
-    ?['¡Perfecto! 🎉','¡Excelente! ⭐','¡Muy bien! 💪','¡Correcto! 🌟','¡Fantástico! 🔥']
-    :['Perfect! 🎉','Excellent! ⭐','Well done! 💪','Correct! 🌟','Amazing! 🔥'];
-}
-const shuffle=a=>[...a].sort(()=>Math.random()-.5);
-const getQ=()=>currentUser==='Aamir'?AAMIR_Q:ALL_Q;
+var WL_SECTIONS = [
+  {id:'verbs',label:'🔵 Verbos',groups:[{name:null,words:[
+    ['Mostrar','Show'],['Decir','Say'],['Llamar','Call'],['Dar','Give'],['Saber','Know'],
+    ['Encontrar','Find'],['Ver','See'],['Usar','Use'],['Mantener','Keep'],['Poner','Put'],
+    ['Recordar','Remember'],['Vivir','Live'],['Ganar','Win'],['Perder','Lose'],['Escribir','Write'],
+    ['Escuchar','Hear'],['Hacer','Make / Do'],['Cargar','Charge'],['Arreglar','Fix'],['Ayudar','Help'],
+    ['Querer','Want'],['Necesitar','Need'],['Ir','Go'],['Venir','Come'],['Comer','Eat'],
+    ['Dormir','Sleep'],['Amar','Love'],['Ser / Estar','Be'],['Tener','Have'],['Pensar','Think'],
+    ['Oración / Frase','Sentence'],['Bailar','Dance'],['Manejar','Drive'],['Correr','Run'],['Caminar','Walk'],
+    ['Reír','Laugh'],['Ducharse','Shower'],['Limpiar','Clean'],['Beber','Drink'],['Llorar','Cry'],
+    ['Leer','Read'],['Obtener','Get'],['Tomar','Take'],['Contar','Tell'],['Preguntar','Ask'],
+    ['Sentir','Feel'],['Trabajar','Work'],['Intentar','Try'],['Hablar','Talk / Speak'],['Comprar','Buy'],
+    ['Pagar','Pay'],['Abrir','Open'],['Cerrar','Close'],['Esperar','Wait'],['Mirar','Watch'],
+    ['Sentarse','Sit'],['Salir / Irse','Leave'],['Traer','Bring'],['Enviar','Send'],
+    ['Conocer / Reunirse','Meet'],['Gustar','Like']
+  ]}]},
+  {id:'adj',label:'🟡 Adjetivos',groups:[{name:null,words:[
+    ['Caliente','Hot'],['Frío','Cold'],['Grande','Big'],['Pequeño','Small'],
+    ['Rápido','Fast'],['Despacio','Slow'],['Bueno','Good'],['Malo','Bad'],
+    ['Feliz','Happy'],['Triste','Sad'],['Arriba','Up'],['Abajo','Down']
+  ]}]},
+  {id:'nouns',label:'🟢 Sustantivos',groups:[{name:null,words:[
+    ['Día','Day'],['Noche','Night'],['Adentro','Inside'],['Afuera','Outside']
+  ]}]},
+  {id:'connect',label:'🟣 Conectores',groups:[
+    {name:'Pronombres',words:[['Yo','I'],['Tú','You'],['Él','He'],['Ella','She'],['Nosotros','We'],['Ellos','They']]},
+    {name:'Sí/No',words:[['Sí','Yes'],['No','No'],['Tal vez','Maybe']]},
+    {name:'Esto/Eso',words:[['Esto','This'],['Eso','That'],['Aquí','Here'],['Allí','There']]},
+    {name:'Conectores',words:[['Y','And'],['O','Or'],['Pero','But'],['Porque','Because'],['Entonces','So']]},
+    {name:'Preguntas',words:[['Qué','What'],['Quién','Who'],['Dónde','Where'],['Cuándo','When'],['Por qué','Why'],['Cómo','How']]}
+  ]}
+];
 
 // ═══════════════════════════════════════
-// 3. SETTINGS
+// 3. STORIES DATA
 // ═══════════════════════════════════════
-const LANGS=[
+function pw(e,s){return {e:e,s:s};}
+function pp(t){return {p:t};}
+var STORIES = [
+  {emoji:'🎣',title:'El Príncipe Mojado',sub:'The Wet Prince',desc:'She is fishing. A prince falls in the water. He is not very impressive.',
+   chapters:[
+    {title:'La Pesca',lines:[
+      {s:[pw('She goes outside','Ella sale afuera'),pp('. '),pw('It is a good day','Es un buen día'),pp('.')],es:'Ella sale afuera. Es un buen día.'},
+      {s:[pw('She sits by the water and waits','Ella se sienta cerca del agua y espera'),pp('.')],es:'Ella se sienta y espera.'},
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('I want to find a big fish today','Yo quiero encontrar un pez grande hoy'),pp('."')],es:'Ella piensa: "Yo quiero un pez grande."'},
+      {s:[pw('Then she hears something very loud','Entonces ella escucha algo muy fuerte'),pp('.')],es:'Entonces ella escucha algo muy fuerte.'}
+    ]},
+    {title:'El Príncipe',lines:[
+      {s:[pw('A man falls into the water','Un hombre cae al agua'),pp('. '),pw('Big splash','Gran chapuzón'),pp('.')],es:'Un hombre cae al agua. Gran chapuzón.'},
+      {s:[pw('He is wet and very sad','Él está mojado y muy triste'),pp('.')],es:'Él está mojado y muy triste.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a prince! Help me','Yo soy un príncipe! Ayúdame'),pp('!"')],es:'Él dice: "¡Yo soy un príncipe!"'},
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('Wait. I have a fish','Espera. Yo tengo un pez'),pp('."')],es:'Ella dice: "Espera. Yo tengo un pez."'},
+      {s:[pw('He waits. Cold. Wet. And very small','Él espera. Frío. Mojado. Y muy pequeño'),pp('.')],es:'Él espera. Frío. Mojado. Y muy pequeño.'}
+    ]},
+    {title:'Después',lines:[
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('He is not bad. For a wet prince','Él no está mal. Para un príncipe mojado'),pp('."')],es:'Ella piensa: "Él no está mal."'},
+      {s:[pw('He asks','Él pregunta'),pp(': "'),pw('Can I come back tomorrow','¿Puedo volver mañana'),pp('?"')],es:'Él pregunta: "¿Puedo volver mañana?"'},
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('Maybe. But bring food','Tal vez. Pero trae comida'),pp('."')],es:'Ella dice: "Tal vez. Pero trae comida."'}
+    ]}
+  ]},
+  {emoji:'🤖',title:'Optimus en la Cocina',sub:'Optimus in the Kitchen',desc:'A giant robot is very hungry. He finds a RoboSousChef. The kitchen does not survive.',
+   chapters:[
+    {title:'El Robot Hambriento',lines:[
+      {s:[pw('Optimus is big. Very big','Optimus es grande. Muy grande'),pp('.')],es:'Optimus es grande. Muy grande.'},
+      {s:[pw('He is hungry. He needs to eat','Él tiene hambre. Él necesita comer'),pp('.')],es:'Él tiene hambre. Él necesita comer.'},
+      {s:[pw('He goes inside. He bumps into everything','Él entra adentro. Él choca con todo'),pp('.')],es:'Él entra adentro. Él choca con todo.'}
+    ]},
+    {title:'La Máquina',lines:[
+      {s:[pw('He sees a machine. Small. But fast','Él ve una máquina. Pequeña. Pero rápida'),pp('.')],es:'Él ve una máquina. Pequeña. Pero rápida.'},
+      {s:[pw('He reads: RoboSousChef. A robot that cooks','Él lee: RoboSousChef. Un robot que cocina'),pp('.')],es:'Él lee: RoboSousChef. Un robot que cocina.'},
+      {s:[pw('He opens it, puts food inside, and closes it','Él lo abre, pone comida adentro, y lo cierra'),pp('.')],es:'Él lo abre, pone comida adentro, y lo cierra.'},
+      {s:[pw('He watches. He waits. He does not blink','Él mira. Él espera. Él no parpadea'),pp('.')],es:'Él mira. Él espera. Él no parpadea.'}
+    ]},
+    {title:'La Comida',lines:[
+      {s:[pw('The food is hot and very good','La comida está caliente y muy buena'),pp('.')],es:'La comida está caliente y muy buena.'},
+      {s:[pw('He eats everything','Él come todo'),pp('.')],es:'Él come todo.'},
+      {s:[pw('Then he laughs. A very big laugh','Entonces él ríe. Una muy grande carcajada'),pp('.')],es:'Entonces él ríe. Una muy grande carcajada.'},
+      {s:[pw('The walls shake. The kitchen falls down','Las paredes tiemblan. La cocina cae abajo'),pp('.')],es:'Las paredes tiemblan. La cocina cae abajo.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Maybe I eat outside next time','Tal vez como afuera la próxima vez'),pp('."')],es:'Él dice: "Tal vez como afuera la próxima vez."'}
+    ]}
+  ]},
+  {emoji:'🧵',title:'La Aguja y el Corazón',sub:'The Needle and the Heart',desc:'She sews alone. A man arrives with a very bad coat.',
+   chapters:[
+    {title:'La Costurera',lines:[
+      {s:[pw('She works every day','Ella trabaja todos los días'),pp('.')],es:'Ella trabaja todos los días.'},
+      {s:[pw('She makes beautiful things. Nobody sees them','Ella hace cosas hermosas. Nadie las ve'),pp('.')],es:'Ella hace cosas hermosas. Nadie las ve.'},
+      {s:[pw('She thinks','Ella piensa'),pp(': "'),pw('One day, someone will see','Un día, alguien verá'),pp('."')],es:'Ella piensa: "Un día, alguien verá."'}
+    ]},
+    {title:'El Hombre',lines:[
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Can you help me? I need something fixed','¿Puedes ayudarme? Necesito algo arreglado'),pp('."')],es:'Él dice: "¿Puedes ayudarme?"'},
+      {s:[pw('She looks at his coat. It is very, very bad','Ella mira su abrigo. Está muy, muy malo'),pp('.')],es:'Está muy, muy malo.'},
+      {s:[pw('She works all night. She does not sleep','Ella trabaja toda la noche. Ella no duerme'),pp('.')],es:'Ella trabaja toda la noche.'},
+      {s:[pw('She makes it beautiful','Ella lo hace hermoso'),pp('.')],es:'Ella lo hace hermoso.'}
+    ]},
+    {title:'El Regreso',lines:[
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Who made this','¿Quién hizo esto'),pp('?"')],es:'Él dice: "¿Quién hizo esto?"'},
+      {s:[pw('She says: I made it','Ella dice: Yo lo hice'),pp('.')],es:'Ella dice: "Yo lo hice."'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('Can I come back? Not for the coat','¿Puedo volver? No por el abrigo'),pp('."')],es:'Él dice: "¿Puedo volver? No por el abrigo."'},
+      {s:[pw('She laughs. Maybe, she says. Maybe','Ella ríe. Tal vez, ella dice. Tal vez'),pp('.')],es:'Ella ríe. "Tal vez," ella dice.'}
+    ]}
+  ]},
+  {emoji:'🪔',title:'El Genio de la Laguna',sub:'The Genie of the Lake',desc:'She finds a lamp while fishing. The genie wastes her second wish.',
+   chapters:[
+    {title:'La Lámpara',lines:[
+      {s:[pw('She is fishing. It is a good day','Ella está pescando. Es un buen día'),pp('.')],es:'Ella está pescando. Es un buen día.'},
+      {s:[pw('She finds something in the water. Not a fish','Ella encuentra algo en el agua. No un pez'),pp('.')],es:'Ella encuentra algo. No un pez.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('I am a genie. I have three wishes for you','Yo soy un genio. Tengo tres deseos para ti'),pp('."')],es:'Él dice: "Yo soy un genio."'}
+    ]},
+    {title:'Los Deseos',lines:[
+      {s:[pw('First wish: I want a big house','Primer deseo: Yo quiero una casa grande'),pp('.')],es:'Primer deseo: "Yo quiero una casa grande."'},
+      {s:[pw('She cannot find her bed. It is too big','Ella no puede encontrar su cama. Está demasiado grande'),pp('.')],es:'Ella no puede encontrar su cama.'},
+      {s:[pw('He says','Él dice'),pp(': "'),pw('That was your second wish','Ese fue tu segundo deseo'),pp('."')],es:'Él dice: "Ese fue tu segundo deseo."'},
+      {s:[pw('He says: Nobody is perfect','Él dice: Nadie es perfecto'),pp('.')],es:'Él dice: "Nadie es perfecto."'}
+    ]},
+    {title:'El Tercer Deseo',lines:[
+      {s:[pw('She says','Ella dice'),pp(': "'),pw('I want someone who makes me laugh','Yo quiero alguien que me hace reír'),pp('."')],es:'Ella dice: "Yo quiero alguien que me hace reír."'},
+      {s:[pw('The genie looks at her. Then he laughs','El genio la mira. Entonces él ríe'),pp('.')],es:'El genio la mira. Entonces él ríe.'},
+      {s:[pw('She laughs too','Ella ríe también'),pp('.')],es:'Ella ríe también.'},
+      {s:[pw('He says: Maybe','Él dice: Tal vez'),pp('.')],es:'Él dice: "Tal vez."'},
+      {s:[pw('She goes back to fishing. He sits next to her','Ella regresa a pescar. Él se sienta junto a ella'),pp('.')],es:'Ella regresa a pescar. Él se sienta junto a ella.'}
+    ]}
+  ]}
+];
+
+// ═══════════════════════════════════════
+// 4. SETTINGS & CONFIG
+// ═══════════════════════════════════════
+var LANGS = [
   {code:'es',label:'🇪🇸 Spanish',hint:'Pista',correct:['¡Perfecto! 🎉','¡Excelente! ⭐','¡Muy bien! 💪','¡Correcto! 🌟'],tryAgain:'Intenta de nuevo',expert:'¡Experta! ¡3 seguidas!'},
   {code:'en',label:'🇺🇸 English',hint:'Hint',correct:['Perfect! 🎉','Excellent! ⭐','Well done! 💪','Correct! 🌟'],tryAgain:'Try again!',expert:'Expert! 3 in a row! 🏆'},
   {code:'fr',label:'🇫🇷 French',hint:'Indice',correct:['Parfait! 🎉','Excellent! ⭐','Très bien! 💪','Correct! 🌟'],tryAgain:'Réessaie!',expert:'Experte! 3 de suite! 🏆'},
-  {code:'ar',label:'🇸🇦 Arabic',hint:'تلميح',correct:['ممتاز! 🎉','رائع! ⭐','أحسنت! 💪','صحيح! 🌟'],tryAgain:'حاولي مجددًا!',expert:'خبيرة! 3 متتالية! 🏆'},
+  {code:'ar',label:'🇸🇦 Arabic',hint:'تلميح',correct:['ممتاز! 🎉','رائع! ⭐','أحسنت! 💪','صحيح! 🌟'],tryAgain:'حاولي مجددًا!',expert:'خبيرة! 3 متتالية! 🏆'}
 ];
-const KEY_LAYOUTS={'1234':['1','2','3','4'],'asdf':['a','s','d','f'],'zxcv':['z','x','c','v'],'qwer':['q','w','e','r']};
-let settings={advanceSec:2,quizLen:20,langCode:'es',gameStartSec:30,gameRightBonus:1,gameWrongPenalty:5,flashOnWrong:true,shakeOnWrong:true,keyLayout:'1234'};
-const getLang=()=>LANGS.find(l=>l.code===settings.langCode)||LANGS[0];
+var KEY_LAYOUTS = {'1234':['1','2','3','4'],'asdf':['a','s','d','f'],'zxcv':['z','x','c','v'],'qwer':['q','w','e','r']};
+var settings = {advanceSec:2,quizLen:20,langCode:'es',gameStartSec:30,gameRightBonus:1,gameWrongPenalty:5,flashOnWrong:true,shakeOnWrong:true,keyLayout:'1234'};
+
+function getLang(){return LANGS.filter(function(l){return l.code===settings.langCode;})[0]||LANGS[0];}
 
 // ═══════════════════════════════════════
-// 4. USER MANAGEMENT
+// 5. UTILITIES  (function declarations — NOT const arrows)
 // ═══════════════════════════════════════
-let currentUser=null;
-const uKey=k=>`${currentUser}_${k}`;
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+function getQ(){return currentUser==='Aamir' ? AAMIR_Q : ALL_Q;}
+
+function getPraise(){
+  return currentUser==='Aamir'
+    ? ['¡Perfecto! 🎉','¡Excelente! ⭐','¡Muy bien! 💪','¡Correcto! 🌟','¡Fantástico! 🔥']
+    : ['Perfect! 🎉','Excellent! ⭐','Well done! 💪','Correct! 🌟','Amazing! 🔥'];
+}
+
+// ═══════════════════════════════════════
+// 6. USER MANAGEMENT
+// ═══════════════════════════════════════
+var currentUser = null;
+
+function uKey(k){return currentUser + '_' + k;}
 
 function selectUser(name,initial,avCls,sub){
-  currentUser=name;
+  currentUser = name;
   try{localStorage.setItem('lastUser',name);}catch(e){}
-  document.getElementById('screen-users').style.display='none';
-  document.getElementById('nav').style.display='flex';
-  const pav=document.getElementById('pill-av');
-  pav.textContent=initial;pav.className=`user-avatar pill-av ${avCls}`;
-  document.getElementById('pill-name').textContent=name;
-  document.getElementById('home-title').textContent=`${name}'s App`;
-  document.getElementById('home-sub').textContent=sub;
-  loadWl();showHome();
+  document.getElementById('screen-users').style.display = 'none';
+  document.getElementById('nav').style.display = 'flex';
+  var pav = document.getElementById('pill-av');
+  pav.textContent = initial;
+  pav.className = 'user-avatar pill-av ' + avCls;
+  document.getElementById('pill-name').textContent = name;
+  document.getElementById('home-title').textContent = name + "'s App";
+  document.getElementById('home-sub').textContent = sub;
+  loadWl();
+  showHome();
 }
+
 function switchUser(){
-  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('nav').style.display='none';
-  document.getElementById('screen-users').style.display='';
+  clearInterval(gTimer);
+  document.removeEventListener('keydown',gKeyHandler);
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('nav').style.display = 'none';
+  document.getElementById('screen-users').style.display = '';
 }
+
 function showHome(){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById('screen-home').classList.add('active');
-  document.getElementById('nav-title').textContent=`🌟 ${currentUser}'s App`;
-  document.getElementById('nav-back').style.display='none';
-  document.getElementById('nav-home').style.display='none';
-  document.getElementById('story-picker').style.display='';
-  document.getElementById('story-reader').style.display='none';
+  document.getElementById('nav-title').textContent = '🌟 ' + currentUser + "'s App";
+  document.getElementById('nav-back').style.display = 'none';
+  document.getElementById('nav-home').style.display = 'none';
+  document.getElementById('story-picker').style.display = '';
+  document.getElementById('story-reader').style.display = 'none';
 }
 
 // ═══════════════════════════════════════
-// 5. NAV
+// 7. NAVIGATION
 // ═══════════════════════════════════════
 function openScreen(id,title){
-  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  clearInterval(gTimer);
+  document.removeEventListener('keydown',gKeyHandler);
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById('screen-'+id).classList.add('active');
-  document.getElementById('nav-title').textContent=title;
-  document.getElementById('nav-back').style.display='';
-  document.getElementById('nav-home').style.display='';
-  if(id==='quiz')startQuiz();if(id==='challenge')startChallenge();if(id==='wordlist')wlRender();
-  if(id==='words')renderWordsManager();if(id==='aiquiz')renderAIQuiz();if(id==='suggest')renderSuggest();
-  if(id==='stories')buildPicker();if(id==='settings')renderSettings();
+  document.getElementById('nav-title').textContent = title;
+  document.getElementById('nav-back').style.display = '';
+  document.getElementById('nav-home').style.display = '';
+  if(id==='quiz')startQuiz();
+  if(id==='challenge')startChallenge();
+  if(id==='wordlist')wlRender();
+  if(id==='words')renderWordsManager();
+  if(id==='aiquiz')renderAIQuiz();
+  if(id==='suggest')renderSuggest();
+  if(id==='stories')buildPicker();
+  if(id==='settings')renderSettings();
   if(id==='game')startGame();
 }
+
 function goBack(){goHome();}
-function goHome(){clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);showHome();}
+
+function goHome(){
+  clearInterval(gTimer);
+  document.removeEventListener('keydown',gKeyHandler);
+  showHome();
+}
 
 // ═══════════════════════════════════════
-// 6. WORD LIST
+// 8. WORD LIST
 // ═══════════════════════════════════════
-const WL_SECTIONS=[
-  {id:'verbs',label:'🔵 Verbos',groups:[{name:null,words:[
-    ["Mostrar","Show"],["Decir","Say"],["Llamar","Call"],["Dar","Give"],["Saber","Know"],["Encontrar","Find"],["Ver","See"],["Usar","Use"],["Mantener","Keep"],["Poner","Put"],["Recordar","Remember"],["Vivir","Live"],["Ganar","Win"],["Perder","Lose"],["Escribir","Write"],["Escuchar","Hear"],["Hacer","Make / Do"],["Cargar","Charge"],["Arreglar","Fix"],["Ayudar","Help"],["Querer","Want"],["Necesitar","Need"],["Ir","Go"],["Venir","Come"],["Comer","Eat"],["Dormir","Sleep"],["Amar","Love"],["Ser / Estar","Be"],["Tener","Have"],["Pensar","Think"],["Oración / Frase","Sentence"],["Bailar","Dance"],["Manejar","Drive"],["Correr","Run"],["Caminar","Walk"],["Reír","Laugh"],["Ducharse","Shower"],["Limpiar","Clean"],["Beber","Drink"],["Llorar","Cry"],["Leer","Read"],["Obtener","Get"],["Tomar","Take"],["Contar","Tell"],["Preguntar","Ask"],["Sentir","Feel"],["Trabajar","Work"],["Intentar","Try"],["Hablar","Talk / Speak"],["Comprar","Buy"],["Pagar","Pay"],["Abrir","Open"],["Cerrar","Close"],["Esperar","Wait"],["Mirar","Watch"],["Sentarse","Sit"],["Salir / Irse","Leave"],["Traer","Bring"],["Enviar","Send"],["Conocer / Reunirse","Meet"],["Gustar","Like"]
-  ]}]},
-  {id:'adj',label:'🟡 Adjetivos',groups:[{name:null,words:[["Caliente","Hot"],["Frío","Cold"],["Grande","Big"],["Pequeño","Small"],["Rápido","Fast"],["Despacio","Slow"],["Bueno","Good"],["Malo","Bad"],["Feliz","Happy"],["Triste","Sad"],["Arriba","Up"],["Abajo","Down"]]}]},
-  {id:'nouns',label:'🟢 Sustantivos',groups:[{name:null,words:[["Día","Day"],["Noche","Night"],["Adentro","Inside"],["Afuera","Outside"]]}]},
-  {id:'connect',label:'🟣 Conectores',groups:[
-    {name:'Pronombres',words:[["Yo","I"],["Tú","You"],["Él","He"],["Ella","She"],["Nosotros","We"],["Ellos","They"]]},
-    {name:'Sí/No',words:[["Sí","Yes"],["No","No"],["Tal vez","Maybe"]]},
-    {name:'Esto/Eso',words:[["Esto","This"],["Eso","That"],["Aquí","Here"],["Allí","There"]]},
-    {name:'Conectores',words:[["Y","And"],["O","Or"],["Pero","But"],["Porque","Because"],["Entonces","So"]]},
-    {name:'Preguntas',words:[["Qué","What"],["Quién","Who"],["Dónde","Where"],["Cuándo","When"],["Por qué","Why"],["Cómo","How"]]}
-  ]}
-];
-let wlS=WL_SECTIONS.map(s=>Array(s.groups.reduce((a,g)=>a+g.words.length,0)).fill(''));
-let wlHideEs=false,wlHideEn=false,wlTab=0;
-function loadWl(){try{const d=localStorage.getItem(uKey('wl_v2'));if(d){const p=JSON.parse(d);if(Array.isArray(p)&&p.length===WL_SECTIONS.length)wlS=p;else resetWl();}else resetWl();}catch(e){resetWl();}}
-function resetWl(){wlS=WL_SECTIONS.map(s=>Array(s.groups.reduce((a,g)=>a+g.words.length,0)).fill(''));}
-function saveWl(){try{localStorage.setItem(uKey('wl_v2'),JSON.stringify(wlS));}catch(e){}}
-function wlToggle(l){if(l==='es'){wlHideEs=!wlHideEs;const b=document.getElementById('wl-es');b.textContent=wlHideEs?'Mostrar Español':'Esconder Español';b.classList.toggle('hiding',wlHideEs);}else{wlHideEn=!wlHideEn;const b=document.getElementById('wl-en');b.textContent=wlHideEn?'Mostrar Inglés':'Esconder Inglés';b.classList.toggle('hiding',wlHideEn);}wlRender();}
-const wlReveal=(td,w)=>{td.className='';td.onclick=null;td.textContent=w;};
-const wlSet=(si,wi,v)=>{wlS[si][wi]=(wlS[si][wi]===v)?'':v;saveWl();wlRender();};
-function wlMkTbl(items,start,si){const tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th class="num">#</th><th>Español</th><th>English</th><th></th></tr></thead>';const tb=document.createElement('tbody');items.forEach(([wi,g,j],off)=>{const[es,en]=g.words[j],st=wlS[si][wi];const tr=document.createElement('tr');if(st==='e')tr.classList.add('expert');else if(st==='c')tr.classList.add('challenge');const tn=document.createElement('td');tn.className='num';tn.textContent=start+off;tr.appendChild(tn);const te=document.createElement('td');if(wlHideEs){te.className='hw';te.textContent=es;te.onclick=()=>wlReveal(te,es);}else te.textContent=es;tr.appendChild(te);const tE=document.createElement('td');if(wlHideEn){tE.className='hw';tE.textContent=en;tE.onclick=()=>wlReveal(tE,en);}else tE.textContent=en;tr.appendChild(tE);const tm=document.createElement('td');tm.innerHTML=`<div class="marks"><button class="mk ${st==='e'?'on':''}" onclick="wlSet(${si},${wi},'e')">✅</button><button class="mk ${st==='c'?'on':''}" onclick="wlSet(${si},${wi},'c')">⚠️</button></div>`;tr.appendChild(tm);tb.appendChild(tr);});tbl.appendChild(tb);return tbl;}
-function wlRender(){document.getElementById('wl-controls').innerHTML=`<button class="wl-btn ${wlHideEs?'hiding':''}" id="wl-es" onclick="wlToggle('es')">${wlHideEs?'Mostrar Español':'Esconder Español'}</button><button class="wl-btn ${wlHideEn?'hiding':''}" id="wl-en" onclick="wlToggle('en')">${wlHideEn?'Mostrar Inglés':'Esconder Inglés'}</button>`;document.getElementById('wl-tabs').innerHTML=WL_SECTIONS.map((s,i)=>`<button class="wl-tab${i===wlTab?' active':''}" onclick="wlTab=${i};wlRender()">${s.label}</button>`).join('');const si=wlTab,sec=WL_SECTIONS[si],st=wlS[si];const ex=[],ch=[],le=[];let wi=0;sec.groups.forEach(g=>{g.words.forEach((_,j)=>{const s=st[wi+j]||'';if(s==='e')ex.push([wi+j,g,j]);else if(s==='c')ch.push([wi+j,g,j]);else le.push([wi+j,g,j]);});wi+=g.words.length;});const c=document.getElementById('wl-content');c.innerHTML='';const addS=(items,lbl,s)=>{const l=document.createElement('div');l.className='sec-label';l.textContent=lbl;c.appendChild(l);c.appendChild(wlMkTbl(items,s,si));};if(ch.length)addS(ch,`⚠️ Difficult — ${ch.length}`,1);if(le.length)addS(le,`📖 Working — ${le.length}`,ch.length+1);if(ex.length)addS(ex,`✅ Expert — ${ex.length}`,ch.length+le.length+1);}
+var wlS = WL_SECTIONS.map(function(s){
+  var total = s.groups.reduce(function(a,g){return a+g.words.length;},0);
+  return new Array(total).fill('');
+});
+var wlHideEs = false, wlHideEn = false, wlTab = 0;
+
+function loadWl(){
+  try{
+    var d = localStorage.getItem(uKey('wl_v2'));
+    if(d){
+      var p = JSON.parse(d);
+      if(Array.isArray(p)&&p.length===WL_SECTIONS.length) wlS=p;
+      else resetWl();
+    } else resetWl();
+  }catch(e){resetWl();}
+}
+
+function resetWl(){
+  wlS = WL_SECTIONS.map(function(s){
+    var total = s.groups.reduce(function(a,g){return a+g.words.length;},0);
+    return new Array(total).fill('');
+  });
+}
+
+function saveWl(){
+  try{localStorage.setItem(uKey('wl_v2'),JSON.stringify(wlS));}catch(e){}
+}
+
+function wlToggle(l){
+  if(l==='es'){
+    wlHideEs=!wlHideEs;
+    var b=document.getElementById('wl-es');
+    b.textContent=wlHideEs?'Mostrar Español':'Esconder Español';
+    b.classList.toggle('hiding',wlHideEs);
+  } else {
+    wlHideEn=!wlHideEn;
+    var b2=document.getElementById('wl-en');
+    b2.textContent=wlHideEn?'Mostrar Inglés':'Esconder Inglés';
+    b2.classList.toggle('hiding',wlHideEn);
+  }
+  wlRender();
+}
+
+function wlReveal(td,w){td.className='';td.onclick=null;td.textContent=w;}
+
+function wlSet(si,wi,v){
+  wlS[si][wi] = (wlS[si][wi]===v) ? '' : v;
+  saveWl();
+  wlRender();
+}
+
+function wlMkTbl(items,start,si){
+  var tbl = document.createElement('table');
+  tbl.innerHTML = '<thead><tr><th class="num">#</th><th>Español</th><th>English</th><th></th></tr></thead>';
+  var tb = document.createElement('tbody');
+  items.forEach(function(item,off){
+    var wi=item[0], g=item[1], j=item[2];
+    var es=g.words[j][0], en=g.words[j][1], st=wlS[si][wi]||'';
+    var tr = document.createElement('tr');
+    if(st==='e') tr.classList.add('expert');
+    else if(st==='c') tr.classList.add('challenge');
+    var tn=document.createElement('td'); tn.className='num'; tn.textContent=start+off; tr.appendChild(tn);
+    var te=document.createElement('td');
+    if(wlHideEs){te.className='hw';te.textContent=es;te.onclick=(function(v){return function(){wlReveal(te,v);};})(es);}
+    else te.textContent=es;
+    tr.appendChild(te);
+    var tE=document.createElement('td');
+    if(wlHideEn){tE.className='hw';tE.textContent=en;tE.onclick=(function(v){return function(){wlReveal(tE,v);};})(en);}
+    else tE.textContent=en;
+    tr.appendChild(tE);
+    var tm=document.createElement('td');
+    tm.innerHTML='<div class="marks">'
+      +'<button class="mk '+(st==='e'?'on':'')+'" onclick="wlSet('+si+','+wi+',\'e\')">✅</button>'
+      +'<button class="mk '+(st==='c'?'on':'')+'" onclick="wlSet('+si+','+wi+',\'c\')">⚠️</button>'
+      +'</div>';
+    tr.appendChild(tm);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  return tbl;
+}
+
+function wlRender(){
+  var ctrlHTML = '<button class="wl-btn '+(wlHideEs?'hiding':'')+'" id="wl-es" onclick="wlToggle(\'es\')">'
+    +(wlHideEs?'Mostrar Español':'Esconder Español')+'</button>'
+    +'<button class="wl-btn '+(wlHideEn?'hiding':'')+'" id="wl-en" onclick="wlToggle(\'en\')">'
+    +(wlHideEn?'Mostrar Inglés':'Esconder Inglés')+'</button>';
+  document.getElementById('wl-controls').innerHTML = ctrlHTML;
+  var tabsHTML = WL_SECTIONS.map(function(s,i){
+    return '<button class="wl-tab'+(i===wlTab?' active':'')+'" onclick="wlTab='+i+';wlRender()">'+s.label+'</button>';
+  }).join('');
+  document.getElementById('wl-tabs').innerHTML = tabsHTML;
+
+  var si=wlTab, sec=WL_SECTIONS[si], st=wlS[si];
+  var ex=[],ch=[],le=[];
+  var wi=0;
+  sec.groups.forEach(function(g){
+    g.words.forEach(function(_,j){
+      var s=st[wi+j]||'';
+      if(s==='e') ex.push([wi+j,g,j]);
+      else if(s==='c') ch.push([wi+j,g,j]);
+      else le.push([wi+j,g,j]);
+    });
+    wi+=g.words.length;
+  });
+
+  var c=document.getElementById('wl-content');
+  c.innerHTML='';
+  function addS(items,lbl,start){
+    var l=document.createElement('div'); l.className='sec-label'; l.textContent=lbl; c.appendChild(l);
+    c.appendChild(wlMkTbl(items,start,si));
+  }
+  if(ch.length) addS(ch,'⚠️ Difficult — '+ch.length,1);
+  if(le.length) addS(le,'📖 Working — '+le.length,ch.length+1);
+  if(ex.length) addS(ex,'✅ Expert — '+ex.length,ch.length+le.length+1);
+}
 
 // ═══════════════════════════════════════
-// 7. QUIZ
+// 9. QUIZ
 // ═══════════════════════════════════════
-let qQueue=[],qPos=0,qExpert=0,qAnswered=false;
-function startQuiz(){qQueue=shuffle(getQ()).slice(0,settings.quizLen).map(q=>({q,streak:0}));qPos=0;qExpert=0;qAnswered=false;document.getElementById('quiz-area').style.display='';document.getElementById('quiz-score').style.display='none';renderQ();}
+var qQueue=[],qPos=0,qExpert=0,qAnswered=false;
+
+function startQuiz(){
+  qQueue = shuffle(getQ()).slice(0,settings.quizLen).map(function(q){return {q:q,streak:0};});
+  qPos=0; qExpert=0; qAnswered=false;
+  document.getElementById('quiz-area').style.display='';
+  document.getElementById('quiz-score').style.display='none';
+  renderQ();
+}
+
 function renderQ(){
-  const item=qQueue[qPos],q=item.q,rem=qQueue.length,lang=getLang();
-  const isAamir=currentUser==='Aamir';
-  let badgeHTML;
-  if(isAamir){const t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};badgeHTML=`<span style="background:${t.bg};color:${t.color};font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">${t.label}</span>`;}
-  else{const cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};const cl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};badgeHTML=`<span class="q-cat ${cm[q.cat]||'cat-verb'}">${cl[q.cat]||q.cat}</span>`;}
-  const opts=shuffle([q.answer,...q.wrong]);
-  const dots=[0,1,2].map(i=>`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px;background:${i<item.streak?'#6b3fa0':'#e0c8f0'}"></span>`).join('');
-  document.getElementById('quiz-area').innerHTML=`
-    <div class="prog-txt">${qPos+1}/${rem} · ✅ ${qExpert}</div>
-    <div class="prog-bar"><div class="prog-fill" style="width:${(qPos+1)/rem*100}%"></div></div>
-    <div class="q-card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">${badgeHTML}<div>${dots}</div></div>
-      <div class="q-sentence">${q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')}</div>
-      <div class="q-hint">${lang.hint}: <span>${q.hint}</span></div>
-    </div>
-    <div class="answers">${opts.map(o=>`<button class="ans" onclick="pickQ(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div>
-    <div class="feedback" id="q-fb"></div>
-    <button class="next-btn" id="q-next" onclick="nextQ()" style="display:none">Siguiente →</button>`;
+  var item=qQueue[qPos], q=item.q, rem=qQueue.length, lang=getLang();
+  var isAamir = currentUser==='Aamir';
+  var badgeHTML;
+  if(isAamir){
+    var t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};
+    badgeHTML='<span style="background:'+t.bg+';color:'+t.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+t.label+'</span>';
+  } else {
+    var cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+    var cl2={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+    badgeHTML='<span class="q-cat '+(cm[q.cat]||'cat-verb')+'">'+(cl2[q.cat]||q.cat)+'</span>';
+  }
+  var opts=shuffle([q.answer].concat(q.wrong));
+  var dots=[0,1,2].map(function(i){
+    return '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 2px;background:'+(i<item.streak?'#6b3fa0':'#e0c8f0')+'"></span>';
+  }).join('');
+  var sentHTML = q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>');
+  var optsHTML = opts.map(function(o){
+    return '<button class="ans" onclick="pickQ(this,\''+o.replace(/'/g,"\\'")+'\',' +
+      '\''+q.answer.replace(/'/g,"\\'")+'\')">'+o+'</button>';
+  }).join('');
+  document.getElementById('quiz-area').innerHTML =
+    '<div class="prog-txt">'+(qPos+1)+'/'+rem+' · ✅ '+qExpert+'</div>'
+    +'<div class="prog-bar"><div class="prog-fill" style="width:'+((qPos+1)/rem*100)+'%"></div></div>'
+    +'<div class="q-card">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:6px">'+badgeHTML+'<div>'+dots+'</div></div>'
+    +'<div class="q-sentence">'+sentHTML+'</div>'
+    +'<div class="q-hint">'+lang.hint+': <span>'+q.hint+'</span></div>'
+    +'</div>'
+    +'<div class="answers">'+optsHTML+'</div>'
+    +'<div class="feedback" id="q-fb"></div>'
+    +'<button class="next-btn" id="q-next" onclick="nextQ()" style="display:none">Siguiente →</button>';
   qAnswered=false;
 }
-function pickQ(btn,chosen,correct){if(qAnswered)return;const item=qQueue[qPos],lang=getLang(),fb=document.getElementById('q-fb');document.querySelectorAll('.ans').forEach(b=>b.disabled=true);if(chosen===correct){btn.classList.add('correct');item.streak++;if(item.streak>=3){fb.innerHTML=`<span style="color:#1a6b2a">🏆 ${lang.expert}</span>`;fb.className='feedback correct';qExpert++;qQueue.splice(qPos,1);if(qPos>=qQueue.length)qPos=0;setTimeout(()=>nextQ(),settings.advanceSec*1000);}else{fb.textContent=lang.correct[Math.floor(Math.random()*lang.correct.length)];fb.className='feedback correct';setTimeout(()=>nextQ(),settings.advanceSec*1000);}qAnswered=true;}else{btn.classList.add('wrong');item.streak=0;fb.innerHTML=`${lang.tryAgain} <span style="color:#a07cb8;font-size:11px">(${lang.hint}: ${item.q.hint})</span>`;fb.className='feedback wrong';document.querySelectorAll('.ans').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false;});qQueue.push({q:item.q,streak:0});}}
-function nextQ(){qAnswered=false;if(!qQueue.length){showQScore();return;}qPos++;if(qPos>=qQueue.length)qPos=0;if(!qQueue.length){showQScore();return;}renderQ();}
-function showQScore(){document.getElementById('quiz-area').style.display='none';const s=document.getElementById('quiz-score');let e,m;if(qExpert>=18){e='🏆';m='¡Increíble!';}else if(qExpert>=12){e='⭐';m=`${qExpert} mastered!`;}else if(qExpert>=6){e='💪';m=`${qExpert} experts. Keep going!`;}else{e='📖';m='Practice makes perfect!';}s.innerHTML=`<div style="font-size:48px">${e}</div><div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 ${qExpert}</div><div style="font-size:13px;color:#5a4070;margin-bottom:16px">${m}</div><button class="restart-btn" onclick="startQuiz()">🔄 Play again</button>`;s.style.display='block';}
+
+function pickQ(btn,chosen,correct){
+  if(qAnswered)return;
+  var item=qQueue[qPos], lang=getLang(), fb=document.getElementById('q-fb');
+  document.querySelectorAll('.ans').forEach(function(b){b.disabled=true;});
+  if(chosen===correct){
+    btn.classList.add('correct');
+    item.streak++;
+    if(item.streak>=3){
+      fb.innerHTML='<span style="color:#1a6b2a">🏆 '+lang.expert+'</span>';
+      fb.className='feedback correct';
+      qExpert++;
+      qQueue.splice(qPos,1);
+      if(qPos>=qQueue.length) qPos=0;
+      setTimeout(nextQ,settings.advanceSec*1000);
+    } else {
+      fb.textContent=lang.correct[Math.floor(Math.random()*lang.correct.length)];
+      fb.className='feedback correct';
+      setTimeout(nextQ,settings.advanceSec*1000);
+    }
+    qAnswered=true;
+  } else {
+    btn.classList.add('wrong');
+    item.streak=0;
+    fb.innerHTML=lang.tryAgain+' <span style="color:#a07cb8;font-size:11px">('+lang.hint+': '+item.q.hint+')</span>';
+    fb.className='feedback wrong';
+    document.querySelectorAll('.ans').forEach(function(b){if(!b.classList.contains('wrong'))b.disabled=false;});
+    qQueue.push({q:item.q,streak:0});
+  }
+}
+
+function nextQ(){
+  qAnswered=false;
+  if(!qQueue.length){showQScore();return;}
+  qPos++;
+  if(qPos>=qQueue.length) qPos=0;
+  if(!qQueue.length){showQScore();return;}
+  renderQ();
+}
+
+function showQScore(){
+  document.getElementById('quiz-area').style.display='none';
+  var s=document.getElementById('quiz-score');
+  var e,m;
+  if(qExpert>=18){e='🏆';m='¡Increíble!';}
+  else if(qExpert>=12){e='⭐';m=qExpert+' mastered!';}
+  else if(qExpert>=6){e='💪';m=qExpert+' experts. Keep going!';}
+  else{e='📖';m='Practice makes perfect!';}
+  s.innerHTML='<div style="font-size:48px">'+e+'</div>'
+    +'<div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 '+qExpert+'</div>'
+    +'<div style="font-size:13px;color:#5a4070;margin-bottom:16px">'+m+'</div>'
+    +'<button class="restart-btn" onclick="startQuiz()">🔄 Play again</button>';
+  s.style.display='block';
+}
 
 // ═══════════════════════════════════════
-// WORD MANAGER
+// 10. MY WORDS (Word Manager)
 // ═══════════════════════════════════════
-function getUserWords(){try{return JSON.parse(localStorage.getItem(uKey('custom_words'))||'[]');}catch(e){return[];}}
-function saveUserWords(w){try{localStorage.setItem(uKey('custom_words'),JSON.stringify(w));}catch(e){}}
+function getUserWords(){
+  try{return JSON.parse(localStorage.getItem(uKey('custom_words'))||'[]');}catch(e){return[];}
+}
+function saveUserWords(w){
+  try{localStorage.setItem(uKey('custom_words'),JSON.stringify(w));}catch(e){}
+}
 
 function renderWordsManager(){
-  const words=getUserWords();
-  const isAamir=currentUser==='Aamir';
-  document.getElementById('words-area').innerHTML=`
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:10px">➕ Add a word</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <input id="w-es" placeholder="${isAamir?'Spanish':'Español'}" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">
-        <input id="w-en" placeholder="${isAamir?'English':'English'}" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">
-      </div>
-      <select id="w-cat" style="width:100%;padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;margin-bottom:8px;background:#fff;color:#3a2050">
-        <option value="verb">Verbo / Verb</option>
-        <option value="adj">Adjetivo / Adjective</option>
-        <option value="noun">Sustantivo / Noun</option>
-        <option value="conn">Conector / Connector</option>
-      </select>
-      <button onclick="addWordManual()" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Add Word</button>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:6px">📋 Paste a list</div>
-      <div style="font-size:11px;color:#a07cb8;margin-bottom:8px">One per line: <b>Spanish, English, category</b><br>Example: Nadar, Swim, verb</div>
-      <textarea id="w-paste" placeholder="Nadar, Swim, verb&#10;Volar, Fly, verb&#10;Rápido, Fast, adj" rows="5" style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid #d8b4f8;font-size:12px;font-family:sans-serif;resize:vertical;outline:none"></textarea>
-      <button onclick="importPasted()" style="width:100%;background:#1a6b2a;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">📥 Import</button>
-      <div id="import-msg" style="font-size:11px;color:#2a9d2a;font-weight:700;text-align:center;margin-top:4px;min-height:16px"></div>
-    </div>
-    <div>
-      <div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:8px">📚 My word list (${words.length})</div>
-      ${words.length===0?'<div style="text-align:center;color:#a07cb8;font-size:12px;padding:16px">No custom words yet. Add some above!</div>':
-      `<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px #e0c8f0">
-        ${words.map((w,i)=>`<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #f3e8ff;gap:8px">
-          <div style="flex:1;font-size:13px;color:#3a2050"><b>${w.es}</b> → ${w.en}</div>
-          <div style="font-size:10px;color:#a07cb8;background:#f3e4ff;padding:1px 7px;border-radius:10px">${w.cat}</div>
-          <button onclick="deleteWord(${i})" style="background:none;border:none;color:#e87070;cursor:pointer;font-size:16px;padding:0 4px">×</button>
-        </div>`).join('')}
-      </div>`}
-    </div>`;
+  var words=getUserWords(), isAamir=currentUser==='Aamir';
+  var listHTML;
+  if(words.length===0){
+    listHTML='<div style="text-align:center;color:#a07cb8;font-size:12px;padding:16px">No custom words yet. Add some above!</div>';
+  } else {
+    listHTML='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px #e0c8f0">'
+      +words.map(function(w,i){
+        return '<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #f3e8ff;gap:8px">'
+          +'<div style="flex:1;font-size:13px;color:#3a2050"><b>'+w.es+'</b> → '+w.en+'</div>'
+          +'<div style="font-size:10px;color:#a07cb8;background:#f3e4ff;padding:1px 7px;border-radius:10px">'+w.cat+'</div>'
+          +'<button onclick="deleteWord('+i+')" style="background:none;border:none;color:#e87070;cursor:pointer;font-size:16px;padding:0 4px">×</button>'
+          +'</div>';
+      }).join('')+'</div>';
+  }
+  document.getElementById('words-area').innerHTML =
+    '<div style="margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:10px">➕ Add a word</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">'
+    +'<input id="w-es" placeholder="'+(isAamir?'Spanish':'Español')+'" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">'
+    +'<input id="w-en" placeholder="English" style="padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;outline:none">'
+    +'</div>'
+    +'<select id="w-cat" style="width:100%;padding:8px 12px;border-radius:20px;border:1px solid #d8b4f8;font-size:13px;margin-bottom:8px;background:#fff;color:#3a2050">'
+    +'<option value="verb">Verbo / Verb</option><option value="adj">Adjetivo / Adjective</option>'
+    +'<option value="noun">Sustantivo / Noun</option><option value="conn">Conector / Connector</option>'
+    +'</select>'
+    +'<button onclick="addWordManual()" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Add Word</button>'
+    +'</div>'
+    +'<div style="margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:6px">📋 Paste a list</div>'
+    +'<div style="font-size:11px;color:#a07cb8;margin-bottom:8px">One per line: <b>Spanish, English, category</b><br>Example: Nadar, Swim, verb</div>'
+    +'<textarea id="w-paste" placeholder="Nadar, Swim, verb" rows="5" style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid #d8b4f8;font-size:12px;font-family:sans-serif;resize:vertical;outline:none"></textarea>'
+    +'<button onclick="importPasted()" style="width:100%;background:#1a6b2a;color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">📥 Import</button>'
+    +'<div id="import-msg" style="font-size:11px;color:#2a9d2a;font-weight:700;text-align:center;margin-top:4px;min-height:16px"></div>'
+    +'</div>'
+    +'<div>'
+    +'<div style="font-size:13px;font-weight:700;color:#6b3fa0;margin-bottom:8px">📚 My word list ('+words.length+')</div>'
+    +listHTML+'</div>';
 }
 
 function addWordManual(){
-  const es=document.getElementById('w-es').value.trim();
-  const en=document.getElementById('w-en').value.trim();
-  const cat=document.getElementById('w-cat').value;
+  var es=document.getElementById('w-es').value.trim();
+  var en=document.getElementById('w-en').value.trim();
+  var cat=document.getElementById('w-cat').value;
   if(!es||!en)return;
-  const words=getUserWords();
-  words.push({es,en,cat});saveUserWords(words);
-  document.getElementById('w-es').value='';document.getElementById('w-en').value='';
+  var words=getUserWords(); words.push({es:es,en:en,cat:cat}); saveUserWords(words);
+  document.getElementById('w-es').value=''; document.getElementById('w-en').value='';
   renderWordsManager();
 }
 
 function importPasted(){
-  const raw=document.getElementById('w-paste').value.trim();
+  var raw=document.getElementById('w-paste').value.trim();
   if(!raw)return;
-  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l);
-  const words=getUserWords();let added=0;
-  lines.forEach(line=>{
-    const parts=line.split(',').map(p=>p.trim());
+  var lines=raw.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;});
+  var words=getUserWords(), added=0;
+  lines.forEach(function(line){
+    var parts=line.split(',').map(function(p){return p.trim();});
     if(parts.length>=2){
-      const es=parts[0],en=parts[1],cat=(parts[2]||'verb').toLowerCase();
-      const validCat=['verb','adj','noun','conn'].includes(cat)?cat:'verb';
-      words.push({es,en,cat:validCat});added++;
+      var es=parts[0],en=parts[1],cat=(parts[2]||'verb').toLowerCase();
+      var validCat=['verb','adj','noun','conn'].indexOf(cat)>=0?cat:'verb';
+      words.push({es:es,en:en,cat:validCat}); added++;
     }
   });
   saveUserWords(words);
-  document.getElementById('import-msg').textContent=`✓ Added ${added} word${added!==1?'s':''}!`;
+  document.getElementById('import-msg').textContent='✓ Added '+added+' word'+(added!==1?'s':'')+'!';
   document.getElementById('w-paste').value='';
-  setTimeout(()=>renderWordsManager(),800);
+  setTimeout(renderWordsManager,800);
 }
 
 function deleteWord(i){
-  const words=getUserWords();words.splice(i,1);saveUserWords(words);renderWordsManager();
+  var words=getUserWords(); words.splice(i,1); saveUserWords(words); renderWordsManager();
 }
 
 // ═══════════════════════════════════════
-// AI QUIZ GENERATOR
+// 11. AI QUIZ GENERATOR
 // ═══════════════════════════════════════
-let aiQuizQuestions=[],aiQIdx=0,aiAnswered=false,aiAttempts=0,aiResults=[];
+var aiQuizQuestions=[],aiQIdx=0,aiAnswered=false,aiAttempts=0,aiResults=[];
 
-async function renderAIQuiz(){
-  const words=getUserWords();
-  const isAamir=currentUser==='Aamir';
+function renderAIQuiz(){
+  var words=getUserWords(), isAamir=currentUser==='Aamir';
   if(words.length<3){
-    document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
-      <div style="font-size:48px;margin-bottom:12px">📝</div>
-      <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Not enough words yet!</div>
-      <div style="font-size:13px;margin-bottom:20px">Add at least 3 words to "My Words" first.</div>
-      <button onclick="openScreen('words','📝 My Words')" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">Go to My Words</button>
-    </div>`;return;
+    document.getElementById('aiquiz-area').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:#a07cb8">'
+      +'<div style="font-size:48px;margin-bottom:12px">📝</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Not enough words yet!</div>'
+      +'<div style="font-size:13px;margin-bottom:20px">Add at least 3 words to "My Words" first.</div>'
+      +'<button onclick="openScreen(\'words\',\'📝 My Words\')" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">Go to My Words</button>'
+      +'</div>';
+    return;
   }
-  document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px">
-    <div style="font-size:48px;margin-bottom:12px">🤖</div>
-    <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Generating your quiz...</div>
-    <div style="font-size:12px;color:#a07cb8">Claude is creating questions from your ${words.length} words</div>
-    <div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-  </div>`;
-  try{
-    const wordList=words.slice(0,30).map(w=>`${w.es}=${w.en}(${w.cat})`).join(', ');
-    const userLang=isAamir?'Spanish':'English';
-    const prompt=`You are a language quiz generator. Generate exactly ${Math.min(settings.quizLen,words.length*2)} fill-in-the-blank questions from these word pairs: ${wordList}.
-    
-    Rules:
-    - Each question tests one word from the list
-    - Sentence is in Spanish with a blank ___
-    - The answer is the ${userLang} translation
-    - Provide 3 plausible wrong answers in ${userLang}
-    - Keep sentences simple and natural
-    - cat should be the category from the word pair
-    
-    Return ONLY a JSON array, no other text:
-    [{"sentence":"Spanish sentence with ___","hint":"spanish word","answer":"${userLang} answer","wrong":["w1","w2","w3"],"cat":"verb"}]`;
-    
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    const text=data.content[0].text.replace(/```json|```/g,'').trim();
+  document.getElementById('aiquiz-area').innerHTML =
+    '<div style="text-align:center;padding:40px 20px">'
+    +'<div style="font-size:48px;margin-bottom:12px">🤖</div>'
+    +'<div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Generating your quiz...</div>'
+    +'<div style="font-size:12px;color:#a07cb8">Claude is creating questions from your '+words.length+' words</div>'
+    +'<div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>'
+    +'<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+    +'</div>';
+
+  var wordList = words.slice(0,30).map(function(w){return w.es+'='+w.en+'('+w.cat+')';}).join(', ');
+  var userLang = isAamir?'Spanish':'English';
+  var prompt = 'You are a language quiz generator. Generate exactly '+Math.min(settings.quizLen,words.length*2)
+    +' fill-in-the-blank questions from these word pairs: '+wordList+'.\n\n'
+    +'Rules:\n- Each question tests one word from the list\n- Sentence is in Spanish with a blank ___\n'
+    +'- The answer is the '+userLang+' translation\n- Provide 3 plausible wrong answers in '+userLang+'\n'
+    +'- Keep sentences simple and natural\n- cat should be the category from the word pair\n\n'
+    +'Return ONLY a JSON array, no other text:\n'
+    +'[{"sentence":"Spanish sentence with ___","hint":"spanish word","answer":"'+userLang+' answer","wrong":["w1","w2","w3"],"cat":"verb"}]';
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  }).then(function(res){return res.json();}).then(function(data){
+    var text=data.content[0].text.replace(/```json|```/g,'').trim();
     aiQuizQuestions=JSON.parse(text);
-    aiQIdx=0;aiAnswered=false;aiAttempts=0;aiResults=[];
+    aiQIdx=0; aiAnswered=false; aiAttempts=0; aiResults=[];
     renderAIQuestion();
-  }catch(e){
-    document.getElementById('aiquiz-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
-      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
-      <div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>
-      <div style="font-size:12px;margin-bottom:20px">Check your connection and try again.</div>
-      <button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>
-    </div>`;
-  }
+  }).catch(function(){
+    document.getElementById('aiquiz-area').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:#a07cb8">'
+      +'<div style="font-size:48px;margin-bottom:12px">⚠️</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>'
+      +'<div style="font-size:12px;margin-bottom:20px">Check your connection and try again.</div>'
+      +'<button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>'
+      +'</div>';
+  });
 }
 
 function renderAIQuestion(){
-  const q=aiQuizQuestions[aiQIdx],total=aiQuizQuestions.length;
-  const isAamir=currentUser==='Aamir';
-  const opts=shuffle([q.answer,...q.wrong]);
-  const cats={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
-  const catLbls={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
-  document.getElementById('aiquiz-area').innerHTML=`
-    <div style="font-size:11px;color:#a07cb8;text-align:right;margin-bottom:4px">${aiQIdx+1} / ${total}</div>
-    <div class="prog-bar"><div class="prog-fill" style="width:${(aiQIdx+1)/total*100}%"></div></div>
-    <div style="text-align:center;font-size:11px;color:#6b3fa0;font-weight:600;margin:8px 0">🤖 AI Generated Quiz</div>
-    <div class="q-card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span class="q-cat ${cats[q.cat]||'cat-verb'}">${catLbls[q.cat]||q.cat}</span>
-        <span style="font-size:10px;color:#a07cb8">${aiAttempts>0?(isAamir?'🔄 Intenta de nuevo':'🔄 Try again'):'&nbsp;'}</span>
-      </div>
-      <div class="q-sentence">${q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')}</div>
-      <div class="q-hint">${isAamir?'Hint':'Pista'}: <span style="font-weight:700;color:#6b3fa0">${q.hint}</span></div>
-    </div>
-    <div class="answers">${opts.map(o=>`<button class="ans" onclick="pickAI(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div>
-    <div class="feedback" id="ai-fb"></div>`;
+  var q=aiQuizQuestions[aiQIdx], total=aiQuizQuestions.length, isAamir=currentUser==='Aamir';
+  var opts=shuffle([q.answer].concat(q.wrong));
+  var catCls={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+  var catLbl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+  var optsHTML=opts.map(function(o){
+    return '<button class="ans" onclick="pickAI(this,\''+o.replace(/'/g,"\\'")+'\',\''+q.answer.replace(/'/g,"\\'")+'\')">'+o+'</button>';
+  }).join('');
+  document.getElementById('aiquiz-area').innerHTML =
+    '<div style="font-size:11px;color:#a07cb8;text-align:right;margin-bottom:4px">'+(aiQIdx+1)+' / '+total+'</div>'
+    +'<div class="prog-bar"><div class="prog-fill" style="width:'+((aiQIdx+1)/total*100)+'%"></div></div>'
+    +'<div style="text-align:center;font-size:11px;color:#6b3fa0;font-weight:600;margin:8px 0">🤖 AI Generated Quiz</div>'
+    +'<div class="q-card">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:6px">'
+    +'<span class="q-cat '+(catCls[q.cat]||'cat-verb')+'">'+(catLbl[q.cat]||q.cat)+'</span>'
+    +'<span style="font-size:10px;color:#a07cb8">'+(aiAttempts>0?(isAamir?'🔄 Intenta de nuevo':'🔄 Try again'):'&nbsp;')+'</span>'
+    +'</div>'
+    +'<div class="q-sentence">'+q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')+'</div>'
+    +'<div class="q-hint">'+(isAamir?'Hint':'Pista')+': <span style="font-weight:700;color:#6b3fa0">'+q.hint+'</span></div>'
+    +'</div>'
+    +'<div class="answers">'+optsHTML+'</div>'
+    +'<div class="feedback" id="ai-fb"></div>';
   aiAnswered=false;
 }
 
 function pickAI(btn,chosen,correct){
   if(aiAnswered)return;
-  const q=aiQuizQuestions[aiQIdx],isAamir=currentUser==='Aamir',fb=document.getElementById('ai-fb');
-  document.querySelectorAll('#aiquiz-area .ans').forEach(b=>b.disabled=true);
+  var q=aiQuizQuestions[aiQIdx], isAamir=currentUser==='Aamir', fb=document.getElementById('ai-fb');
+  document.querySelectorAll('#aiquiz-area .ans').forEach(function(b){b.disabled=true;});
   if(chosen===correct){
     btn.classList.add('correct');
-    const firstTry=aiAttempts===0;
-    aiResults.push({q,firstTry,hint:q.hint,cat:q.cat});
-    const praise=getPraise();
+    var firstTry=aiAttempts===0;
+    aiResults.push({q:q,firstTry:firstTry,hint:q.hint,cat:q.cat});
+    var praise=getPraise();
     fb.textContent=firstTry?praise[Math.floor(Math.random()*praise.length)]:(isAamir?'¡Lo tienes! 👍':'Got it! 👍');
     fb.className='feedback correct';
-    aiAnswered=true;aiAttempts=0;
-    setTimeout(()=>{aiQIdx++;if(aiQIdx>=aiQuizQuestions.length)showAIScore();else renderAIQuestion();},settings.advanceSec*1000);
+    aiAnswered=true; aiAttempts=0;
+    setTimeout(function(){aiQIdx++;if(aiQIdx>=aiQuizQuestions.length)showAIScore();else renderAIQuestion();},settings.advanceSec*1000);
   } else {
-    btn.classList.add('wrong');aiAttempts++;
-    fb.innerHTML=isAamir?`¡Inténtalo de nuevo! <span style="color:#a07cb8;font-size:11px">(${q.hint})</span>`:`Try again! <span style="color:#a07cb8;font-size:11px">(${q.hint})</span>`;
+    btn.classList.add('wrong'); aiAttempts++;
+    fb.innerHTML=isAamir?'¡Inténtalo de nuevo! <span style="color:#a07cb8;font-size:11px">('+q.hint+')</span>'
+      :'Try again! <span style="color:#a07cb8;font-size:11px">('+q.hint+')</span>';
     fb.className='feedback wrong';
-    document.querySelectorAll('#aiquiz-area .ans').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false;});
+    document.querySelectorAll('#aiquiz-area .ans').forEach(function(b){if(!b.classList.contains('wrong'))b.disabled=false;});
   }
 }
 
 function showAIScore(){
-  const total=aiResults.length,first=aiResults.filter(r=>r.firstTry).length,pct=Math.round(first/total*100);
-  const isAamir=currentUser==='Aamir';
-  let em,msg;
+  var total=aiResults.length, first=aiResults.filter(function(r){return r.firstTry;}).length;
+  var pct=Math.round(first/total*100), isAamir=currentUser==='Aamir';
+  var em,msg;
   if(pct===100){em='🏆';msg=isAamir?'¡Perfecto!':'Perfect score!';}
   else if(pct>=80){em='⭐';msg=isAamir?'¡Muy bien!':'Really well done!';}
   else if(pct>=60){em='💪';msg=isAamir?'¡Bien!':'Good effort!';}
   else{em='📖';msg=isAamir?'Sigue practicando.':'Keep practicing.';}
-  const wrong=aiResults.filter(r=>!r.firstTry);
-  document.getElementById('aiquiz-area').innerHTML=`
-    <div style="text-align:center;padding:20px 0 14px">
-      <div style="font-size:48px">${em}</div>
-      <div style="font-size:34px;font-weight:700;color:#6b3fa0">${first}/${total}</div>
-      <div style="font-size:12px;color:#a07cb8;margin-bottom:6px">${isAamir?'a la primera':'first try'}</div>
-      <div style="font-size:13px;color:#5a4070;margin-bottom:14px">${msg}</div>
-    </div>
-    ${wrong.length?`<div class="lb-wrap"><div class="lb-lbl">🔧 ${isAamir?'Para practicar':'Needs work'}</div>${wrong.map(r=>`<div style="padding:6px;border-bottom:1px solid #f3e8ff;font-size:12px;color:#3a2050">${r.hint} → <b>${r.q.answer}</b></div>`).join('')}</div>`:''}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px;margin-top:10px">
-      <button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🤖 New AI Quiz</button>
-      <button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🏠 Home</button>
-    </div>`;
+  var wrong=aiResults.filter(function(r){return !r.firstTry;});
+  document.getElementById('aiquiz-area').innerHTML =
+    '<div style="text-align:center;padding:20px 0 14px">'
+    +'<div style="font-size:48px">'+em+'</div>'
+    +'<div style="font-size:34px;font-weight:700;color:#6b3fa0">'+first+'/'+total+'</div>'
+    +'<div style="font-size:12px;color:#a07cb8;margin-bottom:6px">'+(isAamir?'a la primera':'first try')+'</div>'
+    +'<div style="font-size:13px;color:#5a4070;margin-bottom:14px">'+msg+'</div>'
+    +'</div>'
+    +(wrong.length?'<div class="lb-wrap"><div class="lb-lbl">🔧 '+(isAamir?'Para practicar':'Needs work')+'</div>'
+      +wrong.map(function(r){return '<div style="padding:6px;border-bottom:1px solid #f3e8ff;font-size:12px;color:#3a2050">'+r.hint+' → <b>'+r.q.answer+'</b></div>';}).join('')+'</div>':'')
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px;margin-top:10px">'
+    +'<button onclick="renderAIQuiz()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🤖 New AI Quiz</button>'
+    +'<button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">🏠 Home</button>'
+    +'</div>';
 }
 
 // ═══════════════════════════════════════
-// AI WORD SUGGESTIONS
+// 12. AI WORD SUGGESTIONS
 // ═══════════════════════════════════════
-async function renderSuggest(){
-  const isAamir=currentUser==='Aamir';
-  const existing=[...getUserWords().map(w=>w.en),...(isAamir?AAMIR_Q.map(q=>q.answer):ALL_Q.map(q=>q.answer))];
-  document.getElementById('suggest-area').innerHTML=`<div style="text-align:center;padding:40px 20px">
-    <div style="font-size:48px;margin-bottom:12px">✨</div>
-    <div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Finding suggestions...</div>
-    <div style="font-size:12px;color:#a07cb8">Claude is picking your next words to learn</div>
-    <div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-  </div>`;
-  try{
-    const goal=isAamir?'learning Spanish verb conjugations (presente, pretérito, futuro) as an English speaker':'learning English as a Spanish speaker';
-    const prompt=`A language learner is ${goal}. They already know these words/concepts: ${[...new Set(existing)].slice(0,50).join(', ')}.
-    
-    Suggest exactly 15 new words they should learn next. Choose high-frequency, practical words appropriate for their level.
-    
-    Return ONLY a JSON array, no other text:
-    [{"es":"Spanish word","en":"English word","cat":"verb|adj|noun|conn","why":"One sentence explaining why this word is useful"}]`;
-    
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    const text=data.content[0].text.replace(/```json|```/g,'').trim();
-    const suggestions=JSON.parse(text);
-    const catCls={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
-    const catLbl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
-    document.getElementById('suggest-area').innerHTML=`
-      <div style="font-size:13px;color:#a07cb8;margin-bottom:12px;text-align:center">Tap ➕ to add to your word list</div>
-      <div id="sug-list">
-        ${suggestions.map((s,i)=>`
-          <div id="sug-${i}" style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 6px #e0c8f0;display:flex;align-items:center;gap:10px">
-            <div style="flex:1">
-              <div style="font-size:14px;font-weight:700;color:#3a2050">${s.es} <span style="color:#a07cb8">→</span> ${s.en}</div>
-              <div style="font-size:10px;color:#a07cb8;margin-top:2px">${s.why}</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
-              <span class="q-cat ${catCls[s.cat]||'cat-verb'}" style="margin-bottom:0">${catLbl[s.cat]||s.cat}</span>
-              <button onclick="addSuggestion(${i},'${s.es.replace(/'/g,"\\'")}','${s.en.replace(/'/g,"\\'")}','${s.cat}')" id="sug-btn-${i}" style="background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer">➕ Add</button>
-            </div>
-          </div>`).join('')}
-      </div>
-      <button onclick="renderSuggest()" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;margin-bottom:20px">🔄 Suggest more</button>`;
-  }catch(e){
-    document.getElementById('suggest-area').innerHTML=`<div style="text-align:center;padding:40px 20px;color:#a07cb8">
-      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
-      <div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>
-      <button onclick="renderSuggest()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>
-    </div>`;
-  }
+function renderSuggest(){
+  var isAamir=currentUser==='Aamir';
+  var existing=getUserWords().map(function(w){return w.en;}).concat(
+    isAamir?AAMIR_Q.map(function(q){return q.answer;}):ALL_Q.map(function(q){return q.answer;})
+  );
+  document.getElementById('suggest-area').innerHTML =
+    '<div style="text-align:center;padding:40px 20px">'
+    +'<div style="font-size:48px;margin-bottom:12px">✨</div>'
+    +'<div style="font-size:15px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Finding suggestions...</div>'
+    +'<div style="font-size:12px;color:#a07cb8">Claude is picking your next words to learn</div>'
+    +'<div style="margin-top:20px"><div style="display:inline-block;width:40px;height:40px;border:4px solid #e8d4f8;border-top-color:#6b3fa0;border-radius:50%;animation:spin 1s linear infinite"></div></div>'
+    +'<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+    +'</div>';
+
+  var goal=isAamir?'learning Spanish verb conjugations (presente, pretérito, futuro) as an English speaker':'learning English as a Spanish speaker';
+  var uniqueExisting=[]; existing.forEach(function(e){if(uniqueExisting.indexOf(e)<0)uniqueExisting.push(e);});
+  var prompt='A language learner is '+goal+'. They already know these words/concepts: '+uniqueExisting.slice(0,50).join(', ')+'.\n\n'
+    +'Suggest exactly 15 new words they should learn next. Choose high-frequency, practical words appropriate for their level.\n\n'
+    +'Return ONLY a JSON array, no other text:\n'
+    +'[{"es":"Spanish word","en":"English word","cat":"verb|adj|noun|conn","why":"One sentence explaining why this word is useful"}]';
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  }).then(function(res){return res.json();}).then(function(data){
+    var text=data.content[0].text.replace(/```json|```/g,'').trim();
+    var suggestions=JSON.parse(text);
+    var catCls={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+    var catLbl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+    document.getElementById('suggest-area').innerHTML =
+      '<div style="font-size:13px;color:#a07cb8;margin-bottom:12px;text-align:center">Tap ➕ to add to your word list</div>'
+      +'<div id="sug-list">'
+      +suggestions.map(function(s,i){
+        var safeEs=s.es.replace(/'/g,"\\'"), safeEn=s.en.replace(/'/g,"\\'");
+        return '<div id="sug-'+i+'" style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 6px #e0c8f0;display:flex;align-items:center;gap:10px">'
+          +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#3a2050">'+s.es+' <span style="color:#a07cb8">→</span> '+s.en+'</div>'
+          +'<div style="font-size:10px;color:#a07cb8;margin-top:2px">'+s.why+'</div></div>'
+          +'<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">'
+          +'<span class="q-cat '+(catCls[s.cat]||'cat-verb')+'" style="margin-bottom:0">'+(catLbl[s.cat]||s.cat)+'</span>'
+          +'<button onclick="addSuggestion('+i+',\''+safeEs+'\',\''+safeEn+'\',\''+s.cat+'\')" id="sug-btn-'+i+'" '
+          +'style="background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer">➕ Add</button>'
+          +'</div></div>';
+      }).join('')+'</div>'
+      +'<button onclick="renderSuggest()" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;margin-bottom:20px">🔄 Suggest more</button>';
+  }).catch(function(){
+    document.getElementById('suggest-area').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:#a07cb8">'
+      +'<div style="font-size:48px;margin-bottom:12px">⚠️</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#e87070;margin-bottom:8px">Generation failed</div>'
+      +'<button onclick="renderSuggest()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer">🔄 Try again</button>'
+      +'</div>';
+  });
 }
 
 function addSuggestion(i,es,en,cat){
-  const words=getUserWords();words.push({es,en,cat});saveUserWords(words);
-  const btn=document.getElementById(`sug-btn-${i}`);
+  var words=getUserWords(); words.push({es:es,en:en,cat:cat}); saveUserWords(words);
+  var btn=document.getElementById('sug-btn-'+i);
   if(btn){btn.textContent='✅ Added';btn.style.background='#1a6b2a';btn.disabled=true;}
 }
 
-// ── CHALLENGE QUIZ ──
-let cStreak=0,cBest=0,cAnswered=false,cResults=[];
+// ═══════════════════════════════════════
+// 13. CHALLENGE QUIZ
+// ═══════════════════════════════════════
+var cStreak=0,cBest=0,cAnswered=false,cResults=[];
 
-function startChallenge(){
-  cStreak=0;cBest=0;cAnswered=false;cResults=[];
-  renderChallenge();
-}
+function startChallenge(){cStreak=0;cBest=0;cAnswered=false;cResults=[];renderChallenge();}
 
 function renderChallenge(){
-  const pool=getQ(),q=pool[Math.floor(Math.random()*pool.length)];
-  const isAamir=currentUser==='Aamir',opts=shuffle([q.answer,...q.wrong]);
-  let badgeHTML;
-  if(isAamir){const t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};badgeHTML=`<span style="background:${t.bg};color:${t.color};font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">${t.label}</span>`;}
-  else{const cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};const cl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};badgeHTML=`<span class="q-cat ${cm[q.cat]||'cat-verb'}">${cl[q.cat]||q.cat}</span>`;}
-  const milestones=[5,10,15,20,25,30];const next=milestones.find(m=>m>cStreak)||'∞';
-  const stars=cStreak>=20?'⭐⭐⭐':cStreak>=10?'⭐⭐':cStreak>=5?'⭐':'';
-  const streakDots=Array.from({length:Math.min(cStreak,10)},(_,i)=>`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${i<5?'#6b3fa0':'#E8A020'};margin:1px;"></span>`).join('')+(cStreak>10?`<span style="font-size:10px;color:#a07cb8;font-weight:700"> +${cStreak-10}</span>`:'');  document.getElementById('challenge-area').innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div style="text-align:center;background:#fff;border-radius:12px;padding:8px 16px;box-shadow:0 1px 6px #e0c8f0;min-width:70px">
-        <div style="font-size:26px;font-weight:700;color:#6b3fa0">${cStreak}${stars}</div>
-        <div style="font-size:10px;color:#a07cb8">${isAamir?'racha':'streak'}</div>
-      </div>
-      <div style="text-align:center;font-size:11px;color:#a07cb8;line-height:1.6">
-        <div>${isAamir?'siguiente premio':'next reward'}</div>
-        <div style="font-size:18px;font-weight:700;color:#E8A020">@ ${next}</div>
-      </div>
-      <div style="text-align:center;background:#fff;border-radius:12px;padding:8px 16px;box-shadow:0 1px 6px #e0c8f0;min-width:70px">
-        <div style="font-size:26px;font-weight:700;color:#a07cb8">${cBest}</div>
-        <div style="font-size:10px;color:#a07cb8">${isAamir?'mejor':'best'}</div>
-      </div>
-    </div>
-    <div style="text-align:center;font-size:11px;color:#e87070;font-weight:600;margin-bottom:10px">⚠️ ${isAamir?'¡Un error y termina!':'One wrong and it\'s over!'}</div>
-    <div style="text-align:center;margin-bottom:12px;min-height:18px">${streakDots}</div>
-    <div class="q-card" style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">${badgeHTML}<div></div></div>
-      <div class="q-sentence">${q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>')}</div>
-      <div class="q-hint">${isAamir?'Hint':'Pista'}: <span style="font-weight:700;color:#6b3fa0">${q.hint}</span></div>
-    </div>
-    <div class="answers" id="c-ans">${opts.map(o=>`<button class="ans" onclick="pickChallenge(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div>
-    <div class="feedback" id="c-fb"></div>`;
+  var pool=getQ(), q=pool[Math.floor(Math.random()*pool.length)];
+  var isAamir=currentUser==='Aamir', opts=shuffle([q.answer].concat(q.wrong));
+  var badgeHTML;
+  if(isAamir){
+    var t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};
+    badgeHTML='<span style="background:'+t.bg+';color:'+t.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+t.label+'</span>';
+  } else {
+    var cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
+    var cl={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
+    badgeHTML='<span class="q-cat '+(cm[q.cat]||'cat-verb')+'">'+(cl[q.cat]||q.cat)+'</span>';
+  }
+  var milestones=[5,10,15,20,25,30], next=milestones.filter(function(m){return m>cStreak;})[0]||'∞';
+  var stars=cStreak>=20?'⭐⭐⭐':cStreak>=10?'⭐⭐':cStreak>=5?'⭐':'';
+  var streakDots='';
+  for(var di=0;di<Math.min(cStreak,10);di++){
+    streakDots+='<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(di<5?'#6b3fa0':'#E8A020')+';margin:1px;"></span>';
+  }
+  if(cStreak>10) streakDots+='<span style="font-size:10px;color:#a07cb8;font-weight:700"> +'+(cStreak-10)+'</span>';
+  var sentHTML=q.sentence.replace('___','<span style="border-bottom:2px solid #a07cb8;padding:0 8px;color:#a07cb8;font-weight:700">___</span>');
+  var optsHTML=opts.map(function(o){
+    return '<button class="ans" onclick="pickChallenge(this,\''+o.replace(/'/g,"\\'")+'\',\''+q.answer.replace(/'/g,"\\'")+'\')">'+o+'</button>';
+  }).join('');
+  document.getElementById('challenge-area').innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'
+    +'<div style="text-align:center;background:#fff;border-radius:12px;padding:8px 16px;box-shadow:0 1px 6px #e0c8f0;min-width:70px">'
+    +'<div style="font-size:26px;font-weight:700;color:#6b3fa0">'+cStreak+stars+'</div><div style="font-size:10px;color:#a07cb8">'+(isAamir?'racha':'streak')+'</div></div>'
+    +'<div style="text-align:center;font-size:11px;color:#a07cb8;line-height:1.6"><div>'+(isAamir?'siguiente premio':'next reward')+'</div><div style="font-size:18px;font-weight:700;color:#E8A020">@ '+next+'</div></div>'
+    +'<div style="text-align:center;background:#fff;border-radius:12px;padding:8px 16px;box-shadow:0 1px 6px #e0c8f0;min-width:70px">'
+    +'<div style="font-size:26px;font-weight:700;color:#a07cb8">'+cBest+'</div><div style="font-size:10px;color:#a07cb8">'+(isAamir?'mejor':'best')+'</div></div>'
+    +'</div>'
+    +'<div style="text-align:center;font-size:11px;color:#e87070;font-weight:600;margin-bottom:10px">⚠️ '+(isAamir?'¡Un error y termina!':'One wrong and it\'s over!')+'</div>'
+    +'<div style="text-align:center;margin-bottom:12px;min-height:18px">'+streakDots+'</div>'
+    +'<div class="q-card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:6px">'+badgeHTML+'<div></div></div>'
+    +'<div class="q-sentence">'+sentHTML+'</div>'
+    +'<div class="q-hint">'+(isAamir?'Hint':'Pista')+': <span style="font-weight:700;color:#6b3fa0">'+q.hint+'</span></div></div>'
+    +'<div class="answers" id="c-ans">'+optsHTML+'</div>'
+    +'<div class="feedback" id="c-fb"></div>';
   cAnswered=false;
 }
 
 function pickChallenge(btn,chosen,correct){
-  if(cAnswered)return;cAnswered=true;
-  const isAamir=currentUser==='Aamir',fb=document.getElementById('c-fb');
-  document.querySelectorAll('#c-ans .ans').forEach(b=>b.disabled=true);
+  if(cAnswered)return; cAnswered=true;
+  var isAamir=currentUser==='Aamir', fb=document.getElementById('c-fb');
+  document.querySelectorAll('#c-ans .ans').forEach(function(b){b.disabled=true;});
   if(chosen===correct){
-    btn.classList.add('correct');cStreak++;if(cStreak>cBest)cBest=cStreak;cResults.push({correct:true});
-    const milestones={5:isAamir?'🔥 ¡5 seguidas! ¡En llamas!':'🔥 5 in a row! On fire!',10:isAamir?'💥 ¡10! ¡Increíble!':'💥 10 streak! Incredible!',15:isAamir?'⚡ ¡15! ¡Imparable!':'⚡ 15! Unstoppable!',20:isAamir?'🏆 ¡20! ¡LEYENDA!':'🏆 20! LEGENDARY!',25:isAamir?'🚀 ¡25! ¿Eres humano?':'🚀 25! Are you even human?!'};
-    const praise=getPraise();
-    fb.textContent=milestones[cStreak]||praise[Math.floor(Math.random()*praise.length)];
+    btn.classList.add('correct'); cStreak++; if(cStreak>cBest)cBest=cStreak; cResults.push({correct:true});
+    var ms={5:isAamir?'🔥 ¡5 seguidas! ¡En llamas!':'🔥 5 in a row! On fire!',
+             10:isAamir?'💥 ¡10! ¡Increíble!':'💥 10 streak! Incredible!',
+             15:isAamir?'⚡ ¡15! ¡Imparable!':'⚡ 15! Unstoppable!',
+             20:isAamir?'🏆 ¡20! ¡LEYENDA!':'🏆 20! LEGENDARY!',
+             25:isAamir?'🚀 ¡25! ¿Eres humano?':'🚀 25! Are you even human?!'};
+    var praise=getPraise();
+    fb.textContent=ms[cStreak]||praise[Math.floor(Math.random()*praise.length)];
     fb.className='feedback correct';
-    if(milestones[cStreak]){const ov=document.getElementById('g-flash-bg');ov.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:90;background:#6b3fa0;opacity:0.3;transition:none';setTimeout(()=>{ov.style.transition='opacity .8s';ov.style.opacity=0;},200);}
-    setTimeout(()=>renderChallenge(),settings.advanceSec*1000);
+    if(ms[cStreak]){
+      var ov=document.getElementById('g-flash-bg');
+      ov.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:90;background:#6b3fa0;opacity:0.3;transition:none';
+      setTimeout(function(){ov.style.transition='opacity .8s';ov.style.opacity=0;},200);
+    }
+    setTimeout(renderChallenge,settings.advanceSec*1000);
   } else {
-    btn.classList.add('wrong');document.querySelectorAll('#c-ans .ans').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
+    btn.classList.add('wrong');
+    document.querySelectorAll('#c-ans .ans').forEach(function(b){if(b.textContent===correct)b.classList.add('correct');});
     cResults.push({correct:false});
-    fb.innerHTML=`❌ ${isAamir?'Respuesta':'Answer'}: <b>${correct}</b>`;
+    fb.innerHTML='❌ '+(currentUser==='Aamir'?'Respuesta':'Answer')+': <b>'+correct+'</b>';
     fb.className='feedback wrong';
-    setTimeout(()=>showChallengeScore(),1600);
+    setTimeout(showChallengeScore,1600);
   }
 }
 
 function showChallengeScore(){
-  const isAamir=currentUser==='Aamir';
-  let em,msg;
+  var isAamir=currentUser==='Aamir';
+  var em,msg;
   if(cStreak>=20){em='🏆';msg=isAamir?'¡Absolutamente legendario!':'Absolutely legendary!';}
   else if(cStreak>=15){em='🚀';msg=isAamir?'¡15 seguidas, increíble!':'15 in a row — incredible!';}
   else if(cStreak>=10){em='💥';msg=isAamir?'¡10 seguidas, fantástico!':'10 streak — fantastic!';}
   else if(cStreak>=5){em='🔥';msg=isAamir?'¡5 seguidas, buen trabajo!':'5 streak — great work!';}
   else{em='💪';msg=isAamir?'¡Sigue practicando!':'Keep practicing!';}
-  const correct=cResults.filter(r=>r.correct).length;
-  document.getElementById('challenge-area').innerHTML=`
-    <div style="text-align:center;padding:24px 0 16px">
-      <div style="font-size:52px;margin-bottom:8px">${em}</div>
-      <div style="font-size:64px;font-weight:700;color:#6b3fa0;line-height:1">${cStreak}</div>
-      <div style="font-size:14px;color:#6b3fa0;font-weight:600;margin-top:4px">${isAamir?'seguidas sin error':'in a row without a mistake'}</div>
-      <div style="font-size:13px;color:#a07cb8;margin:8px 0 20px">${msg}</div>
-      <div style="display:flex;justify-content:center;gap:24px;margin-bottom:24px">
-        <div><div style="font-size:22px;font-weight:700;color:#1a6b2a">${correct}</div><div style="font-size:10px;color:#a07cb8">${isAamir?'correctas':'correct'}</div></div>
-        <div><div style="font-size:22px;font-weight:700;color:#a07cb8">${cResults.length}</div><div style="font-size:10px;color:#a07cb8">total</div></div>
-        <div><div style="font-size:22px;font-weight:700;color:#E8A020">${cBest}</div><div style="font-size:10px;color:#a07cb8">${isAamir?'mejor racha':'best streak'}</div></div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px">
-      <button onclick="startChallenge()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🔄 ${isAamir?'Otra vez':'Play again'}</button>
-      <button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🏠 Home</button>
-    </div>`;
+  var correct=cResults.filter(function(r){return r.correct;}).length;
+  document.getElementById('challenge-area').innerHTML =
+    '<div style="text-align:center;padding:24px 0 16px">'
+    +'<div style="font-size:52px;margin-bottom:8px">'+em+'</div>'
+    +'<div style="font-size:64px;font-weight:700;color:#6b3fa0;line-height:1">'+cStreak+'</div>'
+    +'<div style="font-size:14px;color:#6b3fa0;font-weight:600;margin-top:4px">'+(isAamir?'seguidas sin error':'in a row without a mistake')+'</div>'
+    +'<div style="font-size:13px;color:#a07cb8;margin:8px 0 20px">'+msg+'</div>'
+    +'<div style="display:flex;justify-content:center;gap:24px;margin-bottom:24px">'
+    +'<div><div style="font-size:22px;font-weight:700;color:#1a6b2a">'+correct+'</div><div style="font-size:10px;color:#a07cb8">'+(isAamir?'correctas':'correct')+'</div></div>'
+    +'<div><div style="font-size:22px;font-weight:700;color:#a07cb8">'+cResults.length+'</div><div style="font-size:10px;color:#a07cb8">total</div></div>'
+    +'<div><div style="font-size:22px;font-weight:700;color:#E8A020">'+cBest+'</div><div style="font-size:10px;color:#a07cb8">'+(isAamir?'mejor racha':'best streak')+'</div></div>'
+    +'</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px">'
+    +'<button onclick="startChallenge()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🔄 '+(isAamir?'Otra vez':'Play again')+'</button>'
+    +'<button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🏠 Home</button>'
+    +'</div>';
 }
 
 // ═══════════════════════════════════════
-// 8. GAME
+// 14. SPEED GAME
 // ═══════════════════════════════════════
-const lwS=()=>{try{return JSON.parse(localStorage.getItem(uKey('gws'))||'{}');}catch(e){return{};}};
-const swS=d=>{try{localStorage.setItem(uKey('gws'),JSON.stringify(d));}catch(e){}};
-const lHi=()=>{try{return JSON.parse(localStorage.getItem(uKey('ghi'))||'[]');}catch(e){return[];}};
-const sHi=d=>{try{localStorage.setItem(uKey('ghi'),JSON.stringify(d));}catch(e){}};
-let gTimer=null,gTime=0,gMaxTime=0,gScore=0,gLastHint='';
-let gQStart=0,gResults=[],gHistory=[],gWordsRight=new Set(),gStreak=0,gMaxStreak=0;
-let gNewWords=0,gSuperBonus=0,gClutchSaves=0,gNewHints=new Set(),gSuperHints=new Set();
-const gBon=sc=>parseFloat((settings.gameRightBonus*[1,.7,.5,.3,.2][Math.min(Math.floor(sc/5),4)]).toFixed(1));
-const gPen=sc=>parseFloat((settings.gameWrongPenalty*[1,1.3,1.7,2.1,2.5][Math.min(Math.floor(sc/5),4)]).toFixed(1));
-const clv=()=>gTime<=3000?3:gTime<=5000?2:gTime<=8000?1:0;
-function eBon(){const b=gBon(gScore),c=clv();return c===3?parseFloat((b*4).toFixed(1)):c===2?parseFloat((b*2.5).toFixed(1)):c===1?parseFloat((b*1.5).toFixed(1)):b;}
-function ePen(){const p=gPen(gScore),c=clv();return c>=2?parseFloat((p*.5).toFixed(1)):c?parseFloat((p*.7).toFixed(1)):p;}
+function lwS(){try{return JSON.parse(localStorage.getItem(uKey('gws'))||'{}');}catch(e){return{};}}
+function swS(d){try{localStorage.setItem(uKey('gws'),JSON.stringify(d));}catch(e){}}
+function lHi(){try{return JSON.parse(localStorage.getItem(uKey('ghi'))||'[]');}catch(e){return[];}}
+function sHi(d){try{localStorage.setItem(uKey('ghi'),JSON.stringify(d));}catch(e){}}
+
+var gTimer=null,gTime=0,gMaxTime=0,gScore=0,gLastHint='';
+var gQStart=0,gResults=[],gHistory=[],gWordsRight,gStreak=0,gMaxStreak=0;
+var gNewWords=0,gSuperBonus=0,gClutchSaves=0,gNewHints,gSuperHints;
+
+function gBon(sc){return parseFloat((settings.gameRightBonus*[1,.7,.5,.3,.2][Math.min(Math.floor(sc/5),4)]).toFixed(1));}
+function gPen(sc){return parseFloat((settings.gameWrongPenalty*[1,1.3,1.7,2.1,2.5][Math.min(Math.floor(sc/5),4)]).toFixed(1));}
+function clv(){return gTime<=3000?3:gTime<=5000?2:gTime<=8000?1:0;}
+function eBon(){var b=gBon(gScore),c=clv();return c===3?parseFloat((b*4).toFixed(1)):c===2?parseFloat((b*2.5).toFixed(1)):c===1?parseFloat((b*1.5).toFixed(1)):b;}
+function ePen(){var p=gPen(gScore),c=clv();return c>=2?parseFloat((p*.5).toFixed(1)):c?parseFloat((p*.7).toFixed(1)):p;}
+
 function startGame(){
-  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
-  gTime=settings.gameStartSec*1000;gMaxTime=gTime;gScore=0;gLastHint='';
-  gResults=[];gHistory=[];gWordsRight=new Set();gStreak=0;gMaxStreak=0;
-  gNewWords=0;gSuperBonus=0;gClutchSaves=0;gNewHints=new Set();gSuperHints=new Set();
-  document.addEventListener('keydown',gKeyH);
+  clearInterval(gTimer);
+  document.removeEventListener('keydown',gKeyHandler);
+  gTime=settings.gameStartSec*1000; gMaxTime=gTime; gScore=0; gLastHint='';
+  gResults=[]; gHistory=[]; gWordsRight={}; gStreak=0; gMaxStreak=0;
+  gNewWords=0; gSuperBonus=0; gClutchSaves=0; gNewHints={}; gSuperHints={};
+  document.addEventListener('keydown',gKeyHandler);
   renderGQ();
-  gTimer=setInterval(()=>{gTime=Math.max(0,gTime-50);updateGBar();if(gTime<=0){clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);gameOver();}},50);
+  gTimer=setInterval(function(){
+    gTime=Math.max(0,gTime-50);
+    updateGBar();
+    if(gTime<=0){clearInterval(gTimer);document.removeEventListener('keydown',gKeyHandler);gameOver();}
+  },50);
 }
-function gKeyH(e){const keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];const idx=keys.indexOf(e.key.toLowerCase());if(idx>=0){const btns=[...document.querySelectorAll('#game-area .g-ans:not(:disabled)')];if(btns[idx])btns[idx].click();}}
-function renderGQ(){
-  const pool=getQ();
-  let q,att=0;do{q=pool[Math.floor(Math.random()*pool.length)];att++;}while((q.gameWord||q.hint)===gLastHint&&att<10);
-  gLastHint=q.gameWord||q.hint;gQStart=Date.now();
-  const cl=clv(),bon=eBon(),pen=ePen(),pct=gTime/gMaxTime*100;
-  const keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];
-  const opts=shuffle([q.answer,...q.wrong]);
-  const isAamir=currentUser==='Aamir';
-  let clHTML='';
-  if(cl===3)clHTML=`<div class="cl-banner cl3">🚨 OVERTIME!! ×4 BONUS!</div>`;
-  else if(cl===2)clHTML=`<div class="cl-banner cl2">🔥 LAST CHANCE! ×2.5 BONUS!</div>`;
-  else if(cl===1)clHTML=`<div class="cl-banner cl1">⚡ CLUTCH MODE ×1.5</div>`;
-  let tenseBadge='';
-  if(isAamir){const t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};tenseBadge=`<div style="text-align:center;margin-bottom:8px"><span style="background:${t.bg};color:${t.color};font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;">${t.label}</span></div>`;}
-  const displayWord=isAamir?(q.gameWord||q.hint):q.hint;
-  const displaySub=isAamir?'→ Spanish?':'→ English?';
-  document.getElementById('game-area').innerHTML=`
-    <div class="g-bar-wrap"><div class="${cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar'}" id="g-bar" style="width:${pct}%"></div></div>
-    ${clHTML}
-    <div class="g-time ${cl?'cl'+cl:''}" id="g-time">${(gTime/1000).toFixed(1)}s</div>
-    <div class="g-meta"><span>✅ <b>${gScore}</b></span><span>🔥 <b>${gStreak}</b></span><span><span style="color:#1a6b2a;font-weight:700">+${bon}s</span>/<span style="color:#a02020;font-weight:700">-${pen}s</span></span></div>
-    <div class="g-word-card">${tenseBadge}<div class="g-word">${displayWord}</div><div class="g-word-sub">${displaySub}</div></div>
-    <div class="g-answers" id="g-ans-wrap">${opts.map((o,i)=>`<button class="g-ans" data-ans="${o}" onclick="pickG(this,'${o}','${q.answer}','${displayWord}')"><span class="key-badge">${keys[i].toUpperCase()}</span>${o}</button>`).join('')}</div>`;
-}
-function updateGBar(){const bar=document.getElementById('g-bar'),te=document.getElementById('g-time');if(!bar||!te)return;const cl=clv();bar.style.width=(gTime/gMaxTime*100)+'%';bar.className=cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar';te.textContent=(gTime/1000).toFixed(1)+'s';te.className=cl?'g-time cl'+cl:'g-time';}
-function showPop(html,cls){const w=document.getElementById('g-popup');if(!w)return;w.innerHTML=`<div class="bpop ${cls}">${html}</div>`;setTimeout(()=>{if(w)w.innerHTML='';},1800);}
-function flashBg(col){const ov=document.getElementById('g-flash-bg');ov.style.cssText=`position:fixed;inset:0;pointer-events:none;z-index:90;background:${col};opacity:0.35;transition:none`;setTimeout(()=>{ov.style.transition='opacity .6s';ov.style.opacity=0;},120);}
-function pickG(btn,chosen,correct,displayWord){
-  document.querySelectorAll('#game-area .g-ans').forEach(b=>b.disabled=true);
-  const cl=clv(),bon=eBon(),pen=ePen(),ms=Date.now()-gQStart;
-  if(chosen===correct){
-    btn.classList.add('correct');gScore++;gStreak++;if(gStreak>gMaxStreak)gMaxStreak=gStreak;
-    gWordsRight.add(displayWord);gResults.push({hint:displayWord,answer:correct,correct:true,ms,timeLeft:gTime});gHistory.push({score:gScore,timeLeft:gTime});
-    const ws=lwS();if(!ws[displayWord])ws[displayWord]={right:0,wrong:0};
-    const wasR=ws[displayWord].right,wasW=ws[displayWord].wrong;let extra=0;
-    if(wasR===0){gNewWords++;gNewHints.add(displayWord);extra=settings.gameRightBonus*2;showPop(`🆕 NEW!<br><b>+${(bon+extra).toFixed(1)}s</b>`,'bpop-new');flashBg('#00cc44');}
-    else if(wasW>wasR*1.5&&wasW>=2){gSuperBonus++;gSuperHints.add(displayWord);extra=settings.gameRightBonus*3.5;showPop(`💥 SUPER!<br><b>+${(bon+extra).toFixed(1)}s</b>`,'bpop-super');flashBg('#ff8800');}
-    else if(cl>=2){gClutchSaves++;showPop(cl===3?`🚨 MEGA SAVE!<br>+${bon}s`:`🚨 CLUTCH!<br>+${bon}s`,cl===3?'bpop-mega':'bpop-clutch');flashBg('#6600cc');}
-    else{const fl=document.getElementById('g-flash');if(fl){fl.textContent='+'+bon+'s';fl.className='g-flash pos';setTimeout(()=>fl.className='g-flash',650);}}
-    ws[displayWord].right++;swS(ws);gTime=Math.min(gTime+(bon+extra)*1000,gMaxTime*4);
-    setTimeout(()=>renderGQ(),360);
-  } else {
-    btn.classList.add('wrong');gStreak=0;gResults.push({hint:displayWord,answer:correct,correct:false,ms,timeLeft:gTime});
-    document.querySelectorAll('#game-area .g-ans').forEach(b=>{if(b.dataset.ans===correct)b.classList.add('correct');});
-    const ws=lwS();if(!ws[displayWord])ws[displayWord]={right:0,wrong:0};ws[displayWord].wrong++;swS(ws);
-    const fl=document.getElementById('g-flash');if(fl){fl.textContent='-'+pen+'s';fl.className='g-flash neg';setTimeout(()=>fl.className='g-flash',650);}
-    if(settings.flashOnWrong)flashBg('#ff2222');
-    if(settings.shakeOnWrong){const w=document.getElementById('g-ans-wrap');if(w){w.classList.add('shake-it');setTimeout(()=>w.classList.remove('shake-it'),500);}}
-    gTime=Math.max(0,gTime-pen*1000);
-    if(gTime<=0)setTimeout(()=>{clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);gameOver();},500);
-    else setTimeout(()=>renderGQ(),560);
+
+function gKeyHandler(e){
+  var keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];
+  var idx=keys.indexOf(e.key.toLowerCase());
+  if(idx>=0){
+    var btns=[].slice.call(document.querySelectorAll('#game-area .g-ans:not(:disabled)'));
+    if(btns[idx]) btns[idx].click();
   }
 }
-function gameOver(){
-  clearInterval(gTimer);document.removeEventListener('keydown',gKeyH);
-  document.getElementById('g-popup').innerHTML='';
-  const corrR=gResults.filter(r=>r.correct);
-  const avgMs=corrR.length?corrR.reduce((s,r)=>s+r.ms,0)/corrR.length:0;
-  const fastR=corrR.reduce((f,r)=>(!f||r.ms<f.ms)?r:f,null);
-  const slowR=corrR.reduce((s,r)=>(!s||r.ms>s.ms)?r:s,null);
-  const acc=gResults.length?Math.round(corrR.length/gResults.length*100):0;
-  const entry={score:gScore,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),avgMs:Math.round(avgMs),streak:gMaxStreak,ts:Date.now()};
-  let hs=lHi();hs.push(entry);hs.sort((a,b)=>b.score-a.score);
-  const rank=hs.findIndex(h=>h.ts===entry.ts)+1;sHi(hs.slice(0,10));
-  document.getElementById('game-area').innerHTML=buildGOver({corrR,avgMs,fastR,slowR,acc,rank,leaderboard:hs.slice(0,10),entry});
+
+function renderGQ(){
+  var pool=getQ(), q, att=0;
+  do{q=pool[Math.floor(Math.random()*pool.length)];att++;}while((q.gameWord||q.hint)===gLastHint&&att<10);
+  gLastHint=q.gameWord||q.hint; gQStart=Date.now();
+  var cl=clv(), bon=eBon(), pen=ePen(), pct=gTime/gMaxTime*100;
+  var keys=KEY_LAYOUTS[settings.keyLayout]||KEY_LAYOUTS['1234'];
+  var opts=shuffle([q.answer].concat(q.wrong));
+  var isAamir=currentUser==='Aamir';
+  var clHTML='';
+  if(cl===3)clHTML='<div class="cl-banner cl3">🚨 OVERTIME!! ×4 BONUS!</div>';
+  else if(cl===2)clHTML='<div class="cl-banner cl2">🔥 LAST CHANCE! ×2.5 BONUS!</div>';
+  else if(cl===1)clHTML='<div class="cl-banner cl1">⚡ CLUTCH MODE ×1.5</div>';
+  var tenseBadge='';
+  if(isAamir){var t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};tenseBadge='<div style="text-align:center;margin-bottom:8px"><span style="background:'+t.bg+';color:'+t.color+';font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;">'+t.label+'</span></div>';}
+  var displayWord=isAamir?(q.gameWord||q.hint):q.hint;
+  var displaySub=isAamir?'→ Spanish?':'→ English?';
+  var optsHTML=opts.map(function(o,i){
+    return '<button class="g-ans" data-ans="'+o.replace(/"/g,'&quot;')+'" onclick="pickG(this,\''+o.replace(/'/g,"\\'")+'\',\''+q.answer.replace(/'/g,"\\'")+'\',\''+displayWord.replace(/'/g,"\\'")+'\')"><span class="key-badge">'+keys[i].toUpperCase()+'</span>'+o+'</button>';
+  }).join('');
+  document.getElementById('game-area').innerHTML =
+    '<div class="g-bar-wrap"><div class="'+(cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar')+'" id="g-bar" style="width:'+pct+'%"></div></div>'
+    +clHTML
+    +'<div class="g-time '+(cl?'cl'+cl:'')+'" id="g-time">'+(gTime/1000).toFixed(1)+'s</div>'
+    +'<div class="g-meta"><span>✅ <b>'+gScore+'</b></span><span>🔥 <b>'+gStreak+'</b></span>'
+    +'<span><span style="color:#1a6b2a;font-weight:700">+'+bon+'s</span>/<span style="color:#a02020;font-weight:700">-'+pen+'s</span></span></div>'
+    +'<div class="g-word-card">'+tenseBadge+'<div class="g-word">'+displayWord+'</div><div class="g-word-sub">'+displaySub+'</div></div>'
+    +'<div class="g-answers" id="g-ans-wrap">'+optsHTML+'</div>';
 }
+
+function updateGBar(){
+  var bar=document.getElementById('g-bar'), te=document.getElementById('g-time');
+  if(!bar||!te)return;
+  var cl=clv();
+  bar.style.width=(gTime/gMaxTime*100)+'%';
+  bar.className=cl>=2?'g-bar danger':cl?'g-bar warn':'g-bar';
+  te.textContent=(gTime/1000).toFixed(1)+'s';
+  te.className=cl?'g-time cl'+cl:'g-time';
+}
+
+function showPop(html,cls){
+  var w=document.getElementById('g-popup');
+  if(!w)return;
+  w.innerHTML='<div class="bpop '+cls+'">'+html+'</div>';
+  setTimeout(function(){if(w)w.innerHTML='';},1800);
+}
+
+function flashBg(col){
+  var ov=document.getElementById('g-flash-bg');
+  ov.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:90;background:'+col+';opacity:0.35;transition:none';
+  setTimeout(function(){ov.style.transition='opacity .6s';ov.style.opacity=0;},120);
+}
+
+function pickG(btn,chosen,correct,displayWord){
+  document.querySelectorAll('#game-area .g-ans').forEach(function(b){b.disabled=true;});
+  var bon=eBon(), pen=ePen(), ms=Date.now()-gQStart;
+  if(chosen===correct){
+    btn.classList.add('correct'); gScore++; gStreak++; if(gStreak>gMaxStreak)gMaxStreak=gStreak;
+    gWordsRight[displayWord]=true;
+    gResults.push({hint:displayWord,answer:correct,correct:true,ms:ms,timeLeft:gTime});
+    gHistory.push({score:gScore,timeLeft:gTime});
+    var ws=lwS(); if(!ws[displayWord])ws[displayWord]={right:0,wrong:0};
+    var wasR=ws[displayWord].right, wasW=ws[displayWord].wrong, extra=0;
+    if(wasR===0){gNewWords++;gNewHints[displayWord]=true;extra=settings.gameRightBonus*2;showPop('🆕 NEW!<br><b>+'+(bon+extra).toFixed(1)+'s</b>','bpop-new');flashBg('#00cc44');}
+    else if(wasW>wasR*1.5&&wasW>=2){gSuperBonus++;gSuperHints[displayWord]=true;extra=settings.gameRightBonus*3.5;showPop('💥 SUPER!<br><b>+'+(bon+extra).toFixed(1)+'s</b>','bpop-super');flashBg('#ff8800');}
+    else if(clv()>=2){gClutchSaves++;showPop(clv()===3?'🚨 MEGA SAVE!<br>+'+bon+'s':'🚨 CLUTCH!<br>+'+bon+'s',clv()===3?'bpop-mega':'bpop-clutch');flashBg('#6600cc');}
+    else{var fl=document.getElementById('g-flash');if(fl){fl.textContent='+'+bon+'s';fl.className='g-flash pos';setTimeout(function(){fl.className='g-flash';},650);}}
+    ws[displayWord].right++; swS(ws);
+    gTime=Math.min(gTime+(bon+extra)*1000,gMaxTime*4);
+    setTimeout(renderGQ,360);
+  } else {
+    btn.classList.add('wrong'); gStreak=0;
+    gResults.push({hint:displayWord,answer:correct,correct:false,ms:ms,timeLeft:gTime});
+    document.querySelectorAll('#game-area .g-ans').forEach(function(b){if(b.dataset.ans===correct)b.classList.add('correct');});
+    var ws2=lwS(); if(!ws2[displayWord])ws2[displayWord]={right:0,wrong:0}; ws2[displayWord].wrong++; swS(ws2);
+    var fl2=document.getElementById('g-flash');if(fl2){fl2.textContent='-'+pen+'s';fl2.className='g-flash neg';setTimeout(function(){fl2.className='g-flash';},650);}
+    if(settings.flashOnWrong)flashBg('#ff2222');
+    if(settings.shakeOnWrong){var w2=document.getElementById('g-ans-wrap');if(w2){w2.classList.add('shake-it');setTimeout(function(){w2.classList.remove('shake-it');},500);}}
+    gTime=Math.max(0,gTime-pen*1000);
+    if(gTime<=0)setTimeout(function(){clearInterval(gTimer);document.removeEventListener('keydown',gKeyHandler);gameOver();},500);
+    else setTimeout(renderGQ,560);
+  }
+}
+
 function buildChart(results){
-  const r=(results||[]).filter(x=>x&&x.correct&&isFinite(x.ms));
-  if(r.length<2)return`<div style="text-align:center;color:#a07cb8;padding:12px;font-size:12px">Answer more to see chart!</div>`;
-  const W=300,H=140,px=34,py=12,iW=W-px-10,iH=H-py-20;
-  const times=r.map(x=>x.ms),maxT=Math.max(...times),minT=Math.min(...times),range=Math.max(maxT-minT,300);
-  const avg=times.reduce((a,b)=>a+b,0)/times.length;
-  const toY=ms=>py+((ms-minT)/range)*iH;
-  const pts=r.map((x,i)=>({x:px+i/(Math.max(r.length-1,1))*iW,y:toY(x.ms),ms:x.ms}));
-  const pl=pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-  const avgY=toY(avg);
-  const yL=[{y:py,l:(minT/1000).toFixed(1)+'s'},{y:py+iH/2,l:((minT+range/2)/1000).toFixed(1)+'s'},{y:py+iH,l:((minT+range)/1000).toFixed(1)+'s'}];
-  const grids=yL.map(({y,l})=>`<line x1="${px}" y1="${y.toFixed(1)}" x2="${px+iW}" y2="${y.toFixed(1)}" stroke="#f0e4ff" stroke-width="1" stroke-dasharray="3 3"/><text x="${px-3}" y="${(y+3).toFixed(0)}" font-size="8" fill="#c9a8e8" text-anchor="end">${l}</text>`).join('');
-  const dots=pts.map(p=>{const c=p.ms<avg*.75?'#3aaa6a':p.ms>avg*1.35?'#e87070':'#6b3fa0';return`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${c}" stroke="#fff" stroke-width="1.5"/>`;}).join('');
-  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${grids}<line x1="${px}" y1="${py}" x2="${px}" y2="${py+iH}" stroke="#e8d4f8" stroke-width="1"/><line x1="${px}" y1="${py+iH}" x2="${px+iW}" y2="${py+iH}" stroke="#e8d4f8" stroke-width="1"/><line x1="${px}" y1="${avgY.toFixed(1)}" x2="${px+iW}" y2="${avgY.toFixed(1)}" stroke="#a07cb8" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/><text x="${px+iW+3}" y="${(avgY+3).toFixed(0)}" font-size="8" fill="#a07cb8">avg</text><polyline points="${pl}" fill="none" stroke="#6b3fa0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}<text x="${px+2}" y="${py+8}" font-size="7" fill="#c9a8e8">fast</text><text x="${px+2}" y="${py+iH-3}" font-size="7" fill="#c9a8e8">slow</text></svg>`;
+  var r=(results||[]).filter(function(x){return x&&x.correct&&isFinite(x.ms);});
+  if(r.length<2)return '<div style="text-align:center;color:#a07cb8;padding:12px;font-size:12px">Answer more to see chart!</div>';
+  var W=300,H=140,px=34,py=12,iW=W-px-10,iH=H-py-20;
+  var times=r.map(function(x){return x.ms;}), maxT=Math.max.apply(null,times), minT=Math.min.apply(null,times), range=Math.max(maxT-minT,300);
+  var avg=times.reduce(function(a,b){return a+b;},0)/times.length;
+  function toY(ms){return py+((ms-minT)/range)*iH;}
+  var pts=r.map(function(x,i){return {x:px+i/(Math.max(r.length-1,1))*iW,y:toY(x.ms),ms:x.ms};});
+  var pl=pts.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+  var avgY=toY(avg);
+  var yL=[{y:py,l:(minT/1000).toFixed(1)+'s'},{y:py+iH/2,l:((minT+range/2)/1000).toFixed(1)+'s'},{y:py+iH,l:((minT+range)/1000).toFixed(1)+'s'}];
+  var grids=yL.map(function(obj){return '<line x1="'+px+'" y1="'+obj.y.toFixed(1)+'" x2="'+(px+iW)+'" y2="'+obj.y.toFixed(1)+'" stroke="#f0e4ff" stroke-width="1" stroke-dasharray="3 3"/><text x="'+(px-3)+'" y="'+(obj.y+3).toFixed(0)+'" font-size="8" fill="#c9a8e8" text-anchor="end">'+obj.l+'</text>';}).join('');
+  var dots=pts.map(function(p){var c=p.ms<avg*.75?'#3aaa6a':p.ms>avg*1.35?'#e87070':'#6b3fa0';return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="'+c+'" stroke="#fff" stroke-width="1.5"/>';}).join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block">'+grids
+    +'<line x1="'+px+'" y1="'+py+'" x2="'+px+'" y2="'+(py+iH)+'" stroke="#e8d4f8" stroke-width="1"/>'
+    +'<line x1="'+px+'" y1="'+(py+iH)+'" x2="'+(px+iW)+'" y2="'+(py+iH)+'" stroke="#e8d4f8" stroke-width="1"/>'
+    +'<line x1="'+px+'" y1="'+avgY.toFixed(1)+'" x2="'+(px+iW)+'" y2="'+avgY.toFixed(1)+'" stroke="#a07cb8" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>'
+    +'<text x="'+(px+iW+3)+'" y="'+(avgY+3).toFixed(0)+'" font-size="8" fill="#a07cb8">avg</text>'
+    +'<polyline points="'+pl+'" fill="none" stroke="#6b3fa0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots
+    +'<text x="'+(px+2)+'" y="'+(py+8)+'" font-size="7" fill="#c9a8e8">fast</text>'
+    +'<text x="'+(px+2)+'" y="'+(py+iH-3)+'" font-size="7" fill="#c9a8e8">slow</text>'
+    +'</svg>';
 }
-function buildGOver({corrR,avgMs,fastR,slowR,acc,rank,leaderboard,entry}){
-  const score=gScore;
-  let em,msg;
-  if(score>=25){em='🏆';msg='Incredible!';}else if(score>=18){em='🌟';msg='Amazing speed!';}else if(score>=12){em='💪';msg='Great game!';}else if(score>=6){em='😊';msg='Good start!';}else{em='📖';msg='Keep practicing!';}
-  const stats=[{e:'⚡',v:avgMs?(avgMs/1000).toFixed(2)+'s':'—',l:'Avg speed'},{e:'🔥',v:gMaxStreak,l:'Best streak'},{e:'🎯',v:acc+'%',l:'Accuracy'},{e:'🆕',v:gNewWords,l:'New words'},{e:'💥',v:gSuperBonus,l:'Super bonuses'},{e:'🚨',v:gClutchSaves,l:'Clutch saves'}];
-  const ws=lwS();
-  const wordHTML=[...gWordsRight].map(hint=>{const s=ws[hint]||{right:0,wrong:0};const stars=s.right>=6?'⭐⭐⭐':s.right>=3?'⭐⭐':s.right>=1?'⭐':'✨';const isN=gNewHints.has(hint),isS=gSuperHints.has(hint),isE=s.right>=6;const cls=isN?'wchip wn':isS?'wchip ws':'wchip wr';const badge=isE?'<span class="wc-b be">EXPERT</span>':isN?'<span class="wc-b bn">🆕 NEW</span>':isS?'<span class="wc-b bs">💥 SUPER</span>':'';return`<div class="${cls}"><div class="wc-p">${hint}</div><div class="wc-s">${stars} <span style="font-size:9px;color:#a07cb8">×${s.right} total</span></div>${badge}</div>`;}).join('');
-  const lbHTML=leaderboard.map((h,i)=>{const me=h.ts===entry.ts;return`<div class="lb-row ${me?'lb-me':''}"><span class="lb-rk">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`}</span><span class="lb-sc">${h.score}</span><span class="lb-mt">${h.date} · ${h.avgMs?h.avgMs+'ms':'—'} · ${h.streak||0} streak</span>${me?'<b style="font-size:10px;color:#6b3fa0">← you</b>':''}</div>`;}).join('');
-  return`<div style="text-align:center;padding:16px 0 10px"><div style="font-size:52px">${em}</div><div style="font-size:48px;font-weight:700;color:#6b3fa0">${score}</div><div style="font-size:13px;color:#6b3fa0;font-weight:600">${msg}</div>${rank>0?`<div style="font-size:12px;color:#c9a8e8">🏅 Rank #${rank}</div>`:''}</div>
-  <div class="stat-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-e">${s.e}</div><div class="stat-v">${s.v}</div><div class="stat-l">${s.l}</div></div>`).join('')}</div>
-  <div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 4px #e0c8f0;display:flex;justify-content:space-around;text-align:center">
-    <div><div style="font-size:10px;color:#a07cb8">⚡ Fastest</div><div style="font-weight:700;color:#1a6b2a;font-size:12px">${fastR?(fastR.ms/1000).toFixed(2)+'s ('+fastR.hint+')':'—'}</div></div>
-    <div style="width:1px;background:#f0e4ff"></div>
-    <div><div style="font-size:10px;color:#a07cb8">🐢 Slowest</div><div style="font-weight:700;color:#a02020;font-size:12px">${slowR?(slowR.ms/1000).toFixed(2)+'s ('+slowR.hint+')':'—'}</div></div>
-  </div>
-  <div class="chart-wrap"><div class="chart-lbl">⚡ Response Speed</div>${buildChart(gResults)}<div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:10px;color:#a07cb8"><span>🟢 Fast</span><span>🟣 Avg</span><span>🔴 Slow</span></div></div>
-  ${gWordsRight.size?`<div class="lb-wrap"><div class="lb-lbl">✅ Words you got right (${gWordsRight.size})</div><div class="word-grid">${wordHTML}</div></div>`:''}
-  <div class="lb-wrap"><div class="lb-lbl">🏆 ${currentUser}'s Top 10</div>${lbHTML||'<div style="color:#a07cb8;font-size:12px;text-align:center;padding:10px">No scores yet!</div>'}</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px">
-    <button onclick="startGame()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🎮 Play Again</button>
-    <button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🏠 Home</button>
-  </div>`;
+
+function gameOver(){
+  clearInterval(gTimer); document.removeEventListener('keydown',gKeyHandler);
+  document.getElementById('g-popup').innerHTML='';
+  var corrR=gResults.filter(function(r){return r.correct;});
+  var avgMs=corrR.length?corrR.reduce(function(s,r){return s+r.ms;},0)/corrR.length:0;
+  var fastR=corrR.reduce(function(f,r){return (!f||r.ms<f.ms)?r:f;},null);
+  var slowR=corrR.reduce(function(s,r){return (!s||r.ms>s.ms)?r:s;},null);
+  var acc=gResults.length?Math.round(corrR.length/gResults.length*100):0;
+  var entry={score:gScore,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),avgMs:Math.round(avgMs),streak:gMaxStreak,ts:Date.now()};
+  var hs=lHi(); hs.push(entry); hs.sort(function(a,b){return b.score-a.score;});
+  var rank=hs.map(function(h){return h.ts;}).indexOf(entry.ts)+1;
+  sHi(hs.slice(0,10));
+  document.getElementById('game-area').innerHTML=buildGOver({corrR:corrR,avgMs:avgMs,fastR:fastR,slowR:slowR,acc:acc,rank:rank,leaderboard:hs.slice(0,10),entry:entry});
+}
+
+function buildGOver(o){
+  var corrR=o.corrR,avgMs=o.avgMs,fastR=o.fastR,slowR=o.slowR,acc=o.acc,rank=o.rank,leaderboard=o.leaderboard,entry=o.entry;
+  var score=gScore, em,msg;
+  if(score>=25){em='🏆';msg='Incredible!';}else if(score>=18){em='🌟';msg='Amazing speed!';}
+  else if(score>=12){em='💪';msg='Great game!';}else if(score>=6){em='😊';msg='Good start!';}
+  else{em='📖';msg='Keep practicing!';}
+  var stats=[
+    {e:'⚡',v:avgMs?(avgMs/1000).toFixed(2)+'s':'—',l:'Avg speed'},
+    {e:'🔥',v:gMaxStreak,l:'Best streak'},
+    {e:'🎯',v:acc+'%',l:'Accuracy'},
+    {e:'🆕',v:gNewWords,l:'New words'},
+    {e:'💥',v:gSuperBonus,l:'Super bonuses'},
+    {e:'🚨',v:gClutchSaves,l:'Clutch saves'}
+  ];
+  var ws=lwS();
+  var wordHTML=Object.keys(gWordsRight).map(function(hint){
+    var s=ws[hint]||{right:0,wrong:0};
+    var stars=s.right>=6?'⭐⭐⭐':s.right>=3?'⭐⭐':s.right>=1?'⭐':'✨';
+    var isN=gNewHints[hint], isS=gSuperHints[hint], isE=s.right>=6;
+    var cls=isN?'wchip wn':isS?'wchip ws':'wchip wr';
+    var badge=isE?'<span class="wc-b be">EXPERT</span>':isN?'<span class="wc-b bn">🆕 NEW</span>':isS?'<span class="wc-b bs">💥 SUPER</span>':'';
+    return '<div class="'+cls+'"><div class="wc-p">'+hint+'</div><div class="wc-s">'+stars+' <span style="font-size:9px;color:#a07cb8">×'+s.right+' total</span></div>'+badge+'</div>';
+  }).join('');
+  var lbHTML=leaderboard.map(function(h,i){
+    var me=h.ts===entry.ts;
+    return '<div class="lb-row '+(me?'lb-me':'')+'">'
+      +'<span class="lb-rk">'+(i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.')+'</span>'
+      +'<span class="lb-sc">'+h.score+'</span>'
+      +'<span class="lb-mt">'+h.date+' · '+(h.avgMs?h.avgMs+'ms':'—')+' · '+(h.streak||0)+' streak</span>'
+      +(me?'<b style="font-size:10px;color:#6b3fa0">← you</b>':'')+'</div>';
+  }).join('');
+  return '<div style="text-align:center;padding:16px 0 10px"><div style="font-size:52px">'+em+'</div>'
+    +'<div style="font-size:48px;font-weight:700;color:#6b3fa0">'+score+'</div>'
+    +'<div style="font-size:13px;color:#6b3fa0;font-weight:600">'+msg+'</div>'
+    +(rank>0?'<div style="font-size:12px;color:#c9a8e8">🏅 Rank #'+rank+'</div>':'')
+    +'</div>'
+    +'<div class="stat-grid">'+stats.map(function(s){return '<div class="stat-card"><div class="stat-e">'+s.e+'</div><div class="stat-v">'+s.v+'</div><div class="stat-l">'+s.l+'</div></div>';}).join('')+'</div>'
+    +'<div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 4px #e0c8f0;display:flex;justify-content:space-around;text-align:center">'
+    +'<div><div style="font-size:10px;color:#a07cb8">⚡ Fastest</div><div style="font-weight:700;color:#1a6b2a;font-size:12px">'+(fastR?(fastR.ms/1000).toFixed(2)+'s ('+fastR.hint+')':'—')+'</div></div>'
+    +'<div style="width:1px;background:#f0e4ff"></div>'
+    +'<div><div style="font-size:10px;color:#a07cb8">🐢 Slowest</div><div style="font-weight:700;color:#a02020;font-size:12px">'+(slowR?(slowR.ms/1000).toFixed(2)+'s ('+slowR.hint+')':'—')+'</div></div>'
+    +'</div>'
+    +'<div class="chart-wrap"><div class="chart-lbl">⚡ Response Speed</div>'+buildChart(gResults)+'<div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:10px;color:#a07cb8"><span>🟢 Fast</span><span>🟣 Avg</span><span>🔴 Slow</span></div></div>'
+    +(Object.keys(gWordsRight).length?'<div class="lb-wrap"><div class="lb-lbl">✅ Words you got right ('+Object.keys(gWordsRight).length+')</div><div class="word-grid">'+wordHTML+'</div></div>':'')
+    +'<div class="lb-wrap"><div class="lb-lbl">🏆 '+currentUser+"'s Top 10</div>"+(lbHTML||'<div style="color:#a07cb8;font-size:12px;text-align:center;padding:10px">No scores yet!</div>')+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:24px">'
+    +'<button onclick="startGame()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🎮 Play Again</button>'
+    +'<button onclick="goHome()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">🏠 Home</button>'
+    +'</div>';
 }
 
 // ═══════════════════════════════════════
-// 9. SETTINGS
+// 15. SETTINGS
 // ═══════════════════════════════════════
-function renderSettings(){document.getElementById('settings-form').innerHTML=`
-  <div class="set-group"><div class="set-label">⏱ Quiz auto-advance</div><div class="set-chips">${[1,2,3,5].map(s=>`<div class="chip${settings.advanceSec===s?' active':''}" onclick="setSetting('advanceSec',${s})">${s}s</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">❓ Questions per quiz</div><div class="set-chips">${[10,15,20,25,30,35,40,45,50].map(l=>`<div class="chip${settings.quizLen===l?' active':''}" onclick="setSetting('quizLen',${l})">${l}</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">🌍 My language</div><div class="set-chips">${LANGS.map(l=>`<div class="chip${settings.langCode===l.code?' active':''}" onclick="setSetting('langCode','${l.code}')">${l.label}</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">🎮 Game starting time</div><div class="set-chips">${[15,20,30,45,60].map(s=>`<div class="chip${settings.gameStartSec===s?' active':''}" onclick="setSetting('gameStartSec',${s})">${s}s</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">✅ Seconds added on correct</div><div class="set-chips">${[0.5,1,2,3].map(s=>`<div class="chip${settings.gameRightBonus===s?' active':''}" onclick="setSetting('gameRightBonus',${s})">+${s}s</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">❌ Seconds lost on wrong</div><div class="set-chips">${[3,5,8,10].map(s=>`<div class="chip${settings.gameWrongPenalty===s?' active':''}" onclick="setSetting('gameWrongPenalty',${s})">-${s}s</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">⌨️ Keyboard shortcuts</div><div class="set-chips">${Object.keys(KEY_LAYOUTS).map(k=>`<div class="chip${settings.keyLayout===k?' active':''}" onclick="setSetting('keyLayout','${k}')">${KEY_LAYOUTS[k].join('-').toUpperCase()}</div>`).join('')}</div></div>
-  <div class="set-group"><div class="set-label">✨ Visual effects</div><div class="set-chips">
-    <div class="chip${settings.flashOnWrong?' active':''}" onclick="setSetting('flashOnWrong',${!settings.flashOnWrong})">🔴 Flash on wrong</div>
-    <div class="chip${settings.shakeOnWrong?' active':''}" onclick="setSetting('shakeOnWrong',${!settings.shakeOnWrong})">📳 Shake on wrong</div>
-  </div></div>
-  <div class="set-group" style="text-align:center"><div class="set-label">🗑 Reset leaderboard</div>
-    <button onclick="if(confirm('Clear scores?')){localStorage.removeItem(uKey('ghi'));alert('Cleared!');}" style="background:#fff0f0;color:#a02020;border:1px solid #e87070;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600">Reset My Leaderboard</button>
-  </div>`;}
+function renderSettings(){
+  document.getElementById('settings-form').innerHTML =
+    '<div class="set-group"><div class="set-label">⏱ Quiz auto-advance</div><div class="set-chips">'
+    +[1,2,3,5].map(function(s){return '<div class="chip'+(settings.advanceSec===s?' active':'')+'" onclick="setSetting(\'advanceSec\','+s+')">'+s+'s</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">❓ Questions per quiz</div><div class="set-chips">'
+    +[10,15,20,25,30,35,40,45,50].map(function(l){return '<div class="chip'+(settings.quizLen===l?' active':'')+'" onclick="setSetting(\'quizLen\','+l+')">'+l+'</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">🌍 My language</div><div class="set-chips">'
+    +LANGS.map(function(l){return '<div class="chip'+(settings.langCode===l.code?' active':'')+'" onclick="setSetting(\'langCode\',\''+l.code+'\')">'+l.label+'</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">🎮 Game starting time</div><div class="set-chips">'
+    +[15,20,30,45,60].map(function(s){return '<div class="chip'+(settings.gameStartSec===s?' active':'')+'" onclick="setSetting(\'gameStartSec\','+s+')">'+s+'s</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">✅ Seconds added on correct</div><div class="set-chips">'
+    +[0.5,1,2,3].map(function(s){return '<div class="chip'+(settings.gameRightBonus===s?' active':'')+'" onclick="setSetting(\'gameRightBonus\','+s+')">+'+s+'s</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">❌ Seconds lost on wrong</div><div class="set-chips">'
+    +[3,5,8,10].map(function(s){return '<div class="chip'+(settings.gameWrongPenalty===s?' active':'')+'" onclick="setSetting(\'gameWrongPenalty\','+s+')">-'+s+'s</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">⌨️ Keyboard shortcuts</div><div class="set-chips">'
+    +Object.keys(KEY_LAYOUTS).map(function(k){return '<div class="chip'+(settings.keyLayout===k?' active':'')+'" onclick="setSetting(\'keyLayout\',\''+k+'\')">'+KEY_LAYOUTS[k].join('-').toUpperCase()+'</div>';}).join('')+'</div></div>'
+    +'<div class="set-group"><div class="set-label">✨ Visual effects</div><div class="set-chips">'
+    +'<div class="chip'+(settings.flashOnWrong?' active':'')+'" onclick="setSetting(\'flashOnWrong\','+(!settings.flashOnWrong)+')">🔴 Flash on wrong</div>'
+    +'<div class="chip'+(settings.shakeOnWrong?' active':'')+'" onclick="setSetting(\'shakeOnWrong\','+(!settings.shakeOnWrong)+')">📳 Shake on wrong</div>'
+    +'</div></div>'
+    +'<div class="set-group" style="text-align:center"><div class="set-label">🗑 Reset leaderboard</div>'
+    +'<button onclick="resetLeaderboard()" style="background:#fff0f0;color:#a02020;border:1px solid #e87070;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600">Reset My Leaderboard</button>'
+    +'</div>';
+}
+
 function setSetting(k,v){settings[k]=v;renderSettings();}
 
-// ═══════════════════════════════════════
-// 10. STORIES
-// ═══════════════════════════════════════
-const pw=(e,s)=>({e,s}),pp=t=>({p:t});
-const STORIES=[
-  {emoji:"🎣",title:"El Príncipe Mojado",sub:"The Wet Prince",desc:"She is fishing. A prince falls in the water. He is not very impressive.",chapters:[{title:"La Pesca",lines:[{s:[pw("She goes outside","Ella sale afuera"),pp(". "),pw("It is a good day","Es un buen día"),pp(".")],es:"Ella sale afuera. Es un buen día."},{s:[pw("She sits by the water and waits","Ella se sienta cerca del agua y espera"),pp(".")],es:"Ella se sienta y espera."},{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("I want to find a big fish today","Yo quiero encontrar un pez grande hoy"),pp('."')],es:'Ella piensa: "Yo quiero un pez grande."'},{s:[pw("Then she hears something very loud","Entonces ella escucha algo muy fuerte"),pp(".")],es:"Entonces ella escucha algo muy fuerte."}]},{title:"El Príncipe",lines:[{s:[pw("A man falls into the water","Un hombre cae al agua"),pp(". "),pw("Big splash","Gran chapuzón"),pp(".")],es:"Un hombre cae al agua. Gran chapuzón."},{s:[pw("He is wet and very sad","Él está mojado y muy triste"),pp(".")],es:"Él está mojado y muy triste."},{s:[pw("He says","Él dice"),pp(': "'),pw("I am a prince! Help me","Yo soy un príncipe! Ayúdame"),pp('!"')],es:'Él dice: "¡Yo soy un príncipe!"'},{s:[pw("She says","Ella dice"),pp(': "'),pw("Wait. I have a fish","Espera. Yo tengo un pez"),pp('."')],es:'Ella dice: "Espera. Yo tengo un pez."'},{s:[pw("He waits. Cold. Wet. And very small","Él espera. Frío. Mojado. Y muy pequeño"),pp(".")],es:"Él espera. Frío. Mojado. Y muy pequeño."}]},{title:"Después",lines:[{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("He is not bad. For a wet prince","Él no está mal. Para un príncipe mojado"),pp('."')],es:'Ella piensa: "Él no está mal."'},{s:[pw("He asks","Él pregunta"),pp(': "'),pw("Can I come back tomorrow","¿Puedo volver mañana"),pp('?"')],es:'Él pregunta: "¿Puedo volver mañana?"'},{s:[pw("She says","Ella dice"),pp(': "'),pw("Maybe. But bring food","Tal vez. Pero trae comida"),pp('."')],es:'Ella dice: "Tal vez. Pero trae comida."'}]}]},
-  {emoji:"🤖",title:"Optimus en la Cocina",sub:"Optimus in the Kitchen",desc:"A giant robot is very hungry. He finds a RoboSousChef. The kitchen does not survive.",chapters:[{title:"El Robot Hambriento",lines:[{s:[pw("Optimus is big. Very big","Optimus es grande. Muy grande"),pp(".")],es:"Optimus es grande. Muy grande."},{s:[pw("He is hungry. He needs to eat","Él tiene hambre. Él necesita comer"),pp(".")],es:"Él tiene hambre. Él necesita comer."},{s:[pw("He goes inside. He bumps into everything","Él entra adentro. Él choca con todo"),pp(".")],es:"Él entra adentro. Él choca con todo."}]},{title:"La Máquina",lines:[{s:[pw("He sees a machine. Small. But fast","Él ve una máquina. Pequeña. Pero rápida"),pp(".")],es:"Él ve una máquina. Pequeña. Pero rápida."},{s:[pw("He reads: RoboSousChef. A robot that cooks","Él lee: RoboSousChef. Un robot que cocina"),pp(".")],es:"Él lee: RoboSousChef. Un robot que cocina."},{s:[pw("He opens it, puts food inside, and closes it","Él lo abre, pone comida adentro, y lo cierra"),pp(".")],es:"Él lo abre, pone comida adentro, y lo cierra."},{s:[pw("He watches. He waits. He does not blink","Él mira. Él espera. Él no parpadea"),pp(".")],es:"Él mira. Él espera. Él no parpadea."}]},{title:"La Comida",lines:[{s:[pw("The food is hot and very good","La comida está caliente y muy buena"),pp(".")],es:"La comida está caliente y muy buena."},{s:[pw("He eats everything","Él come todo"),pp(".")],es:"Él come todo."},{s:[pw("Then he laughs. A very big laugh","Entonces él ríe. Una muy grande carcajada"),pp(".")],es:"Entonces él ríe. Una muy grande carcajada."},{s:[pw("The walls shake. The kitchen falls down","Las paredes tiemblan. La cocina cae abajo"),pp(".")],es:"Las paredes tiemblan. La cocina cae abajo."},{s:[pw("He says","Él dice"),pp(': "'),pw("Maybe I eat outside next time","Tal vez como afuera la próxima vez"),pp('."')],es:'Él dice: "Tal vez como afuera la próxima vez."'}]}]},
-  {emoji:"🧵",title:"La Aguja y el Corazón",sub:"The Needle and the Heart",desc:"She sews alone. A man arrives with a very bad coat.",chapters:[{title:"La Costurera",lines:[{s:[pw("She works every day","Ella trabaja todos los días"),pp(".")],es:"Ella trabaja todos los días."},{s:[pw("She makes beautiful things. Nobody sees them","Ella hace cosas hermosas. Nadie las ve"),pp(".")],es:"Ella hace cosas hermosas. Nadie las ve."},{s:[pw("She thinks","Ella piensa"),pp(': "'),pw("One day, someone will see","Un día, alguien verá"),pp('."')],es:'Ella piensa: "Un día, alguien verá."'}]},{title:"El Hombre",lines:[{s:[pw("He says","Él dice"),pp(': "'),pw("Can you help me? I need something fixed","¿Puedes ayudarme? Necesito algo arreglado"),pp('."')],es:'Él dice: "¿Puedes ayudarme?"'},{s:[pw("She looks at his coat. It is very, very bad","Ella mira su abrigo. Está muy, muy malo"),pp(".")],es:"Está muy, muy malo."},{s:[pw("She works all night. She does not sleep","Ella trabaja toda la noche. Ella no duerme"),pp(".")],es:"Ella trabaja toda la noche."},{s:[pw("She makes it beautiful","Ella lo hace hermoso"),pp(".")],es:"Ella lo hace hermoso."}]},{title:"El Regreso",lines:[{s:[pw("He says","Él dice"),pp(': "'),pw("Who made this","¿Quién hizo esto"),pp('?"')],es:'Él dice: "¿Quién hizo esto?"'},{s:[pw("She says: I made it","Ella dice: Yo lo hice"),pp(".")],es:'Ella dice: "Yo lo hice."'},{s:[pw("He says","Él dice"),pp(': "'),pw("Can I come back? Not for the coat","¿Puedo volver? No por el abrigo"),pp('."')],es:'Él dice: "¿Puedo volver? No por el abrigo."'},{s:[pw("She laughs. Maybe, she says. Maybe","Ella ríe. Tal vez, ella dice. Tal vez"),pp(".")],es:'Ella ríe. "Tal vez," ella dice.'}]}]},
-  {emoji:"🪔",title:"El Genio de la Laguna",sub:"The Genie of the Lake",desc:"She finds a lamp while fishing. The genie wastes her second wish.",chapters:[{title:"La Lámpara",lines:[{s:[pw("She is fishing. It is a good day","Ella está pescando. Es un buen día"),pp(".")],es:"Ella está pescando. Es un buen día."},{s:[pw("She finds something in the water. Not a fish","Ella encuentra algo en el agua. No un pez"),pp(".")],es:"Ella encuentra algo. No un pez."},{s:[pw("He says","Él dice"),pp(': "'),pw("I am a genie. I have three wishes for you","Yo soy un genio. Tengo tres deseos para ti"),pp('."')],es:'Él dice: "Yo soy un genio."'}]},{title:"Los Deseos",lines:[{s:[pw("First wish: I want a big house","Primer deseo: Yo quiero una casa grande"),pp(".")],es:'Primer deseo: "Yo quiero una casa grande."'},{s:[pw("She cannot find her bed. It is too big","Ella no puede encontrar su cama. Está demasiado grande"),pp(".")],es:"Ella no puede encontrar su cama."},{s:[pw("He says","Él dice"),pp(': "'),pw("That was your second wish","Ese fue tu segundo deseo"),pp('."')],es:'Él dice: "Ese fue tu segundo deseo."'},{s:[pw("He says: Nobody is perfect","Él dice: Nadie es perfecto"),pp(".")],es:'Él dice: "Nadie es perfecto."'}]},{title:"El Tercer Deseo",lines:[{s:[pw("She says","Ella dice"),pp(': "'),pw("I want someone who makes me laugh","Yo quiero alguien que me hace reír"),pp('."')],es:'Ella dice: "Yo quiero alguien que me hace reír."'},{s:[pw("The genie looks at her. Then he laughs","El genio la mira. Entonces él ríe"),pp(".")],es:"El genio la mira. Entonces él ríe."},{s:[pw("She laughs too","Ella ríe también"),pp(".")],es:"Ella ríe también."},{s:[pw("He says: Maybe","Él dice: Tal vez"),pp(".")],es:'Él dice: "Tal vez."'},{s:[pw("She goes back to fishing. He sits next to her","Ella regresa a pescar. Él se sienta junto a ella"),pp(".")],es:"Ella regresa a pescar. Él se sienta junto a ella."}]}]}
-];
-let storySubs=false;
-function buildPicker(){document.getElementById('story-reader').style.display='none';document.getElementById('story-picker').style.display='';document.getElementById('story-picker').innerHTML=`<div class="picker-grid">${STORIES.map((st,i)=>`<div class="story-card" onclick="openStory(${i})"><div class="sc-emoji">${st.emoji}</div><div class="sc-title">${st.title}</div><div class="sc-sub">${st.sub}</div><div class="sc-desc">${st.desc}</div></div>`).join('')}</div>`;}
-function openStory(i){storySubs=false;const st=STORIES[i];document.getElementById('story-picker').style.display='none';const rdr=document.getElementById('story-reader');rdr.innerHTML=`<div class="story-bar"><button class="s-btn" onclick="buildPicker()">← Stories</button><button class="s-btn" onclick="sReset()">↺ Reset</button><button class="s-btn" id="s-sub-btn" onclick="sToggle()">Hide subtitles</button></div><p class="s-hint">Toca cualquier <span>frase</span> para verla en español</p>${st.chapters.map(ch=>`<div class="ch"><div class="ch-title">${ch.title}</div>${ch.lines.map(ln=>`<div class="lp"><div class="en-l">${ln.s.map(seg=>seg.p!==undefined?`<span>${seg.p}</span>`:`<span class="w" data-en="${(seg.e||'').replace(/"/g,'&quot;')}" data-es="${(seg.s||'').replace(/"/g,'&quot;')}" onclick="sTap(this)">${seg.e}</span>`).join('')}</div><div class="es-l">${ln.es}</div></div>`).join('')}</div>`).join('')}<div class="s-ending">Fin — The End 🌙</div>`;rdr.style.display='';}
-function sTap(el){const f=el.classList.contains('flipped');el.textContent=f?el.dataset.en:el.dataset.es;el.classList.toggle('flipped',!f);}
-function sReset(){document.querySelectorAll('#story-reader .w.flipped').forEach(el=>{el.textContent=el.dataset.en;el.classList.remove('flipped');});}
-function sToggle(){storySubs=!storySubs;document.querySelectorAll('#story-reader .es-l').forEach(el=>el.classList.toggle('hidden',storySubs));document.getElementById('s-sub-btn').textContent=storySubs?'Show subtitles':'Hide subtitles';}
+function resetLeaderboard(){
+  if(confirm('Clear scores?')){
+    try{localStorage.removeItem(uKey('ghi'));}catch(e){}
+    alert('Cleared!');
+  }
+}
 
 // ═══════════════════════════════════════
-// 11. INIT
+// 16. STORIES
+// ═══════════════════════════════════════
+var storySubs = false;
+
+function buildPicker(){
+  document.getElementById('story-reader').style.display='none';
+  document.getElementById('story-picker').style.display='';
+  document.getElementById('story-picker').innerHTML =
+    '<div class="picker-grid">'
+    +STORIES.map(function(st,i){
+      return '<div class="story-card" onclick="openStory('+i+')">'
+        +'<div class="sc-emoji">'+st.emoji+'</div>'
+        +'<div class="sc-title">'+st.title+'</div>'
+        +'<div class="sc-sub">'+st.sub+'</div>'
+        +'<div class="sc-desc">'+st.desc+'</div>'
+        +'</div>';
+    }).join('')+'</div>';
+}
+
+function openStory(i){
+  storySubs=false;
+  var st=STORIES[i];
+  document.getElementById('story-picker').style.display='none';
+  var rdr=document.getElementById('story-reader');
+  var chHTML=st.chapters.map(function(ch){
+    return '<div class="ch"><div class="ch-title">'+ch.title+'</div>'
+      +ch.lines.map(function(ln,li){
+        var lineId='ln_'+i+'_'+st.chapters.indexOf(ch)+'_'+li;
+        var enLine=ln.s.map(function(seg,si){
+          if(seg.p!==undefined) return '<span>'+seg.p+'</span>';
+          var wid='w_'+i+'_'+st.chapters.indexOf(ch)+'_'+li+'_'+si;
+          return '<span class="w" id="'+wid+'" data-en="'+seg.e.replace(/"/g,'&quot;')+'" data-es="'+seg.s.replace(/"/g,'&quot;')+'" onclick="sTap(\''+wid+'\')">'+seg.e+'</span>';
+        }).join('');
+        return '<div class="lp"><div class="en-l">'+enLine+'</div><div class="es-l" id="es_'+lineId+'">'+ln.es+'</div></div>';
+      }).join('')+'</div>';
+  }).join('');
+  rdr.innerHTML =
+    '<div class="story-bar">'
+    +'<button class="s-btn" onclick="buildPicker()">← Stories</button>'
+    +'<button class="s-btn" onclick="sReset()">↺ Reset</button>'
+    +'<button class="s-btn" id="s-sub-btn" onclick="sToggle()">Hide subtitles</button>'
+    +'</div>'
+    +'<p class="s-hint">Toca cualquier <span>frase</span> para verla en español</p>'
+    +chHTML
+    +'<div class="s-ending">Fin — The End 🌙</div>';
+  rdr.style.display='';
+}
+
+function sTap(wid){
+  var el=document.getElementById(wid);
+  if(!el)return;
+  var f=el.classList.contains('flipped');
+  el.textContent=f?el.dataset.en:el.dataset.es;
+  el.classList.toggle('flipped',!f);
+}
+
+function sReset(){
+  document.querySelectorAll('#story-reader .w.flipped').forEach(function(el){
+    el.textContent=el.dataset.en;
+    el.classList.remove('flipped');
+  });
+}
+
+function sToggle(){
+  storySubs=!storySubs;
+  document.querySelectorAll('#story-reader .es-l').forEach(function(el){el.classList.toggle('hidden',storySubs);});
+  document.getElementById('s-sub-btn').textContent=storySubs?'Show subtitles':'Hide subtitles';
+}
+
+// ═══════════════════════════════════════
+// 17. INIT — auto-restore last user
 // ═══════════════════════════════════════
 try{
-  const last=localStorage.getItem('lastUser');
-  if(last==='Rosa')selectUser('Rosa','R','av-rosa','🌹 Learning English');
-  else if(last==='Aamir')selectUser('Aamir','A','av-aamir','⚡ Spanish tenses');
+  var last=localStorage.getItem('lastUser');
+  if(last==='Rosa') selectUser('Rosa','R','av-rosa','🌹 Learning English');
+  else if(last==='Aamir') selectUser('Aamir','A','av-aamir','⚡ Spanish tenses');
 }catch(e){}
 </script>
 </body>
