@@ -21,6 +21,12 @@ body{font-family:sans-serif;background:#f9f0ff;min-height:100vh;max-width:500px;
 .av-rosa{background:linear-gradient(135deg,#e87cb8,#a03070)}
 .av-aamir{background:linear-gradient(135deg,#6b3fa0,#3a1060)}
 .av-ilias{background:linear-gradient(135deg,#00b894,#006644)}
+.av-admin{background:linear-gradient(135deg,#2c3e50,#4a5568)}
+.admin-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 6px #e0c8f0}
+.admin-stat{flex:1;text-align:center;border-radius:10px;padding:8px}
+.admin-lbl{font-size:10px;color:#a07cb8;margin-top:2px}
+.admin-val{font-size:20px;font-weight:700}
+.admin-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f3e8ff;font-size:12px}
 .user-name{font-size:18px;font-weight:700;color:#3a2050}
 .user-sub{font-size:11px;color:#a07cb8;margin-top:2px}
 .user-arrow{font-size:20px;color:#d8b4f8}
@@ -205,8 +211,13 @@ tr.challenge td{background:#fff4f0!important}
         <div style="flex:1"><div class="user-name">Ilias</div><div class="user-sub">⚽ Learning Spanish</div></div>
         <div class="user-arrow">→</div>
       </div>
+      <div class="user-card" onclick="selectUser('Admin','👁','av-admin','📊 Activity dashboard')" style="border:1.5px dashed #c9a8e8;background:#fafafa;margin-top:4px">
+        <div class="user-avatar av-admin" style="font-size:18px">👁</div>
+        <div style="flex:1"><div class="user-name" style="color:#555">Admin</div><div class="user-sub">📊 View all activity</div></div>
+        <div class="user-arrow">→</div>
+      </div>
     </div>
-    <div class="app-ver">v2.3.0 · May 31, 2026 · 8:23 PM</div>
+    <div class="app-ver">v2.7.1 · Jun 1, 2026 · 12:32 AM ET</div>
   </div>
 </div>
 
@@ -225,7 +236,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-avatar pill-av" id="pill-av" style="width:28px;height:28px;font-size:13px"></div>
         <div><div class="pill-name" id="pill-name"></div><div class="pill-switch">tap to switch</div></div>
       </div>
-      <div class="ver-tag"><b>v2.3.0</b><br>May 31 · 8:23 PM</div>
+      <div class="ver-tag"><b>v2.7.1</b><br>Jun 1 · 12:32 AM ET</div>
     </div>
     <div class="home-header">
       <div class="logo">🌟</div>
@@ -1200,7 +1211,10 @@ function getWordBank(){try{return JSON.parse(localStorage.getItem(uKey('wbank'))
 function saveWordBank(b){try{localStorage.setItem(uKey('wbank'),JSON.stringify(b));}catch(e){}}
 function addToWordBank(word){
   var b=getWordBank();
-  if(!b.find(function(w){return w.es===word.es&&w.pack===word.pack;})){b.push(word);saveWordBank(b);}
+  if(!b.find(function(w){return w.es===word.es&&w.pack===word.pack;})){
+    b.push(word);saveWordBank(b);
+    logActivity(currentUser,'word_added',{es:word.es,en:word.en,pack:word.pack});
+  }
 }
 function removeFromWordBank(es,pack){
   var b=getWordBank().filter(function(w){return !(w.es===es&&w.pack===pack);});
@@ -1214,7 +1228,8 @@ function getBankQuestions(){
     var wrongs=shuffle(bank.filter(function(x){return x.es!==w.es;})).slice(0,3).map(function(x){return x.es;});
     if(wrongs.length<3) return;
     var p=ILIAS_WORD_PACKS[w.pack]||{};
-    qs.push({cat:w.pack||'gaming',sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:w.es,answer:w.es,wrong:wrongs});
+    var pLabel=(ILIAS_WORD_PACKS[w.pack]&&ILIAS_WORD_PACKS[w.pack].label)||w.pack||'';
+    qs.push({cat:w.pack||'gaming',sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:pLabel,answer:w.es,wrong:wrongs});
   });
   return qs;
 }
@@ -1318,6 +1333,7 @@ function showLearnFlash(txt){
 function showDiscoveryDone(){
   var bank=getWordBank(), p=ILIAS_WORD_PACKS[discPack];
   var packLearned=bank.filter(function(w){return w.pack===discPack;}).length;
+  if(discBatch.length>0) logActivity(currentUser,'discovery_complete',{pack:p.label,learned:discBatch.length});
   document.getElementById('screen-wordlist').innerHTML=
     '<div style="padding:16px;text-align:center">'
     +'<div style="font-size:52px;margin-bottom:12px">'+(discBatch.length>0?'🎉':'✅')+'</div>'
@@ -1465,10 +1481,34 @@ function renderWordBankView(){
 // ── ILIAS QUIZ (from word bank) ──
 function startIliasQuiz(){
   var qs=getBankQuestions();
-  if(qs.length<4){showLearnFlash('Learn 4+ words first!');return;}
+  if(qs.length<4){
+    // Not enough words - show message wherever we are
+    var scr=document.getElementById('screen-wordlist');
+    if(scr) scr.innerHTML=
+      '<div style="padding:16px;text-align:center;padding-top:60px">'
+      +'<div style="font-size:52px;margin-bottom:12px">📖</div>'
+      +'<div style="font-size:18px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Need more words first!</div>'
+      +'<div style="font-size:13px;color:#a07cb8;margin-bottom:20px">Add at least 4 words to practice.</div>'
+      +'<button onclick="renderIliasLearn()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer">🎓 Learn Words →</button>'
+      +'</div>';
+    return;
+  }
+  // Set up round mode BEFORE showing quiz screen
+  qRoundMode=true; qRoundCorrect=0; qRoundWrong=0;
   qQueue=shuffle(qs).slice(0,Math.min(settings.quizLen,qs.length)).map(function(q){return{q:q,streak:0};});
+  qRoundTotal=qQueue.length;
   qPos=0; qExpert=0; qAnswered=false;
-  openScreen('quiz','🎯 Word Bank Quiz');
+  // Show quiz screen directly — do NOT call openScreen (it would call startQuiz and reset qRoundMode)
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen-quiz').classList.add('active');
+  document.getElementById('nav-title').textContent='🎯 Word Bank Quiz';
+  document.getElementById('nav-back').style.display='';
+  document.getElementById('nav-home').style.display='';
+  var qa=document.getElementById('quiz-area');
+  var qs2=document.getElementById('quiz-score');
+  if(qa){qa.style.display='';qa.innerHTML='';}
+  if(qs2) qs2.style.display='none';
+  renderQ();
 }
 
 // ── TENSES & PRONOUNS ──
@@ -1571,9 +1611,438 @@ function shuffle(arr){
   return a;
 }
 
+
+// ── ILIAS STORY VOCABULARY (simple/base form only) ──
+// Index matches position in ILIAS_STORIES array
+var ILIAS_STORY_VOCAB = {
+  0: [ // El Partido Final (Level 1)
+    {es:'Jugar',en:'Play',pack:'futbol'},
+    {es:'El equipo',en:'Team',pack:'futbol'},
+    {es:'La cancha',en:'Field',pack:'futbol'},
+    {es:'El partido',en:'Match',pack:'futbol'},
+    {es:'El balón',en:'Ball',pack:'futbol'},
+    {es:'El árbitro',en:'Referee',pack:'futbol'},
+    {es:'Ganar',en:'Win',pack:'futbol'},
+    {es:'Correr',en:'Run',pack:'futbol'},
+    {es:'Patear',en:'Kick',pack:'futbol'},
+    {es:'Caer',en:'Fall',pack:'jiujitsu'}
+  ],
+  1: [ // El Pez Más Grande (Level 1)
+    {es:'Pescar',en:'Fish',pack:'pesca'},
+    {es:'El pez',en:'The fish',pack:'pesca'},
+    {es:'La caña',en:'The rod',pack:'pesca'},
+    {es:'El río',en:'River',pack:'pesca'},
+    {es:'El bote',en:'Boat',pack:'pesca'},
+    {es:'Capturar',en:'Catch',pack:'pesca'},
+    {es:'Grande',en:'Big',pack:'pesca'},
+    {es:'Jalar',en:'Pull',pack:'jiujitsu'}
+  ],
+  2: [ // Roblox vs Ryano (Level 1)
+    {es:'Jugar',en:'Play',pack:'gaming'},
+    {es:'Construir',en:'Build',pack:'gaming'},
+    {es:'El mundo',en:'World',pack:'gaming'},
+    {es:'El personaje',en:'Character',pack:'gaming'},
+    {es:'El enemigo',en:'Enemy',pack:'gaming'},
+    {es:'Ganar',en:'Win',pack:'gaming'},
+    {es:'Fuerte',en:'Strong',pack:'jiujitsu'},
+    {es:'Las paredes',en:'The walls',pack:'aventura'}
+  ],
+  3: [ // El Cinturón Azul (Level 1)
+    {es:'Luchar',en:'Fight',pack:'jiujitsu'},
+    {es:'El cinturón',en:'Belt',pack:'jiujitsu'},
+    {es:'Entrenar',en:'Train',pack:'futbol'},
+    {es:'Fuerte',en:'Strong',pack:'jiujitsu'},
+    {es:'Rápido',en:'Fast',pack:'jiujitsu'},
+    {es:'Ganar',en:'Win',pack:'jiujitsu'},
+    {es:'El oponente',en:'Opponent',pack:'jiujitsu'},
+    {es:'Nervioso',en:'Nervous',pack:'escuela'}
+  ],
+  8: [ // El Restaurante (Level 3)
+    {es:'El restaurante',en:'Restaurant',pack:'escuela'},
+    {es:'El camarero',en:'Waiter',pack:'escuela'},
+    {es:'El menú',en:'Menu',pack:'escuela'},
+    {es:'La cuenta',en:'The bill',pack:'escuela'},
+    {es:'El café',en:'Coffee',pack:'pesca'},
+    {es:'El agua',en:'Water',pack:'pesca'},
+    {es:'La mesa',en:'Table',pack:'escuela'},
+    {es:'Pedir',en:'Order/Ask for',pack:'escuela'}
+  ],
+  9: [ // El Perro y la Lluvia (Level 3)
+    {es:'El perro',en:'Dog',pack:'aventura'},
+    {es:'La lluvia',en:'Rain',pack:'aventura'},
+    {es:'La ventana',en:'Window',pack:'escuela'},
+    {es:'La calle',en:'Street',pack:'escuela'},
+    {es:'La puerta',en:'Door',pack:'escuela'},
+    {es:'La silla',en:'Chair',pack:'escuela'},
+    {es:'Entrar',en:'Come in/Enter',pack:'escuela'},
+    {es:'Mojado',en:'Wet',pack:'pesca'}
+  ],
+  10: [ // La Música del Vecino (Level 3)
+    {es:'La música',en:'Music',pack:'influencer'},
+    {es:'La guitarra',en:'Guitar',pack:'influencer'},
+    {es:'El vecino',en:'Neighbor',pack:'familia'},
+    {es:'La pared',en:'Wall',pack:'escuela'},
+    {es:'La canción',en:'Song',pack:'influencer'},
+    {es:'Escuchar',en:'Listen',pack:'escuela'},
+    {es:'Tocar',en:'Play (instrument)',pack:'influencer'},
+    {es:'Hermosa',en:'Beautiful',pack:'familia'}
+  ],
+  11: [ // Las Flores del Sábado (Level 3)
+    {es:'El mercado',en:'Market',pack:'escuela'},
+    {es:'La flor',en:'Flower',pack:'aventura'},
+    {es:'Rojo',en:'Red',pack:'aventura'},
+    {es:'Amarillo',en:'Yellow',pack:'aventura'},
+    {es:'Blanco',en:'White',pack:'aventura'},
+    {es:'El precio',en:'Price',pack:'escuela'},
+    {es:'La mamá',en:'Mom',pack:'familia'},
+    {es:'Elegir',en:'Choose',pack:'escuela'}
+  ]
+};
+
+// Show vocab offer at end of Ilias story
+function clearVocabOffer(){var el=document.getElementById('story-vocab-offer');if(el)el.innerHTML='';}
+function showStoryVocabOffer(storyIdx){
+  var vocab = ILIAS_STORY_VOCAB[storyIdx];
+  if(!vocab||!vocab.length) return;
+  var bank = getWordBank();
+  // Filter out words already in bank (by Spanish text)
+  var newWords = vocab.filter(function(w){
+    return !bank.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();});
+  });
+  var el = document.getElementById('story-vocab-offer');
+  if(!el) return;
+  if(!newWords.length){
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:#3aaa6a;font-weight:700">✅ You already have all these words!</div>';
+    return;
+  }
+  var wHTML = newWords.map(function(w){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid #f3e8ff">'
+      +'<div><span style="font-weight:700;color:#3a2050">'+w.es+'</span>'
+      +'<span style="color:#a07cb8;font-size:12px"> = '+w.en+'</span></div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML =
+    '<div style="background:#fff;border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 2px 10px #e0c8f0">'
+    +'<div style="font-size:14px;font-weight:700;color:#6b3fa0;margin-bottom:8px">📝 Story vocabulary ('+newWords.length+' new words):</div>'
+    +wHTML
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">'
+    +'<button onclick="addStoryWords('+storyIdx+')" style="background:#6b3fa0;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer">➕ Add All</button>'
+    +'<button onclick="clearVocabOffer()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer">Skip</button>'
+    +'</div></div>';
+}
+
+function addStoryWords(storyIdx){
+  var vocab = ILIAS_STORY_VOCAB[storyIdx];
+  if(!vocab) return;
+  var bank = getWordBank();
+  var added = 0;
+  vocab.forEach(function(w){
+    if(!bank.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();})){
+      bank.push({es:w.es,en:w.en,pack:w.pack||'escuela',status:''});
+      added++;
+    }
+  });
+  saveWordBank(bank);
+  var stTitle=ILIAS_STORIES[storyIdx]?ILIAS_STORIES[storyIdx].title:'story';
+  logActivity(currentUser,'story_words_added',{count:added,title:stTitle,idx:storyIdx});
+  var el = document.getElementById('story-vocab-offer');
+  if(el) el.innerHTML = '<div style="text-align:center;padding:14px;color:#3aaa6a;font-weight:700;font-size:15px">✅ Added '+added+' words to your list!</div>';
+}
+
+// Word bank table view with checkmarks (replaces word list for Ilias)
+function renderWordBankTable(){
+  var bank = getWordBank();
+  var scr = document.getElementById('screen-wordlist');
+  if(!scr) return;
+
+  if(!bank.length){
+    scr.innerHTML = '<div style="padding:16px;text-align:center;padding-top:60px">'
+      +'<div style="font-size:52px;margin-bottom:12px">📦</div>'
+      +'<div style="font-size:18px;font-weight:700;color:#6b3fa0;margin-bottom:8px">Your word bank is empty!</div>'
+      +'<div style="font-size:13px;color:#a07cb8;margin-bottom:20px">Go learn some words first.</div>'
+      +'<button onclick="renderIliasLearn()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer">🎓 Learn Words →</button>'
+      +'</div>';
+    return;
+  }
+
+  var diff = bank.filter(function(w){return w.status==='c';});
+  var work = bank.filter(function(w){return !w.status||w.status==='';});
+  var exp  = bank.filter(function(w){return w.status==='e';});
+
+  function mkRows(words, label){
+    if(!words.length) return '';
+    var rows = words.map(function(w,idx){
+      var i = bank.indexOf(w)+1;
+      return '<tr class="'+(w.status==='e'?'expert':w.status==='c'?'challenge':'')+'">'
+        +'<td class="num">'+i+'</td>'
+        +'<td style="font-weight:600">'+w.es+'</td>'
+        +'<td style="color:#6b3fa0">'+w.en+'</td>'
+        +'<td><div class="marks">'
+        +'<button class="mk '+(w.status==='e'?'on':'')+'" data-es="'+w.es+'" data-pk="'+(w.pack||'')+'" data-st="e" onclick="setBankStatus(this)">✅</button>'
+        +'<button class="mk '+(w.status==='c'?'on':'')+'" data-es="'+w.es+'" data-pk="'+(w.pack||'')+'" data-st="c" onclick="setBankStatus(this)">⚠️</button>'
+        +'</div></td></tr>';
+    }).join('');
+    return '<div class="sec-label">'+label+' — '+words.length+'</div>'
+      +'<table><thead><tr><th class="num">#</th><th>Español</th><th>English</th><th></th></tr></thead>'
+      +'<tbody>'+rows+'</tbody></table>';
+  }
+
+  var html = '<div style="padding:16px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+    +'<div style="font-size:18px;font-weight:900;color:#3a2050">📦 My Words ('+bank.length+')</div>'
+    +'<button onclick="renderIliasLearn()" style="background:#6b3fa0;color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">➕ Learn More</button>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:14px">'
+    +'<div style="flex:1;text-align:center;background:#fff8e8;border-radius:10px;padding:8px"><div style="font-size:18px;font-weight:700;color:#c07010">'+diff.length+'</div><div style="font-size:10px;color:#a07cb8">⚠️ Hard</div></div>'
+    +'<div style="flex:1;text-align:center;background:#f3e4ff;border-radius:10px;padding:8px"><div style="font-size:18px;font-weight:700;color:#6b3fa0">'+work.length+'</div><div style="font-size:10px;color:#a07cb8">📖 Working</div></div>'
+    +'<div style="flex:1;text-align:center;background:#edfff3;border-radius:10px;padding:8px"><div style="font-size:18px;font-weight:700;color:#1a6b2a">'+exp.length+'</div><div style="font-size:10px;color:#a07cb8">✅ Expert</div></div>'
+    +'</div>'
+    +(diff.length ? mkRows(diff,'⚠️ Difficult') : '')
+    +(work.length ? mkRows(work,'📖 Working') : '')
+    +(exp.length  ? mkRows(exp, '✅ Expert')  : '')
+    +(bank.length>=4 ? '<button onclick="startIliasQuiz()" style="width:100%;background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">🎯 Practice These Words</button>' : '')
+    +'<div style="font-size:11px;color:#a07cb8;text-align:center;margin-top:8px">Tap ✅ expert · ⚠️ hard</div>'
+    +'</div>';
+
+  scr.innerHTML = html;
+}
+
+function setBankStatus(btn){
+  var es=btn.dataset.es, pk=btn.dataset.pk, st=btn.dataset.st;
+  var b=getWordBank();
+  var w=b.find(function(x){return x.es===es&&x.pack===pk;});
+  if(w){w.status=(w.status===st)?'':st;saveWordBank(b);}
+  renderWordBankTable();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// ADMIN + ACTIVITY LOGGING SYSTEM
+// ═══════════════════════════════════════════════════════
+
+// ── Activity log (global, all users) ──
+function logActivity(user,action,data){
+  if(!user||user==='Admin') return;
+  try{
+    var log=JSON.parse(localStorage.getItem('rla2_actlog')||'[]');
+    log.push({user:user,action:action,data:data||{},ts:Date.now()});
+    if(log.length>2000) log=log.slice(-2000);
+    localStorage.setItem('rla2_actlog',JSON.stringify(log));
+  }catch(e){}
+}
+function getActivityLog(){try{return JSON.parse(localStorage.getItem('rla2_actlog')||'[]');}catch(e){return[];}}
+
+// ── Per-user stats ──
+function getUserStats(user){try{return JSON.parse(localStorage.getItem('rla2_stats_'+user)||'{}');}catch(e){return{};}}
+function saveUserStats(user,s){try{localStorage.setItem('rla2_stats_'+user,JSON.stringify(s));}catch(e){}}
+function updateUserBest(user,key,value){
+  var s=getUserStats(user);
+  if(!s.bests) s.bests={};
+  if(s.bests[key]===undefined||value>s.bests[key]){s.bests[key]=value;saveUserStats(user,s);}
+}
+function getUserBest(user,key){var s=getUserStats(user);return (s.bests&&s.bests[key]!==undefined)?s.bests[key]:null;}
+
+// ── Format helpers ──
+function fmtTs(ts){
+  if(!ts) return 'Never';
+  var d=new Date(ts), now=new Date();
+  var diff=Math.floor((now-d)/86400000);
+  var t=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(diff===0) return 'Today '+t;
+  if(diff===1) return 'Yesterday '+t;
+  if(diff<7) return diff+'d ago '+t;
+  return months[d.getMonth()]+' '+d.getDate()+' '+t;
+}
+
+var ACT_LBL={
+  session_start:'🟢 Session started',
+  word_added:'📝 Word learned',
+  story_words_added:'📖 Words added from story',
+  story_read:'📚 Story read',
+  quiz_complete:'🎯 Quiz completed',
+  game_complete:'⚡ Speed Game',
+  challenge_complete:'🔥 Challenge Quiz',
+  discovery_complete:'🎓 Topic pack done'
+};
+
+// ── ADMIN HOME ──
+function renderAdminHome(){
+  var log=getActivityLog();
+  var uColors={Rosa:'#e87cb8',Aamir:'#6b3fa0',Ilias:'#00b894'};
+  var cards=['Rosa','Aamir','Ilias'].map(function(u){
+    var s=getUserStats(u), uLog=log.filter(function(e){return e.user===u;});
+    var col=uColors[u]||'#6b3fa0';
+    var extra='';
+    if(u==='Ilias'){try{var bk=JSON.parse(localStorage.getItem('Ilias_wbank')||'[]');extra='<span style="background:#f3e4ff;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;color:#6b3fa0;margin-right:4px">'+bk.length+' words</span>';}catch(e){}}
+    var qb=getUserBest(u,'quiz');
+    if(qb!==null) extra+='<span style="background:#edfff3;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;color:#1a6b2a">Best: '+qb+'%</span>';
+    return '<div data-user="'+u+'" onclick="doAdminUser(this.dataset.user)" style="background:#fff;border-radius:14px;padding:14px;cursor:pointer;border:2px solid #e8d4f8;margin-bottom:10px">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+      +'<div style="width:40px;height:40px;border-radius:50%;background:'+col+';display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">'+u[0]+'</div>'
+      +'<div style="flex:1"><div style="font-size:15px;font-weight:700;color:#3a2050">'+u+'</div>'
+      +'<div style="font-size:11px;color:#a07cb8">Last seen: '+fmtTs(s.lastSeen)+'</div></div>'
+      +'<div style="text-align:right"><div style="font-size:22px;font-weight:700;color:'+col+'">'+( s.sessions||0)+'</div><div style="font-size:9px;color:#a07cb8">sessions</div></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+extra+'<span style="background:#f0f0f0;border-radius:8px;padding:3px 8px;font-size:11px;color:#888">'+uLog.length+' events</span></div>'
+      +'</div>';
+  }).join('');
+
+  var recent=log.slice(-15).reverse().map(function(e){
+    var col=uColors[e.user]||'#aaa';
+    var detail='';
+    if(e.action==='quiz_complete')detail=' — '+e.data.correct+'/'+e.data.total+' ('+e.data.pct+'%)';
+    if(e.action==='game_complete')detail=' — '+e.data.score+' pts';
+    if(e.action==='challenge_complete')detail=' — '+e.data.streak+' streak';
+    if(e.action==='word_added')detail=': '+e.data.es+'';
+    if(e.action==='story_read')detail=': '+e.data.title;
+    if(e.action==='story_words_added')detail=': +'+e.data.count+' words';
+    if(e.action==='discovery_complete')detail=': '+e.data.pack+' ('+e.data.learned+')';
+    return '<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f3e8ff">'
+      +'<div style="width:24px;height:24px;border-radius:50%;background:'+col+';flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">'+e.user[0]+'</div>'
+      +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#3a2050">'+(ACT_LBL[e.action]||e.action)+detail+'</div>'
+      +'<div style="font-size:10px;color:#a07cb8">'+fmtTs(e.ts)+'</div></div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('screen-admin').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+    +'<div style="font-size:20px;font-weight:900;color:#3a2050">📊 Admin Dashboard</div>'
+    +'<button onclick="switchUser()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">← Users</button>'
+    +'</div>'
+    +'<div style="font-size:12px;color:#a07cb8;margin-bottom:16px">Tap a user to see detailed stats</div>'
+    +cards
+    +'<div class="admin-card"><div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🕐 Recent Activity (All Users)</div>'
+    +(recent||'<div style="text-align:center;color:#a07cb8;font-size:12px;padding:12px">No activity logged yet</div>')
+    +'</div></div>';
+}
+
+// ── ADMIN USER DETAIL ──
+function doAdminUser(user){renderAdminUser(user);}
+function renderAdminUser(user){
+  var log=getActivityLog().filter(function(e){return e.user===user;});
+  var s=getUserStats(user), bests=s.bests||{};
+  var col={Rosa:'#e87cb8',Aamir:'#6b3fa0',Ilias:'#00b894'}[user]||'#6b3fa0';
+
+  // Word bank (Ilias only)
+  var bankHTML='';
+  if(user==='Ilias'){
+    try{
+      var bank=JSON.parse(localStorage.getItem('Ilias_wbank')||'[]');
+      var exp=bank.filter(function(w){return w.status==='e';}).length;
+      var hard=bank.filter(function(w){return w.status==='c';}).length;
+      var work=bank.length-exp-hard;
+      var packs={};
+      bank.forEach(function(w){packs[w.pack]=(packs[w.pack]||0)+1;});
+      var packBars=Object.keys(packs).map(function(k){
+        var p=ILIAS_WORD_PACKS&&ILIAS_WORD_PACKS[k]?ILIAS_WORD_PACKS[k]:{label:k,color:'#6b3fa0'};
+        var pct=Math.round(packs[k]/bank.length*100);
+        return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">'
+          +'<div style="font-size:11px;color:'+p.color+';width:80px;flex-shrink:0">'+p.label+'</div>'
+          +'<div style="flex:1;height:7px;background:#f0e4ff;border-radius:4px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+p.color+'"></div></div>'
+          +'<div style="font-size:10px;color:#a07cb8;width:18px;text-align:right">'+packs[k]+'</div></div>';
+      }).join('');
+      bankHTML='<div class="admin-card">'
+        +'<div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📦 Word Bank ('+bank.length+')</div>'
+        +'<div style="display:flex;gap:8px;margin-bottom:12px">'
+        +'<div class="admin-stat" style="background:#edfff3"><div class="admin-val" style="color:#1a6b2a">'+exp+'</div><div class="admin-lbl">✅ Expert</div></div>'
+        +'<div class="admin-stat" style="background:#fff8e8"><div class="admin-val" style="color:#c07010">'+hard+'</div><div class="admin-lbl">⚠️ Hard</div></div>'
+        +'<div class="admin-stat" style="background:#f3e4ff"><div class="admin-val" style="color:#6b3fa0">'+work+'</div><div class="admin-lbl">📖 Working</div></div>'
+        +'</div>'+packBars+'</div>';
+    }catch(e){}
+  }
+
+  // Stories
+  var storyMap={};
+  log.filter(function(e){return e.action==='story_read';}).forEach(function(e){
+    storyMap[e.data.title]=(storyMap[e.data.title]||{count:0,last:0});
+    storyMap[e.data.title].count++;
+    if(e.ts>storyMap[e.data.title].last) storyMap[e.data.title].last=e.ts;
+  });
+  var storyHTML='';
+  if(Object.keys(storyMap).length){
+    storyHTML='<div class="admin-card">'
+      +'<div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📚 Stories Read</div>'
+      +Object.keys(storyMap).map(function(t){
+        var d=storyMap[t];
+        return '<div class="admin-row"><div style="color:#3a2050;font-size:12px">'+t+'</div>'
+          +'<div style="display:flex;gap:8px;align-items:center">'
+          +'<span style="background:#f3e4ff;border-radius:8px;padding:2px 7px;font-size:10px;font-weight:700;color:#6b3fa0">×'+d.count+'</span>'
+          +'<span style="font-size:10px;color:#a07cb8">'+fmtTs(d.last)+'</span></div></div>';
+      }).join('')+'</div>';
+  }
+
+  // Quiz scores
+  var qLog=log.filter(function(e){return e.action==='quiz_complete';});
+  var quizHTML='';
+  if(qLog.length){
+    var qBest=bests.quiz||0;
+    var qAvg=Math.round(qLog.reduce(function(s,e){return s+e.data.pct;},0)/qLog.length);
+    quizHTML='<div class="admin-card">'
+      +'<div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🎯 Quiz ('+qLog.length+' rounds)</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:10px">'
+      +'<div class="admin-stat" style="background:#edfff3"><div class="admin-val" style="color:#1a6b2a">'+qBest+'%</div><div class="admin-lbl">Best</div></div>'
+      +'<div class="admin-stat" style="background:#f3e4ff"><div class="admin-val" style="color:#6b3fa0">'+qAvg+'%</div><div class="admin-lbl">Avg</div></div>'
+      +'<div class="admin-stat" style="background:#f0f0f0"><div class="admin-val" style="color:#555">'+qLog.length+'</div><div class="admin-lbl">Rounds</div></div>'
+      +'</div>'
+      +qLog.slice(-6).reverse().map(function(e){
+        var clr=e.data.pct>=80?'#1a6b2a':e.data.pct>=60?'#c07010':'#a02020';
+        return '<div class="admin-row"><div>'+e.data.correct+'/'+e.data.total+'</div>'
+          +'<div style="font-weight:700;color:'+clr+'">'+e.data.pct+'%</div>'
+          +'<div style="color:#a07cb8">'+fmtTs(e.ts)+'</div></div>';
+      }).join('')+'</div>';
+  }
+
+  // Best scores
+  var bestsHTML='';
+  if(bests.game||bests.challenge){
+    bestsHTML='<div class="admin-card">'
+      +'<div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">🏆 Personal Bests</div>'
+      +'<div style="display:flex;gap:8px">'
+      +(bests.game!==undefined?'<div class="admin-stat" style="background:#ede0ff"><div class="admin-val" style="color:#6b3fa0">'+bests.game+'</div><div class="admin-lbl">⚡ Game</div></div>':'')
+      +(bests.challenge!==undefined?'<div class="admin-stat" style="background:#fff8e8"><div class="admin-val" style="color:#c07010">'+bests.challenge+'</div><div class="admin-lbl">🔥 Streak</div></div>':'')
+      +'</div></div>';
+  }
+
+  // Activity log
+  var actHTML=log.slice(-40).reverse().map(function(e){
+    var detail='';
+    if(e.action==='quiz_complete')detail=' — '+e.data.correct+'/'+e.data.total+' ('+e.data.pct+'%)';
+    if(e.action==='game_complete')detail=' — '+e.data.score+' pts';
+    if(e.action==='challenge_complete')detail=' — '+e.data.streak+' streak';
+    if(e.action==='word_added')detail=': <b>'+e.data.es+'</b> = '+e.data.en;
+    if(e.action==='story_read')detail=': '+e.data.title;
+    if(e.action==='story_words_added')detail=': +'+e.data.count+' words from "'+e.data.title+'"';
+    if(e.action==='discovery_complete')detail=': '+e.data.pack+' ('+e.data.learned+' learned)';
+    return '<div style="padding:6px 0;border-bottom:1px solid #f3e8ff">'
+      +'<div style="font-size:12px;color:#3a2050">'+(ACT_LBL[e.action]||e.action)+detail+'</div>'
+      +'<div style="font-size:10px;color:#a07cb8">'+fmtTs(e.ts)+'</div></div>';
+  }).join('');
+
+  document.getElementById('screen-admin').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">'
+    +'<button onclick="renderAdminHome()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="width:34px;height:34px;border-radius:50%;background:'+col+';display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff">'+user[0]+'</div>'
+    +'<div style="font-size:18px;font-weight:900;color:#3a2050">'+user+"'s Stats</div>"
+    +'</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:10px">'
+    +'<div class="admin-stat" style="background:#fff;box-shadow:0 1px 4px #e0c8f0"><div class="admin-val" style="color:'+col+'">'+(s.sessions||0)+'</div><div class="admin-lbl">Sessions</div></div>'
+    +'<div style="flex:2;background:#fff;border-radius:10px;padding:8px;box-shadow:0 1px 4px #e0c8f0;text-align:center"><div style="font-size:11px;font-weight:700;color:#3a2050">Last seen</div><div style="font-size:11px;color:#a07cb8">'+fmtTs(s.lastSeen)+'</div></div>'
+    +'<div class="admin-stat" style="background:#fff;box-shadow:0 1px 4px #e0c8f0"><div class="admin-val" style="color:'+col+'">'+log.length+'</div><div class="admin-lbl">Actions</div></div>'
+    +'</div>'
+    +bankHTML+storyHTML+quizHTML+bestsHTML
+    +'<div class="admin-card"><div style="font-size:11px;font-weight:700;color:#a07cb8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">🕐 Full Activity Log</div>'
+    +(actHTML||'<div style="text-align:center;color:#a07cb8;font-size:12px;padding:12px">No activity yet</div>')
+    +'</div></div>';
+}
 function getQ(){
   if(currentUser==='Aamir') return AAMIR_Q;
-  if(currentUser==='Ilias') return ILIAS_Q;
+  if(currentUser==='Ilias'){
+    var bq = getBankQuestions();
+    return bq.length >= 4 ? bq : [];
+  }
   return ALL_Q;
 }
 
@@ -1594,6 +2063,16 @@ function selectUser(name,initial,avCls,sub){
   currentUser = name;
   try{localStorage.setItem('lastUser',name);}catch(e){}
   document.getElementById('screen-users').style.display = 'none';
+  if(name==='Admin'){
+    document.getElementById('nav').style.display='flex';
+    document.getElementById('nav-title').textContent='📊 Admin Dashboard';
+    document.getElementById('nav-back').style.display='none';
+    document.getElementById('nav-home').style.display='none';
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+    document.getElementById('screen-admin').classList.add('active');
+    renderAdminHome();
+    return;
+  }
   document.getElementById('nav').style.display = 'flex';
   var pav = document.getElementById('pill-av');
   pav.textContent = initial;
@@ -1604,9 +2083,15 @@ function selectUser(name,initial,avCls,sub){
   var wlLbl=document.getElementById('wl-home-lbl');
   var wlDesc=document.getElementById('wl-home-desc');
   if(wlLbl&&wlDesc){
-    if(name==='Ilias'){wlLbl.textContent='🎓 Learn Words';wlDesc.textContent='Discover new words — zero to hero!';}
+    if(name==='Ilias'){wlLbl.textContent='📦 My Word List';wlDesc.textContent='See all your words with ✅ checkmarks';}
     else{wlLbl.textContent='Word List';wlDesc.textContent='All your words with ✅ tracking';}
   }
+  // Log session + update stats
+  var _ss=getUserStats(name);
+  _ss.sessions=(_ss.sessions||0)+1;
+  _ss.lastSeen=Date.now();
+  saveUserStats(name,_ss);
+  logActivity(name,'session_start',{});
   loadWl();
   showHome();
 }
@@ -1640,7 +2125,7 @@ function openScreen(id,title){
   document.getElementById('nav-title').textContent = title;
   document.getElementById('nav-back').style.display = '';
   document.getElementById('nav-home').style.display = '';
-  if(id==='quiz')startQuiz();
+  if(id==='quiz'){if(currentUser==='Ilias')startIliasQuiz();else startQuiz();}
   if(id==='challenge')startChallenge();
   if(id==='wordlist')wlRender();
   if(id==='words')renderWordsManager();
@@ -1746,16 +2231,16 @@ function wlMkTbl(items,start,si){
 }
 
 function wlRender(){
-  if(currentUser==='Ilias'){renderIliasLearn();return;}
+  if(currentUser==='Ilias'){renderWordBankTable();return;}
   var ctrlHTML = '<button class="wl-btn '+(wlHideEs?'hiding':'')+'" id="wl-es" onclick="wlToggle(\'es\')">'
     +(wlHideEs?'Mostrar Español':'Esconder Español')+'</button>'
     +'<button class="wl-btn '+(wlHideEn?'hiding':'')+'" id="wl-en" onclick="wlToggle(\'en\')">'
     +(wlHideEn?'Mostrar Inglés':'Esconder Inglés')+'</button>';
-  document.getElementById('wl-controls').innerHTML = ctrlHTML;
+  var wlc=document.getElementById('wl-controls'); if(wlc) wlc.innerHTML=ctrlHTML;
   var tabsHTML = WL_SECTIONS.map(function(s,i){
     return '<button class="wl-tab'+(i===wlTab?' active':'')+'" onclick="wlTab='+i+';wlRender()">'+s.label+'</button>';
   }).join('');
-  document.getElementById('wl-tabs').innerHTML = tabsHTML;
+  var wlt=document.getElementById('wl-tabs'); if(wlt) wlt.innerHTML=tabsHTML;
 
   var si=wlTab, sec=WL_SECTIONS[si], st=wlS[si];
   var ex=[],ch=[],le=[];
@@ -1770,8 +2255,9 @@ function wlRender(){
     wi+=g.words.length;
   });
 
-  var c=document.getElementById('wl-content');
-  c.innerHTML='';
+  var wlContent=document.getElementById('wl-content');
+  if(!wlContent) return;
+  wlContent.innerHTML='';
   function addS(items,lbl,start){
     var l=document.createElement('div'); l.className='sec-label'; l.textContent=lbl; c.appendChild(l);
     c.appendChild(wlMkTbl(items,start,si));
@@ -1785,8 +2271,10 @@ function wlRender(){
 // 9. QUIZ
 // ═══════════════════════════════════════
 var qQueue=[],qPos=0,qExpert=0,qAnswered=false;
+var qRoundMode=false,qRoundCorrect=0,qRoundWrong=0,qRoundTotal=0;
 
 function startQuiz(){
+  qRoundMode=false; qRoundCorrect=0; qRoundWrong=0; qRoundTotal=0;
   qQueue = shuffle(getQ()).slice(0,settings.quizLen).map(function(q){return {q:q,streak:0};});
   qPos=0; qExpert=0; qAnswered=false;
   document.getElementById('quiz-area').style.display='';
@@ -1839,26 +2327,42 @@ function pickQ(btn,chosen,correct){
   if(chosen===correct){
     btn.classList.add('correct');
     item.streak++;
-    if(item.streak>=3){
+    if(qRoundMode){
+      qRoundCorrect++;
+      fb.textContent='✓ '+item.q.answer+'!';
+      fb.className='feedback correct';
+      qAnswered=true;
+      setTimeout(nextQ, settings.advanceSec*1000);
+    } else if(item.streak>=3){
       fb.innerHTML='<span style="color:#1a6b2a">🏆 '+lang.expert+'</span>';
       fb.className='feedback correct';
       qExpert++;
       qQueue.splice(qPos,1);
       if(qPos>=qQueue.length) qPos=0;
       setTimeout(nextQ,settings.advanceSec*1000);
+      qAnswered=true;
     } else {
       fb.textContent=lang.correct[Math.floor(Math.random()*lang.correct.length)];
       fb.className='feedback correct';
       setTimeout(nextQ,settings.advanceSec*1000);
+      qAnswered=true;
     }
-    qAnswered=true;
   } else {
     btn.classList.add('wrong');
     item.streak=0;
-    fb.innerHTML=lang.tryAgain+' <span style="color:#a07cb8;font-size:11px">('+lang.hint+': '+item.q.hint+')</span>';
-    fb.className='feedback wrong';
-    document.querySelectorAll('.ans').forEach(function(b){if(!b.classList.contains('wrong'))b.disabled=false;});
-    qQueue.push({q:item.q,streak:0});
+    if(qRoundMode){
+      qRoundWrong++;
+      // Show correct answer highlight but don't re-add to queue
+      fb.innerHTML='<span style="color:#a02020">'+lang.tryAgain+'</span> <span style="color:#a07cb8;font-size:11px">→ '+item.q.answer+'</span>';
+      fb.className='feedback wrong';
+      document.querySelectorAll('.ans').forEach(function(b){b.disabled=true;});
+      setTimeout(nextQ, 1800);
+    } else {
+      fb.innerHTML=lang.tryAgain+' <span style="color:#a07cb8;font-size:11px">('+lang.hint+': '+item.q.hint+')</span>';
+      fb.className='feedback wrong';
+      document.querySelectorAll('.ans').forEach(function(b){if(!b.classList.contains('wrong'))b.disabled=false;});
+      qQueue.push({q:item.q,streak:0});
+    }
   }
 }
 
@@ -1866,7 +2370,12 @@ function nextQ(){
   qAnswered=false;
   if(!qQueue.length){showQScore();return;}
   qPos++;
-  if(qPos>=qQueue.length) qPos=0;
+  if(qRoundMode){
+    // Single-pass mode: end when all questions answered
+    if(qPos>=qRoundTotal){showQScore();return;}
+  } else {
+    if(qPos>=qQueue.length) qPos=0;
+  }
   if(!qQueue.length){showQScore();return;}
   renderQ();
 }
@@ -1874,17 +2383,39 @@ function nextQ(){
 function showQScore(){
   document.getElementById('quiz-area').style.display='none';
   var s=document.getElementById('quiz-score');
-  var e,m;
-  if(qExpert>=18){e='🏆';m='¡Increíble!';}
-  else if(qExpert>=12){e='⭐';m=qExpert+' mastered!';}
-  else if(qExpert>=6){e='💪';m=qExpert+' experts. Keep going!';}
-  else{e='📖';m='Practice makes perfect!';}
-  s.innerHTML='<div style="font-size:48px">'+e+'</div>'
-    +'<div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 '+qExpert+'</div>'
-    +'<div style="font-size:13px;color:#5a4070;margin-bottom:16px">'+m+'</div>'
-    +'<button class="restart-btn" onclick="startQuiz()">🔄 Play again</button>';
+  if(qRoundMode){
+    var total=qRoundCorrect+qRoundWrong;
+    var pct=total>0?Math.round(qRoundCorrect/total*100):0;
+    logActivity(currentUser,'quiz_complete',{correct:qRoundCorrect,total:total,pct:pct});
+    updateUserBest(currentUser,'quiz',pct);
+    var e,m;
+    if(pct===100){e='🏆';m='Perfect! Every single word!';}
+    else if(pct>=80){e='⭐';m='Great job — almost perfect!';}
+    else if(pct>=60){e='💪';m='Good effort! Keep practicing!';}
+    else if(pct>=40){e='📖';m='Review your words and try again!';}
+    else{e='🌱';m="Keep learning — you'll get it!";}
+    s.innerHTML='<div style="font-size:52px;margin-bottom:8px">'+e+'</div>'
+      +'<div style="font-size:52px;font-weight:900;color:#6b3fa0;line-height:1">'+qRoundCorrect+'/'+total+'</div>'
+      +'<div style="font-size:14px;color:#a07cb8;margin:6px 0 4px">correct · '+pct+'%</div>'
+      +'<div style="font-size:14px;color:#5a4070;margin-bottom:20px">'+m+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<button class="restart-btn" onclick="startIliasQuiz()" style="font-size:13px;padding:11px">🔄 Play again</button>'
+      +'<button class="restart-btn" onclick="renderWordBankTable()" style="background:#f3e4ff;color:#6b3fa0;border:1px solid #d8b4f8;font-size:13px;padding:11px">📦 My Words</button>'
+      +'</div>';
+  } else {
+    var e2,m2;
+    if(qExpert>=18){e2='🏆';m2='¡Increíble!';}
+    else if(qExpert>=12){e2='⭐';m2=qExpert+' mastered!';}
+    else if(qExpert>=6){e2='💪';m2=qExpert+' experts. Keep going!';}
+    else{e2='📖';m2='Practice makes perfect!';}
+    s.innerHTML='<div style="font-size:48px">'+e2+'</div>'
+      +'<div style="font-size:34px;font-weight:700;color:#6b3fa0;margin:8px 0">🏆 '+qExpert+'</div>'
+      +'<div style="font-size:13px;color:#5a4070;margin-bottom:16px">'+m2+'</div>'
+      +'<button class="restart-btn" onclick="startQuiz()">🔄 Play again</button>';
+  }
   s.style.display='block';
 }
+
 
 // ═══════════════════════════════════════
 // 10. MY WORDS (Word Manager)
@@ -2169,7 +2700,11 @@ function addSuggestion(i,es,en,cat){
 // ═══════════════════════════════════════
 var cStreak=0,cBest=0,cAnswered=false,cResults=[];
 
-function startChallenge(){cStreak=0;cBest=0;cAnswered=false;cResults=[];renderChallenge();}
+function startChallenge(){
+  cStreak=0;
+  cBest=getUserBest(currentUser,'challenge')||0;
+  cAnswered=false;cResults=[];renderChallenge();
+}
 
 function renderChallenge(){
   var pool=getQ(), q=pool[Math.floor(Math.random()*pool.length)];
@@ -2251,6 +2786,8 @@ function showChallengeScore(){
   else if(cStreak>=5){em='🔥';msg=isAamir?'¡5 seguidas, buen trabajo!':'5 streak — great work!';}
   else{em='💪';msg=isAamir?'¡Sigue practicando!':'Keep practicing!';}
   var correct=cResults.filter(function(r){return r.correct;}).length;
+  logActivity(currentUser,'challenge_complete',{streak:cStreak,correct:correct,total:cResults.length});
+  updateUserBest(currentUser,'challenge',cStreak);
   document.getElementById('challenge-area').innerHTML =
     '<div style="text-align:center;padding:24px 0 16px">'
     +'<div style="font-size:52px;margin-bottom:8px">'+em+'</div>'
@@ -2426,6 +2963,8 @@ function gameOver(){
   var slowR=corrR.reduce(function(s,r){return (!s||r.ms>s.ms)?r:s;},null);
   var acc=gResults.length?Math.round(corrR.length/gResults.length*100):0;
   var entry={score:gScore,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),avgMs:Math.round(avgMs),streak:gMaxStreak,ts:Date.now()};
+  logActivity(currentUser,'game_complete',{score:gScore,streak:gMaxStreak,correct:gCorrect,wrong:gWrong});
+  updateUserBest(currentUser,'game',gScore);
   var hs=lHi(); hs.push(entry); hs.sort(function(a,b){return b.score-a.score;});
   var rank=hs.map(function(h){return h.ts;}).indexOf(entry.ts)+1;
   sHi(hs.slice(0,10));
@@ -2564,6 +3103,7 @@ function buildPicker(){
 function openStory(i){
   storySubs=false;
   var st=getActiveStories()[i];
+  logActivity(currentUser,'story_read',{title:isLearnSpanish()?st.title:st.sub, idx:i, level:st.level});
   var isSpanish=isLearnSpanish();
   document.getElementById('story-picker').style.display='none';
   var rdr=document.getElementById('story-reader');
@@ -2604,7 +3144,9 @@ function openStory(i){
     +'</div>'
     +'<p class="s-hint">'+tapHint+'</p>'
     +chHTML
-    +'<div class="s-ending">Fin — The End 🌙</div>';
+    +'<div class="s-ending">Fin — The End 🌙</div>'
+    +((currentUser==='Ilias'&&typeof ILIAS_STORY_VOCAB!=='undefined'&&ILIAS_STORY_VOCAB[i])
+      ?'<div id="story-vocab-offer"></div><div style="text-align:center;padding:12px 0 16px"><button onclick="showStoryVocabOffer('+i+')" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer">📝 Add story words to my list</button></div>':'');
   rdr.style.display='';
 }
 
@@ -2642,5 +3184,6 @@ try{
   else if(last==='Ilias') selectUser('Ilias','I','av-ilias','⚽ Learning Spanish');
 }catch(e){}
 </script>
+<div class="screen" id="screen-admin"></div>
 </body>
 </html>
