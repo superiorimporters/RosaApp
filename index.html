@@ -20,6 +20,7 @@ body{font-family:sans-serif;background:#f9f0ff;min-height:100vh;max-width:500px;
 .user-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;flex-shrink:0}
 .av-rosa{background:linear-gradient(135deg,#e87cb8,#a03070)}
 .av-aamir{background:linear-gradient(135deg,#6b3fa0,#3a1060)}
+.av-ilias{background:linear-gradient(135deg,#00b894,#006644)}
 .user-name{font-size:18px;font-weight:700;color:#3a2050}
 .user-sub{font-size:11px;color:#a07cb8;margin-top:2px}
 .user-arrow{font-size:20px;color:#d8b4f8}
@@ -199,8 +200,13 @@ tr.challenge td{background:#fff4f0!important}
         <div style="flex:1"><div class="user-name">Aamir</div><div class="user-sub">⚡ Spanish tenses</div></div>
         <div class="user-arrow">→</div>
       </div>
+      <div class="user-card" onclick="selectUser('Ilias','I','av-ilias','⚽ Learning Spanish')">
+        <div class="user-avatar av-ilias">I</div>
+        <div style="flex:1"><div class="user-name">Ilias</div><div class="user-sub">⚽ Learning Spanish</div></div>
+        <div class="user-arrow">→</div>
+      </div>
     </div>
-    <div class="app-ver">v2.1.0 · May 3, 2026</div>
+    <div class="app-ver">v2.3.0 · May 31, 2026 · 8:23 PM</div>
   </div>
 </div>
 
@@ -219,7 +225,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-avatar pill-av" id="pill-av" style="width:28px;height:28px;font-size:13px"></div>
         <div><div class="pill-name" id="pill-name"></div><div class="pill-switch">tap to switch</div></div>
       </div>
-      <div class="ver-tag"><b>v2.1.0</b><br>May 3, 2026</div>
+      <div class="ver-tag"><b>v2.3.0</b><br>May 31 · 8:23 PM</div>
     </div>
     <div class="home-header">
       <div class="logo">🌟</div>
@@ -232,7 +238,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="desc">Race the clock — clutch bonuses when time runs low!</div>
       </div>
       <div class="home-card" onclick="openScreen('wordlist','📖 Word List')">
-        <div class="icon">📖</div><div class="label">Word List</div><div class="desc">All your words with ✅ tracking</div>
+        <div class="icon">📖</div><div class="label" id="wl-home-lbl">Word List</div><div class="desc" id="wl-home-desc">All your words with ✅ tracking</div>
       </div>
       <div class="home-card" onclick="openScreen('quiz','✏️ Practice Quiz')">
         <div class="icon">✏️</div><div class="label">Practice Quiz</div><div class="desc">Fill-in-the-blank — see results &amp; weak spots</div>
@@ -682,6 +688,860 @@ var STORIES = [
 ];
 
 // ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// ILIAS — Word List, Quiz Questions, Stories
+// 10-year-old beginner. Interests: soccer, fishing, jiu-jitsu,
+// Roblox, Legos, cars, planes, influencer. Brothers: Ali, Ayla, Ismail, Isaaq.
+// Villain: Ryano el Tramposo. School: Princeton Academy.
+// ═══════════════════════════════════════
+var ILIAS_WL_SECTIONS=[
+  {id:'futbol',label:'⚽ Fútbol',groups:[{name:null,words:[
+    ['Gol','Goal'],['Balón','Ball'],['Equipo','Team'],['Portero','Goalkeeper'],
+    ['Árbitro','Referee'],['Cancha','Field'],['Partido','Match'],['Campeón','Champion'],
+    ['Entrenar','Train'],['Meter gol','Score'],['Ganar','Win'],['Perder','Lose'],
+    ['Correr','Run'],['Patear','Kick'],['Defensa','Defense'],['Atacar','Attack']
+  ]}]},
+  {id:'gaming',label:'🎮 Gaming',groups:[{name:null,words:[
+    ['Jugar','Play'],['Construir','Build'],['Mundo','World'],['Pantalla','Screen'],
+    ['Personaje','Character'],['Misión','Mission'],['Enemigo','Enemy'],['Poder','Power'],
+    ['Nivel','Level'],['Victoria','Victory'],['Derrota','Defeat'],['Respawn','Respawn']
+  ]}]},
+  {id:'pesca',label:'🎣 Pesca',groups:[{name:null,words:[
+    ['Pescar','Fish (verb)'],['Pez','Fish (noun)'],['Caña','Rod'],['Lago','Lake'],
+    ['Río','River'],['Anzuelo','Hook'],['Bote','Boat'],['Capturar','Catch'],
+    ['Grande','Big'],['Agua','Water']
+  ]}]},
+  {id:'jiujitsu',label:'🥋 Jiu-Jitsu',groups:[{name:null,words:[
+    ['Luchar','Fight'],['Cinturón','Belt'],['Fuerte','Strong'],['Rápido','Fast'],
+    ['Atacar','Attack'],['Defender','Defend'],['Competencia','Competition'],
+    ['Caer','Fall'],['Ganar','Win'],['Negro','Black']
+  ]}]},
+  {id:'aventura',label:'✈️ Aventura',groups:[{name:null,words:[
+    ['Avión','Plane'],['Carro','Car'],['Volar','Fly'],['Manejar','Drive'],
+    ['Motor','Engine'],['Velocidad','Speed'],['Piloto','Pilot'],
+    ['Construir','Build'],['Nave','Spacecraft'],['Rápido','Fast']
+  ]}]},
+  {id:'escuela',label:'🏫 Escuela',groups:[{name:null,words:[
+    ['Escuela','School'],['Clase','Class'],['Maestro','Teacher'],['Estudiar','Study'],
+    ['Amigo','Friend'],['Aprender','Learn'],['Leer','Read'],['Escribir','Write'],
+    ['Uniforme','Uniform'],['Recreo','Recess']
+  ]}]},
+  {id:'familia',label:'👨‍👦 Familia',groups:[{name:null,words:[
+    ['Hermano','Brother'],['Mayor','Older'],['Menor','Younger'],['Familia','Family'],
+    ['Padre','Father'],['Madre','Mother'],['El menor','The youngest'],['Los cinco','The five']
+  ]}]},
+  {id:'influencer',label:'📱 Influencer',groups:[{name:null,words:[
+    ['Cámara','Camera'],['Video','Video'],['Famoso','Famous'],['Seguidor','Follower'],
+    ['Grabar','Record'],['Compartir','Share'],['Viral','Viral'],['Estrella','Star']
+  ]}]}
+];
+
+var ILIAS_Q=[
+  {cat:'futbol',sentence:'Ilias mete un ___ en el partido.',hint:'gol',answer:'Goal',wrong:['Ball','Team','Player']},
+  {cat:'futbol',sentence:'El ___ para jugar fútbol es redondo.',hint:'balón',answer:'Ball',wrong:['Goal','Field','Shoe']},
+  {cat:'futbol',sentence:'Somos el mejor ___ de la escuela.',hint:'equipo',answer:'Team',wrong:['Game','Goal','Field']},
+  {cat:'futbol',sentence:'El ___ protege la portería.',hint:'portero',answer:'Goalkeeper',wrong:['Referee','Coach','Captain']},
+  {cat:'futbol',sentence:'El partido es en la ___.',hint:'cancha',answer:'Field',wrong:['School','Pool','Gym']},
+  {cat:'futbol',sentence:'Ilias quiere ser ___ del mundo.',hint:'campeón',answer:'Champion',wrong:['Referee','Player','Coach']},
+  {cat:'gaming',sentence:'Me gusta ___ Roblox todos los días.',hint:'jugar',answer:'Play',wrong:['Watch','Build','Run']},
+  {cat:'gaming',sentence:'Tengo que terminar esta ___ en el juego.',hint:'misión',answer:'Mission',wrong:['Level','Life','Power']},
+  {cat:'gaming',sentence:'Mi ___ en Roblox tiene superpoderes.',hint:'personaje',answer:'Character',wrong:['Mission','Enemy','Screen']},
+  {cat:'gaming',sentence:'Ilias derrota al ___ de Ryano.',hint:'enemigo',answer:'Enemy',wrong:['Friend','Teacher','Team']},
+  {cat:'gaming',sentence:'¡Subí de ___ otra vez!',hint:'nivel',answer:'Level',wrong:['Mission','Life','Power']},
+  {cat:'pesca',sentence:'Papá y yo vamos a ___ en el río.',hint:'pescar',answer:'Fish',wrong:['Swim','Run','Play']},
+  {cat:'pesca',sentence:'Necesito mi ___ para pescar.',hint:'caña',answer:'Rod',wrong:['Boat','Hook','Net']},
+  {cat:'pesca',sentence:'El pez era muy ___ y pesado.',hint:'grande',answer:'Big',wrong:['Small','Fast','Blue']},
+  {cat:'jiujitsu',sentence:'Ilias sabe ___ muy bien en el tatami.',hint:'luchar',answer:'Fight',wrong:['Run','Swim','Kick']},
+  {cat:'jiujitsu',sentence:'Quiero ganar el ___ negro.',hint:'cinturón',answer:'Belt',wrong:['Medal','Trophy','Cup']},
+  {cat:'jiujitsu',sentence:'Soy muy ___ en jiu-jitsu.',hint:'fuerte',answer:'Strong',wrong:['Fast','Tall','Smart']},
+  {cat:'aventura',sentence:'Quiero ___ aviones cuando sea grande.',hint:'volar',answer:'Fly',wrong:['Drive','Build','Race']},
+  {cat:'aventura',sentence:'El carro rojo es muy ___.',hint:'rápido',answer:'Fast',wrong:['Big','Small','Old']},
+  {cat:'aventura',sentence:'Mi ___ de juguete favorito es rojo.',hint:'carro',answer:'Car',wrong:['Plane','Boat','Bike']},
+  {cat:'escuela',sentence:'Tengo que ___ para el examen de mañana.',hint:'estudiar',answer:'Study',wrong:['Play','Sleep','Run']},
+  {cat:'escuela',sentence:'Mi ___ se llama Princeton Academy.',hint:'escuela',answer:'School',wrong:['Home','Gym','Park']},
+  {cat:'familia',sentence:'Ali es mi ___ mayor.',hint:'hermano',answer:'Brother',wrong:['Father','Friend','Teacher']},
+  {cat:'familia',sentence:'Yo soy el más ___ de mis hermanos.',hint:'menor',answer:'Youngest',wrong:['Oldest','Tallest','Smartest']},
+  {cat:'influencer',sentence:'Voy a ___ un video para YouTube.',hint:'grabar',answer:'Record',wrong:['Watch','Share','Edit']},
+  {cat:'influencer',sentence:'Quiero ser ___ en las redes sociales.',hint:'famoso',answer:'Famous',wrong:['Smart','Strong','Fast']}
+];
+
+var ILIAS_CAT_CLR={
+  futbol:{bg:'#E8F5E9',color:'#2E7D32',label:'⚽ Fútbol'},
+  gaming:{bg:'#E3F2FD',color:'#1565C0',label:'🎮 Gaming'},
+  pesca:{bg:'#E0F7FA',color:'#00695C',label:'🎣 Pesca'},
+  jiujitsu:{bg:'#FFF3E0',color:'#E65100',label:'🥋 Jiu-Jitsu'},
+  aventura:{bg:'#F3E5F5',color:'#6A1B9A',label:'✈️ Aventura'},
+  escuela:{bg:'#FFFDE7',color:'#F57F17',label:'🏫 Escuela'},
+  familia:{bg:'#FCE4EC',color:'#880E4F',label:'👨‍👦 Familia'},
+  influencer:{bg:'#F1F8E9',color:'#33691E',label:'📱 Influencer'}
+};
+
+var ILIAS_STORIES=[
+  // ── LEVEL 1 ──
+  {level:1,emoji:'⚽',title:'Ilias y el Partido Final',sub:'Ilias and the Final Game',
+   desc:'Big game against Ryano\'s team. Ilias is ready. His brothers are watching.',
+   chapters:[
+    {title:'El Equipo',titleEn:'The Team',lines:[
+      {s:[pw('Ilias is the best player on his team','Ilias es el mejor jugador de su equipo'),pp('.')],en:'Ilias is the best player on his team.',es:'Ilias es el mejor jugador de su equipo.'},
+      {s:[pw('His brothers Ali, Ismail, and Isaaq are watching','Sus hermanos Ali, Ismail e Isaaq están mirando'),pp('.')],en:'His brothers Ali, Ismail, and Isaaq are watching.',es:'Sus hermanos Ali, Ismail e Isaaq están mirando.'},
+      {s:[pw('Today is the big game against Ryano\'s team','Hoy es el partido grande contra el equipo de Ryano'),pp('.')],en:'Today is the big game against Ryano\'s team.',es:'Hoy es el partido grande contra el equipo de Ryano.'},
+      {s:[pw('Ryano says','Ryano dice'),pp(': "'),pw('You will lose. You are too small','Van a perder. Son muy pequeños'),pp('."')],en:'Ryano says: "You will lose. You are too small."',es:'Ryano dice: "Van a perder. Son muy pequeños."'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('We will see','Ya veremos'),pp('."')],en:'Ilias says: "We will see."',es:'Ilias dice: "Ya veremos."'}
+    ]},
+    {title:'El Partido',titleEn:'The Game',lines:[
+      {s:[pw('The game starts. Ilias runs fast','El partido empieza. Ilias corre rápido'),pp('.')],en:'The game starts. Ilias runs fast.',es:'El partido empieza. Ilias corre rápido.'},
+      {s:[pw('Ryano pushes him. The referee does not see','Ryano lo empuja. El árbitro no ve'),pp('.')],en:'Ryano pushes him. The referee does not see.',es:'Ryano lo empuja. El árbitro no ve.'},
+      {s:[pw('Ilias does not fall. He keeps running','Ilias no cae. Sigue corriendo'),pp('.')],en:'Ilias does not fall. He keeps running.',es:'Ilias no cae. Sigue corriendo.'},
+      {s:[pw('He kicks the ball','Patea el balón'),pp('. '),pw('GOAL!','¡GOL!'),pp('')],en:'He kicks the ball. GOAL!',es:'Patea el balón. ¡GOL!'}
+    ]},
+    {title:'La Victoria',titleEn:'The Victory',lines:[
+      {s:[pw('Ilias\'s team wins 2-1','El equipo de Ilias gana 2-1'),pp('.')],en:'Ilias\'s team wins 2-1.',es:'El equipo de Ilias gana 2-1.'},
+      {s:[pw('Ali shouts','Ali grita'),pp(': "'),pw('That is my little brother!','¡Ese es mi hermano menor!'),pp('"')],en:'Ali shouts: "That is my little brother!"',es:'Ali grita: "¡Ese es mi hermano menor!"'},
+      {s:[pw('Ryano walks away angry','Ryano se va enojado'),pp('.')],en:'Ryano walks away angry.',es:'Ryano se va enojado.'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('Good game','Buen partido'),pp('."')],en:'Ilias says: "Good game."',es:'Ilias dice: "Buen partido."'},
+      {s:[pw('Ryano says nothing. He is very angry','Ryano no dice nada. Está muy enojado'),pp('.')],en:'Ryano says nothing. He is very angry.',es:'Ryano no dice nada. Está muy enojado.'}
+    ]}
+  ]},
+  {level:1,emoji:'🎣',title:'El Pez Más Grande del Mundo',sub:'The Biggest Fish in the World',
+   desc:'Ilias goes fishing alone. Something BIG is in the water.',
+   chapters:[
+    {title:'El Río',titleEn:'The River',lines:[
+      {s:[pw('Saturday morning. Time to fish','Sábado por la mañana. Hora de pescar'),pp('.')],en:'Saturday morning. Time to fish.',es:'Sábado por la mañana. Hora de pescar.'},
+      {s:[pw('Ilias takes his rod and goes to the river','Ilias toma su caña y va al río'),pp('.')],en:'Ilias takes his rod and goes to the river.',es:'Ilias toma su caña y va al río.'},
+      {s:[pw('He puts the hook in and waits','Pone el anzuelo y espera'),pp('.')],en:'He puts the hook in and waits.',es:'Pone el anzuelo y espera.'}
+    ]},
+    {title:'Algo Grande',titleEn:'Something Big',lines:[
+      {s:[pw('Suddenly the rod moves. A lot','De repente la caña se mueve. Mucho'),pp('.')],en:'Suddenly the rod moves. A lot.',es:'De repente la caña se mueve. Mucho.'},
+      {s:[pw('Ilias pulls and pulls','Ilias jala y jala'),pp('.')],en:'Ilias pulls and pulls.',es:'Ilias jala y jala.'},
+      {s:[pw('He shouts','Grita'),pp(': "'),pw('This fish is enormous!','¡Este pez es enorme!'),pp('"')],en:'He shouts: "This fish is enormous!"',es:'Grita: "¡Este pez es enorme!"'},
+      {s:[pw('The fish is bigger than Ilias','El pez es más grande que Ilias'),pp('!')],en:'The fish is bigger than Ilias!',es:'¡El pez es más grande que Ilias!'}
+    ]},
+    {title:'El Héroe',titleEn:'The Hero',lines:[
+      {s:[pw('He takes a photo and sends it to his brothers','Saca una foto y la manda a sus hermanos'),pp('.')],en:'He takes a photo and sends it to his brothers.',es:'Saca una foto y la manda a sus hermanos.'},
+      {s:[pw('Ismail says','Ismail dice'),pp(': "'),pw('That is not real!','¡Eso no es real!'),pp('"')],en:'Ismail says: "That is not real!"',es:'Ismail dice: "¡Eso no es real!"'},
+      {s:[pw('But it is. The biggest fish in the world','Pero es real. El pez más grande del mundo'),pp('.')],en:'But it is. The biggest fish in the world.',es:'Pero es real. El pez más grande del mundo.'}
+    ]}
+  ]},
+  {level:1,emoji:'🎮',title:'Roblox vs Ryano',sub:'Roblox vs Ryano',
+   desc:'Ryano says he is the best at Roblox. Ilias is not so sure.',
+   chapters:[
+    {title:'El Reto',titleEn:'The Challenge',lines:[
+      {s:[pw('Ryano sends Ilias a message','Ryano le manda un mensaje a Ilias'),pp('.')],en:'Ryano sends Ilias a message.',es:'Ryano le manda un mensaje a Ilias.'},
+      {s:[pw('He says','Dice'),pp(': "'),pw('I am the best at Roblox. You cannot beat me','Yo soy el mejor en Roblox. No me puedes ganar'),pp('."')],en:'He says: "I am the best at Roblox. You cannot beat me."',es:'Dice: "Yo soy el mejor en Roblox. No me puedes ganar."'},
+      {s:[pw('Ilias smiles and says','Ilias sonríe y dice'),pp(': "'),pw('Game on','A jugar'),pp('."')],en:'Ilias smiles and says: "Game on."',es:'Ilias sonríe y dice: "A jugar."'}
+    ]},
+    {title:'La Batalla',titleEn:'The Battle',lines:[
+      {s:[pw('The game starts. Ryano builds fast','El juego empieza. Ryano construye rápido'),pp('.')],en:'The game starts. Ryano builds fast.',es:'El juego empieza. Ryano construye rápido.'},
+      {s:[pw('But Ilias builds smarter','Pero Ilias construye más inteligente'),pp('.')],en:'But Ilias builds smarter.',es:'Pero Ilias construye más inteligente.'},
+      {s:[pw('Ryano tries to destroy Ilias\'s world. He cannot','Ryano intenta destruir el mundo de Ilias. No puede'),pp('.')],en:'Ryano tries to destroy Ilias\'s world. He cannot.',es:'Ryano intenta destruir el mundo de Ilias. No puede.'},
+      {s:[pw('The walls are too strong','Las paredes son demasiado fuertes'),pp('.')],en:'The walls are too strong.',es:'Las paredes son demasiado fuertes.'}
+    ]},
+    {title:'Game Over',titleEn:'Game Over',lines:[
+      {s:[pw('Ilias wins all three rounds','Ilias gana las tres rondas'),pp('.')],en:'Ilias wins all three rounds.',es:'Ilias gana las tres rondas.'},
+      {s:[pw('Ryano says','Ryano dice'),pp(': "'),pw('You got lucky','Tuviste suerte'),pp('."')],en:'Ryano says: "You got lucky."',es:'Ryano dice: "Tuviste suerte."'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('Same time next week?','¿La próxima semana a la misma hora?'),pp('"')],en:'Ilias says: "Same time next week?"',es:'Ilias dice: "¿La próxima semana a la misma hora?"'},
+      {s:[pw('Ryano does not answer','Ryano no responde'),pp('.')],en:'Ryano does not answer.',es:'Ryano no responde.'}
+    ]}
+  ]},
+  {level:1,emoji:'🥋',title:'El Cinturón Azul',sub:'The Blue Belt',
+   desc:'Ilias has been training hard. Today is belt day. All five brothers are there.',
+   chapters:[
+    {title:'El Entrenamiento',titleEn:'The Training',lines:[
+      {s:[pw('Ilias trains every day after school','Ilias entrena todos los días después de la escuela'),pp('.')],en:'Ilias trains every day after school.',es:'Ilias entrena todos los días después de la escuela.'},
+      {s:[pw('His coach says','Su entrenador dice'),pp(': "'),pw('You are ready for the blue belt','Estás listo para el cinturón azul'),pp('."')],en:'His coach says: "You are ready for the blue belt."',es:'Su entrenador dice: "Estás listo para el cinturón azul."'},
+      {s:[pw('Ilias is nervous but excited','Ilias está nervioso pero emocionado'),pp('.')],en:'Ilias is nervous but excited.',es:'Ilias está nervioso pero emocionado.'}
+    ]},
+    {title:'La Prueba',titleEn:'The Test',lines:[
+      {s:[pw('He has to fight three opponents','Tiene que luchar contra tres oponentes'),pp('.')],en:'He has to fight three opponents.',es:'Tiene que luchar contra tres oponentes.'},
+      {s:[pw('First fight. He wins fast','Primera pelea. Gana rápido'),pp('.')],en:'First fight. He wins fast.',es:'Primera pelea. Gana rápido.'},
+      {s:[pw('Second fight. The opponent is strong. But Ilias is faster','Segunda pelea. El oponente es fuerte. Pero Ilias es más rápido'),pp('.')],en:'Second fight. The opponent is strong. But Ilias is faster.',es:'Segunda pelea. El oponente es fuerte. Pero Ilias es más rápido.'},
+      {s:[pw('Third fight. He wins again','Tercera pelea. Gana otra vez'),pp('.')],en:'Third fight. He wins again.',es:'Tercera pelea. Gana otra vez.'}
+    ]},
+    {title:'El Cinturón',titleEn:'The Belt',lines:[
+      {s:[pw('His coach gives him the blue belt','Su entrenador le da el cinturón azul'),pp('.')],en:'His coach gives him the blue belt.',es:'Su entrenador le da el cinturón azul.'},
+      {s:[pw('All five brothers are there. They all shout','Los cinco hermanos están ahí. Todos gritan'),pp('.')],en:'All five brothers are there. They all shout.',es:'Los cinco hermanos están ahí. Todos gritan.'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('This is just the beginning','Esto es solo el comienzo'),pp('."')],en:'Ilias says: "This is just the beginning."',es:'Ilias dice: "Esto es solo el comienzo."'}
+    ]}
+  ]},
+  // ── LEVEL 2 ── past tense + irregular verbs
+  {level:2,emoji:'⚽',title:'La Revancha',sub:'The Rematch',
+   desc:'Ryano wanted revenge. Irregular preterites: fue, vio, dijo, corrió, pudo, tuvo, ganó, metió.',
+   chapters:[
+    {title:'Antes del Partido',titleEn:'Before the Game',lines:[
+      {s:[pw('Ryano went to Ilias and said','Ryano fue donde Ilias y dijo'),pp(': "'),pw('I want a rematch','Quiero la revancha'),pp('."')],en:'Ryano went to Ilias and said: "I want a rematch."',es:'Ryano fue donde Ilias y dijo: "Quiero la revancha."'},
+      {s:[pw('Ilias saw him and said','Ilias lo vio y dijo'),pp(': "'),pw('Fine. Saturday','Está bien. El sábado'),pp('."')],en:'Ilias saw him and said: "Fine. Saturday."',es:'Ilias lo vio y dijo: "Está bien. El sábado."'},
+      {s:[pw('Ilias trained all week. He could not stop','Ilias entrenó toda la semana. No pudo parar'),pp('.')],en:'Ilias trained all week. He could not stop.',es:'Ilias entrenó toda la semana. No pudo parar.'},
+      {s:[pw('He had to win. For his brothers','Tuvo que ganar. Por sus hermanos'),pp('.')],en:'He had to win. For his brothers.',es:'Tuvo que ganar. Por sus hermanos.'}
+    ]},
+    {title:'La Revancha',titleEn:'The Rematch',lines:[
+      {s:[pw('Ilias ran and ran. He was everywhere','Ilias corrió y corrió. Estuvo en todas partes'),pp('.')],en:'Ilias ran and ran. He was everywhere.',es:'Ilias corrió y corrió. Estuvo en todas partes.'},
+      {s:[pw('Ryano tried to stop him. He could not','Ryano intentó pararlo. No pudo'),pp('.')],en:'Ryano tried to stop him. He could not.',es:'Ryano intentó pararlo. No pudo.'},
+      {s:[pw('Ilias scored two goals. Beautiful goals','Ilias metió dos goles. Goles hermosos'),pp('.')],en:'Ilias scored two goals. Beautiful goals.',es:'Ilias metió dos goles. Goles hermosos.'}
+    ]},
+    {title:'Después del Partido',titleEn:'After the Game',lines:[
+      {s:[pw('Ilias\'s team won 3-0','El equipo de Ilias ganó 3-0'),pp('.')],en:'Ilias\'s team won 3-0.',es:'El equipo de Ilias ganó 3-0.'},
+      {s:[pw('Ryano said nothing and went home','Ryano no dijo nada y se fue a casa'),pp('.')],en:'Ryano said nothing and went home.',es:'Ryano no dijo nada y se fue a casa.'},
+      {s:[pw('Ali saw everything and said','Ali lo vio todo y dijo'),pp(': "'),pw('Best game ever','El mejor partido de todos'),pp('."')],en:'Ali saw everything and said: "Best game ever."',es:'Ali lo vio todo y dijo: "El mejor partido de todos."'},
+      {s:[pw('Ilias smiled. He had done it','Ilias sonrió. Lo había hecho'),pp('.')],en:'Ilias smiled. He had done it.',es:'Ilias sonrió. Lo había hecho.'}
+    ]}
+  ]},
+  {level:2,emoji:'📱',title:'El Video Viral',sub:'The Viral Video',
+   desc:'He recorded one video. Then everything changed. Past tense + future: grabó, fue, dijo, vio, hizo + haré, seré.',
+   chapters:[
+    {title:'La Idea',titleEn:'The Idea',lines:[
+      {s:[pw('Ilias had an idea','Ilias tuvo una idea'),pp('.')],en:'Ilias had an idea.',es:'Ilias tuvo una idea.'},
+      {s:[pw('He said to his brother Isaaq','Le dijo a su hermano Isaaq'),pp(': "'),pw('Film me. I will do something incredible','Grábame. Haré algo increíble'),pp('."')],en:'He said to his brother Isaaq: "Film me. I will do something incredible."',es:'Le dijo a su hermano Isaaq: "Grábame. Haré algo increíble."'},
+      {s:[pw('He did five jiu-jitsu moves, scored a goal, and caught a fish. All in one video','Hizo cinco movimientos de jiu-jitsu, metió un gol y pescó un pez. Todo en un video'),pp('.')],en:'He did five jiu-jitsu moves, scored a goal, and caught a fish. All in one video.',es:'Hizo cinco movimientos de jiu-jitsu, metió un gol y pescó un pez. Todo en un video.'}
+    ]},
+    {title:'La Publicación',titleEn:'The Upload',lines:[
+      {s:[pw('He posted the video that night','Publicó el video esa noche'),pp('.')],en:'He posted the video that night.',es:'Publicó el video esa noche.'},
+      {s:[pw('He went to sleep with 10 followers. He woke up with 10,000','Se fue a dormir con 10 seguidores. Se despertó con 10,000'),pp('.')],en:'He went to sleep with 10 followers. He woke up with 10,000.',es:'Se fue a dormir con 10 seguidores. Se despertó con 10,000.'},
+      {s:[pw('Ryano saw the video. He was not happy','Ryano vio el video. No estuvo feliz'),pp('.')],en:'Ryano saw the video. He was not happy.',es:'Ryano vio el video. No estuvo feliz.'}
+    ]},
+    {title:'El Futuro',titleEn:'The Future',lines:[
+      {s:[pw('Ilias said','Ilias dijo'),pp(': "'),pw('I will make more videos. I will be famous','Haré más videos. Seré famoso'),pp('."')],en:'Ilias said: "I will make more videos. I will be famous."',es:'Ilias dijo: "Haré más videos. Seré famoso."'},
+      {s:[pw('Isaaq said','Isaaq dijo'),pp(': "'),pw('You already are','Ya lo eres'),pp('."')],en:'Isaaq said: "You already are."',es:'Isaaq dijo: "Ya lo eres."'},
+      {s:[pw('Ilias smiled. This was just the beginning','Ilias sonrió. Esto era solo el comienzo'),pp('.')],en:'Ilias smiled. This was just the beginning.',es:'Ilias sonrió. Esto era solo el comienzo.'}
+    ]}
+  ]},
+  {level:2,emoji:'🥋',title:'El Gran Torneo',sub:'The Big Tournament',
+   desc:'The biggest jiu-jitsu tournament of the year. And Ryano is there. Irregulars: fue, luchó, ganó, pudo, dijo, vino, hizo.',
+   chapters:[
+    {title:'El Torneo',titleEn:'The Tournament',lines:[
+      {s:[pw('The whole family went to the tournament','Toda la familia fue al torneo'),pp('.')],en:'The whole family went to the tournament.',es:'Toda la familia fue al torneo.'},
+      {s:[pw('Ilias saw Ryano across the room','Ilias vio a Ryano al otro lado del lugar'),pp('.')],en:'Ilias saw Ryano across the room.',es:'Ilias vio a Ryano al otro lado del lugar.'},
+      {s:[pw('Ryano smiled. Not a nice smile','Ryano sonrió. No fue una sonrisa amable'),pp('.')],en:'Ryano smiled. Not a nice smile.',es:'Ryano sonrió. No fue una sonrisa amable.'},
+      {s:[pw('Ilias thought','Ilias pensó'),pp(': "'),pw('Here we go again','Aquí vamos otra vez'),pp('."')],en:'Ilias thought: "Here we go again."',es:'Ilias pensó: "Aquí vamos otra vez."'}
+    ]},
+    {title:'Las Peleas',titleEn:'The Fights',lines:[
+      {s:[pw('Ilias fought six times. He won six times','Ilias luchó seis veces. Ganó seis veces'),pp('.')],en:'Ilias fought six times. He won six times.',es:'Ilias luchó seis veces. Ganó seis veces.'},
+      {s:[pw('Ryano tried hard. He could not make the final','Ryano intentó mucho. No pudo llegar a la final'),pp('.')],en:'Ryano tried hard. He could not make the final.',es:'Ryano intentó mucho. No pudo llegar a la final.'},
+      {s:[pw('The final was hard. But Ilias did what he trained for. He won','La final fue difícil. Pero Ilias hizo lo que entrenó. Ganó'),pp('.')],en:'The final was hard. But Ilias did what he trained for. He won.',es:'La final fue difícil. Pero Ilias hizo lo que entrenó. Ganó.'}
+    ]},
+    {title:'El Campeón',titleEn:'The Champion',lines:[
+      {s:[pw('His father came and hugged him','Su padre vino y lo abrazó'),pp('.')],en:'His father came and hugged him.',es:'Su padre vino y lo abrazó.'},
+      {s:[pw('All five brothers shouted his name','Los cinco hermanos gritaron su nombre'),pp('.')],en:'All five brothers shouted his name.',es:'Los cinco hermanos gritaron su nombre.'},
+      {s:[pw('Ryano left without saying anything','Ryano se fue sin decir nada'),pp('.')],en:'Ryano left without saying anything.',es:'Ryano se fue sin decir nada.'},
+      {s:[pw('Ilias held the trophy high','Ilias levantó el trofeo bien alto'),pp('.')],en:'Ilias held the trophy high.',es:'Ilias levantó el trofeo bien alto.'}
+    ]}
+  ]},
+  {level:2,emoji:'🎣',title:'El Monstruo del Lago',sub:'The Monster in the Lake',
+   desc:'Ilias went fishing alone. Something was down there. Past tense adventure: fue, puso, esperó, movió, jaló, recordó, salió.',
+   chapters:[
+    {title:'Solo en el Lago',titleEn:'Alone at the Lake',lines:[
+      {s:[pw('Ilias went to the lake early in the morning','Ilias fue al lago temprano por la mañana'),pp('.')],en:'Ilias went to the lake early in the morning.',es:'Ilias fue al lago temprano por la mañana.'},
+      {s:[pw('He put his rod in and waited. One hour. Two hours','Puso su caña y esperó. Una hora. Dos horas'),pp('.')],en:'He put his rod in and waited. One hour. Two hours.',es:'Puso su caña y esperó. Una hora. Dos horas.'},
+      {s:[pw('Then the water moved. Something big was down there','Luego el agua se movió. Algo grande estaba allá abajo'),pp('.')],en:'Then the water moved. Something big was down there.',es:'Luego el agua se movió. Algo grande estaba allá abajo.'}
+    ]},
+    {title:'La Pelea',titleEn:'The Fight',lines:[
+      {s:[pw('The rod bent. Ilias held on with all his strength','La caña se dobló. Ilias se aferró con toda su fuerza'),pp('.')],en:'The rod bent. Ilias held on with all his strength.',es:'La caña se dobló. Ilias se aferró con toda su fuerza.'},
+      {s:[pw('He remembered his jiu-jitsu training. He used his body weight','Recordó su entrenamiento de jiu-jitsu. Usó el peso de su cuerpo'),pp('.')],en:'He remembered his jiu-jitsu training. He used his body weight.',es:'Recordó su entrenamiento de jiu-jitsu. Usó el peso de su cuerpo.'},
+      {s:[pw('The fish came out of the water. It was gigantic','El pez salió del agua. Fue gigantesco'),pp('.')],en:'The fish came out of the water. It was gigantic.',es:'El pez salió del agua. Fue gigantesco.'}
+    ]},
+    {title:'La Leyenda',titleEn:'The Legend',lines:[
+      {s:[pw('He took a photo and put the fish back','Sacó una foto y devolvió el pez al agua'),pp('.')],en:'He took a photo and put the fish back.',es:'Sacó una foto y devolvió el pez al agua.'},
+      {s:[pw('He said to the fish','Le dijo al pez'),pp(': "'),pw('See you next year','Hasta el próximo año'),pp('."')],en:'He said to the fish: "See you next year."',es:'Le dijo al pez: "Hasta el próximo año."'},
+      {s:[pw('Ryano said the photo was fake. Ali said: Legend','Ryano dijo que la foto era falsa. Ali dijo: Leyenda'),pp('.')],en:'Ryano said the photo was fake. Ali said: Legend.',es:'Ryano dijo que la foto era falsa. Ali dijo: Leyenda.'}
+    ]}
+  ]},
+  // ── LEVEL 3 ── new vocabulary
+  {level:3,emoji:'🧱',title:'La Torre Imposible',sub:'The Impossible Tower',
+   desc:'Ilias builds the tallest Lego tower ever. New vocab: pieza, diseño, torre, arquitecto, construcción, piso.',
+   chapters:[
+    {title:'El Plan',titleEn:'The Plan',lines:[
+      {s:[pw('Ilias wants to build the tallest Lego tower in the world','Ilias quiere construir la torre de Lego más alta del mundo'),pp('.')],en:'Ilias wants to build the tallest Lego tower in the world.',es:'Ilias quiere construir la torre de Lego más alta del mundo.'},
+      {s:[pw('He draws a design on paper first','Primero dibuja un diseño en papel'),pp('.')],en:'He draws a design on paper first.',es:'Primero dibuja un diseño en papel.'},
+      {s:[pw('Ali says','Ali dice'),pp(': "'),pw('You are an architect!','¡Eres un arquitecto!'),pp('"')],en:'Ali says: "You are an architect!"',es:'Ali dice: "¡Eres un arquitecto!"'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('I am just a builder','Solo soy un constructor'),pp('."')],en:'Ilias says: "I am just a builder."',es:'Ilias dice: "Solo soy un constructor."'}
+    ]},
+    {title:'La Construcción',titleEn:'The Build',lines:[
+      {s:[pw('He uses 3,000 pieces','Usa 3,000 piezas'),pp('.')],en:'He uses 3,000 pieces.',es:'Usa 3,000 piezas.'},
+      {s:[pw('The tower has 47 floors. It reaches the ceiling','La torre tiene 47 pisos. Llega al techo'),pp('.')],en:'The tower has 47 floors. It reaches the ceiling.',es:'La torre tiene 47 pisos. Llega al techo.'},
+      {s:[pw('Isaaq says','Isaaq dice'),pp(': "'),pw('Do not touch it! It will fall!','¡No la toques! ¡Va a caer!'),pp('"')],en:'Isaaq says: "Do not touch it! It will fall!"',es:'Isaaq dice: "¡No la toques! ¡Va a caer!"'}
+    ]},
+    {title:'La Prueba',titleEn:'The Test',lines:[
+      {s:[pw('Ryano visits and says','Ryano visita y dice'),pp(': "'),pw('I will knock it down','La voy a tirar'),pp('."')],en:'Ryano visits and says: "I will knock it down."',es:'Ryano visita y dice: "La voy a tirar."'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('Try it','Inténtalo'),pp('."')],en:'Ilias says: "Try it."',es:'Ilias dice: "Inténtalo."'},
+      {s:[pw('Ryano pushes. The tower does not fall. It is perfect','Ryano empuja. La torre no cae. Es perfecta'),pp('.')],en:'Ryano pushes. The tower does not fall. It is perfect.',es:'Ryano empuja. La torre no cae. Es perfecta.'},
+      {s:[pw('Ryano leaves. The tower stands tall','Ryano se va. La torre sigue de pie'),pp('.')],en:'Ryano leaves. The tower stands tall.',es:'Ryano se va. La torre sigue de pie.'}
+    ]}
+  ]},
+  {level:3,emoji:'✈️',title:'El Piloto Más Joven',sub:'The Youngest Pilot',
+   desc:'Ilias wants to fly. New vocab: aeropuerto, despegue, aterrizaje, altitud, nube, cielo, control, simulador.',
+   chapters:[
+    {title:'El Aeropuerto',titleEn:'The Airport',lines:[
+      {s:[pw('The family goes to the airport','La familia va al aeropuerto'),pp('.')],en:'The family goes to the airport.',es:'La familia va al aeropuerto.'},
+      {s:[pw('Ilias sees the planes and cannot stop looking','Ilias ve los aviones y no puede dejar de mirar'),pp('.')],en:'Ilias sees the planes and cannot stop looking.',es:'Ilias ve los aviones y no puede dejar de mirar.'},
+      {s:[pw('He says','Dice'),pp(': "'),pw('One day I will be the pilot of that plane','Un día seré el piloto de ese avión'),pp('."')],en:'He says: "One day I will be the pilot of that plane."',es:'Dice: "Un día seré el piloto de ese avión."'},
+      {s:[pw('His father says','Su padre dice'),pp(': "'),pw('First finish your homework','Primero termina tu tarea'),pp('."')],en:'His father says: "First finish your homework."',es:'Su padre dice: "Primero termina tu tarea."'}
+    ]},
+    {title:'El Simulador',titleEn:'The Simulator',lines:[
+      {s:[pw('They find a flight simulator','Encuentran un simulador de vuelo'),pp('.')],en:'They find a flight simulator.',es:'Encuentran un simulador de vuelo.'},
+      {s:[pw('Ilias grabs the control and takes off','Ilias agarra el control y despega'),pp('.')],en:'Ilias grabs the control and takes off.',es:'Ilias agarra el control y despega.'},
+      {s:[pw('He reaches 10,000 feet. The sky is full of clouds','Alcanza 10,000 pies. El cielo está lleno de nubes'),pp('.')],en:'He reaches 10,000 feet. The sky is full of clouds.',es:'Alcanza 10,000 pies. El cielo está lleno de nubes.'}
+    ]},
+    {title:'El Aterrizaje',titleEn:'The Landing',lines:[
+      {s:[pw('The instructor says','El instructor dice'),pp(': "'),pw('Now land the plane','Ahora aterriza el avión'),pp('."')],en:'The instructor says: "Now land the plane."',es:'El instructor dice: "Ahora aterriza el avión."'},
+      {s:[pw('Ilias is calm. He lands it perfectly','Ilias está tranquilo. Lo aterriza perfectamente'),pp('.')],en:'Ilias is calm. He lands it perfectly.',es:'Ilias está tranquilo. Lo aterriza perfectamente.'},
+      {s:[pw('Ali says','Ali dice'),pp(': "'),pw('Future pilot right here','El futuro piloto está aquí'),pp('."')],en:'Ali says: "Future pilot right here."',es:'Ali dice: "El futuro piloto está aquí."'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('I know','Lo sé'),pp('."')],en:'Ilias says: "I know."',es:'Ilias dice: "Lo sé."'}
+    ]}
+  ]},
+  {level:3,emoji:'🏫',title:'El Misterio en Princeton Academy',sub:'The Mystery at Princeton Academy',
+   desc:'Something strange is happening at school. New vocab: biblioteca, laboratorio, misterio, secreto, alarma, director, trofeo.',
+   chapters:[
+    {title:'El Día Extraño',titleEn:'The Strange Day',lines:[
+      {s:[pw('Monday morning. Something is different at Princeton Academy','Lunes por la mañana. Algo es diferente en Princeton Academy'),pp('.')],en:'Monday morning. Something is different at Princeton Academy.',es:'Lunes por la mañana. Algo es diferente en Princeton Academy.'},
+      {s:[pw('The laboratory door is open. Nobody is inside','La puerta del laboratorio está abierta. Nadie está adentro'),pp('.')],en:'The laboratory door is open. Nobody is inside.',es:'La puerta del laboratorio está abierta. Nadie está adentro.'},
+      {s:[pw('The library is closed. It is never closed','La biblioteca está cerrada. Nunca está cerrada'),pp('.')],en:'The library is closed. It is never closed.',es:'La biblioteca está cerrada. Nunca está cerrada.'},
+      {s:[pw('Ilias says','Ilias dice'),pp(': "'),pw('This is a mystery','Esto es un misterio'),pp('."')],en:'Ilias says: "This is a mystery."',es:'Ilias dice: "Esto es un misterio."'}
+    ]},
+    {title:'La Investigación',titleEn:'The Investigation',lines:[
+      {s:[pw('Ilias finds a secret door behind the bookshelf','Ilias encuentra una puerta secreta detrás de la estantería'),pp('.')],en:'Ilias finds a secret door behind the bookshelf.',es:'Ilias encuentra una puerta secreta detrás de la estantería.'},
+      {s:[pw('He opens it. There is a room full of old trophies','La abre. Hay un cuarto lleno de trofeos viejos'),pp('.')],en:'He opens it. There is a room full of old trophies.',es:'La abre. Hay un cuarto lleno de trofeos viejos.'},
+      {s:[pw('A note says','Una nota dice'),pp(': "'),pw('Find the champion','Encuentra al campeón'),pp('."')],en:'A note says: "Find the champion."',es:'Una nota dice: "Encuentra al campeón."'},
+      {s:[pw('The alarm sounds. The principal runs in','La alarma suena. El director corre adentro'),pp('.')],en:'The alarm sounds. The principal runs in.',es:'La alarma suena. El director corre adentro.'}
+    ]},
+    {title:'El Secreto',titleEn:'The Secret',lines:[
+      {s:[pw('The principal sees Ilias and smiles','El director ve a Ilias y sonríe'),pp('.')],en:'The principal sees Ilias and smiles.',es:'El director ve a Ilias y sonríe.'},
+      {s:[pw('He says','Dice'),pp(': "'),pw('You found it. You are the champion we were looking for','Lo encontraste. Eres el campeón que buscábamos'),pp('."')],en:'He says: "You found it. You are the champion we were looking for."',es:'Dice: "Lo encontraste. Eres el campeón que buscábamos."'},
+      {s:[pw('Ilias. Of course','Ilias. Por supuesto'),pp('.')],en:'Ilias. Of course.',es:'Ilias. Por supuesto.'}
+    ]}
+  ]},
+  {level:3,emoji:'👊',title:'Cinco Hermanos vs El Mundo',sub:'Five Brothers vs The World',
+   desc:'The five brothers form a team. New vocab: trofeo, medalla, uniforme, celebrar, aficionado, tribuna, equipo.',
+   chapters:[
+    {title:'El Equipo',titleEn:'The Team',lines:[
+      {s:[pw('Ali, Ayla, Ismail, Isaaq, and Ilias. Five brothers','Ali, Ayla, Ismail, Isaaq e Ilias. Cinco hermanos'),pp('.')],en:'Ali, Ayla, Ismail, Isaaq, and Ilias. Five brothers.',es:'Ali, Ayla, Ismail, Isaaq e Ilias. Cinco hermanos.'},
+      {s:[pw('They put on their uniforms. Same color. Same team','Se ponen sus uniformes. Mismo color. Mismo equipo'),pp('.')],en:'They put on their uniforms. Same color. Same team.',es:'Se ponen sus uniformes. Mismo color. Mismo equipo.'},
+      {s:[pw('The stands are full. The fans are loud','La tribuna está llena. Los aficionados hacen mucho ruido'),pp('.')],en:'The stands are full. The fans are loud.',es:'La tribuna está llena. Los aficionados hacen mucho ruido.'},
+      {s:[pw('Ryano is there too. He has a team','Ryano también está ahí. Tiene un equipo'),pp('.')],en:'Ryano is there too. He has a team.',es:'Ryano también está ahí. Tiene un equipo.'}
+    ]},
+    {title:'La Final',titleEn:'The Final',lines:[
+      {s:[pw('Ali is strong. Ismail is fast. Isaaq is smart. Ayla is brave. Ilias is all of them','Ali es fuerte. Ismail es rápido. Isaaq es inteligente. Ayla es valiente. Ilias es todos ellos'),pp('.')],en:'Ali is strong. Ismail is fast. Isaaq is smart. Ayla is brave. Ilias is all of them.',es:'Ali es fuerte. Ismail es rápido. Isaaq es inteligente. Ayla es valiente. Ilias es todos ellos.'},
+      {s:[pw('They play together like one person','Juegan juntos como una sola persona'),pp('.')],en:'They play together like one person.',es:'Juegan juntos como una sola persona.'},
+      {s:[pw('Final score: 5-0','Marcador final: 5-0'),pp('.')],en:'Final score: 5-0.',es:'Marcador final: 5-0.'}
+    ]},
+    {title:'La Celebración',titleEn:'The Celebration',lines:[
+      {s:[pw('They receive the medal and the trophy','Reciben la medalla y el trofeo'),pp('.')],en:'They receive the medal and the trophy.',es:'Reciben la medalla y el trofeo.'},
+      {s:[pw('The five brothers celebrate together','Los cinco hermanos celebran juntos'),pp('.')],en:'The five brothers celebrate together.',es:'Los cinco hermanos celebran juntos.'},
+      {s:[pw('Ryano looks at them and says nothing','Ryano los mira y no dice nada'),pp('.')],en:'Ryano looks at them and says nothing.',es:'Ryano los mira y no dice nada.'},
+      {s:[pw('Ilias holds up the trophy and shouts','Ilias levanta el trofeo y grita'),pp(': "'),pw('Five brothers. Forever!','¡Cinco hermanos. Para siempre!'),pp('"')],en:'Ilias holds up the trophy and shouts: "Five brothers. Forever!"',es:'Ilias levanta el trofeo y grita: "¡Cinco hermanos. Para siempre!"'}
+    ]}
+  ]}
+];
+
+
+// ═══════════════════════════════════════════════════════
+// ILIAS LEARN SYSTEM — word discovery packs + tense intro
+// Ilias starts with ZERO words. He discovers them here.
+// ═══════════════════════════════════════════════════════
+
+var ILIAS_WORD_PACKS = {
+  futbol:{label:'⚽ Fútbol',color:'#2E7D32',bg:'#E8F5E9',words:[
+    {es:'Gol',en:'Goal',ex:{es:'¡Ilias mete un gol!',en:'Ilias scores a goal!'}},
+    {es:'Balón',en:'Ball',ex:{es:'El balón es redondo.',en:'The ball is round.'}},
+    {es:'Equipo',en:'Team',ex:{es:'Somos el mejor equipo.',en:'We are the best team.'}},
+    {es:'Portero',en:'Goalkeeper',ex:{es:'El portero protege la portería.',en:'The goalkeeper protects the goal.'}},
+    {es:'Árbitro',en:'Referee',ex:{es:'El árbitro pita el foul.',en:'The referee calls the foul.'}},
+    {es:'Cancha',en:'Field',ex:{es:'El partido es en la cancha.',en:'The game is on the field.'}},
+    {es:'Partido',en:'Match',ex:{es:'El partido empieza a las tres.',en:'The match starts at three.'}},
+    {es:'Campeón',en:'Champion',ex:{es:'¡Ilias es el campeón!',en:'Ilias is the champion!'}},
+    {es:'Ganar',en:'Win',ex:{es:'Queremos ganar el partido.',en:'We want to win the match.'}},
+    {es:'Perder',en:'Lose',ex:{es:'Ryano siempre pierde.',en:'Ryano always loses.'}},
+    {es:'Correr',en:'Run',ex:{es:'Ilias corre muy rápido.',en:'Ilias runs very fast.'}},
+    {es:'Patear',en:'Kick',ex:{es:'Ilias patea el balón.',en:'Ilias kicks the ball.'}},
+    {es:'Atacar',en:'Attack',ex:{es:'¡Vamos a atacar!',en:"Let's attack!"}},
+    {es:'Defensa',en:'Defense',ex:{es:'Nuestra defensa es perfecta.',en:'Our defense is perfect.'}},
+    {es:'Entrenar',en:'Train',ex:{es:'Entreno todos los días.',en:'I train every day.'}},
+    {es:'Meter gol',en:'Score',ex:{es:'Ilias va a meter gol.',en:'Ilias is going to score.'}}
+  ]},
+  gaming:{label:'🎮 Gaming',color:'#1565C0',bg:'#E3F2FD',words:[
+    {es:'Jugar',en:'Play',ex:{es:'Vamos a jugar Roblox.',en:"Let's play Roblox."}},
+    {es:'Construir',en:'Build',ex:{es:'Ilias puede construir mundos.',en:'Ilias can build worlds.'}},
+    {es:'Mundo',en:'World',ex:{es:'Bienvenido a mi mundo.',en:'Welcome to my world.'}},
+    {es:'Pantalla',en:'Screen',ex:{es:'La pantalla es muy grande.',en:'The screen is very big.'}},
+    {es:'Personaje',en:'Character',ex:{es:'Mi personaje es muy fuerte.',en:'My character is very strong.'}},
+    {es:'Misión',en:'Mission',ex:{es:'Tengo que terminar la misión.',en:'I have to finish the mission.'}},
+    {es:'Enemigo',en:'Enemy',ex:{es:'Ryano es mi enemigo.',en:'Ryano is my enemy.'}},
+    {es:'Nivel',en:'Level',ex:{es:'¡Subí de nivel!',en:'I leveled up!'}},
+    {es:'Victoria',en:'Victory',ex:{es:'¡Victoria! ¡Ganamos!',en:'Victory! We won!'}},
+    {es:'Derrota',en:'Defeat',ex:{es:'Ryano acepta la derrota.',en:'Ryano accepts defeat.'}},
+    {es:'Poder',en:'Power',ex:{es:'Mi personaje tiene mucho poder.',en:'My character has a lot of power.'}},
+    {es:'Respawn',en:'Respawn',ex:{es:'Después del respawn, sigo jugando.',en:'After respawn, I keep playing.'}}
+  ]},
+  pesca:{label:'🎣 Pesca',color:'#00695C',bg:'#E0F7FA',words:[
+    {es:'Pescar',en:'Fish',ex:{es:'Me encanta pescar los sábados.',en:'I love to fish on Saturdays.'}},
+    {es:'Pez',en:'Fish',ex:{es:'Agarré un pez muy grande.',en:'I caught a very big fish.'}},
+    {es:'Caña',en:'Rod',ex:{es:'Necesito mi caña de pescar.',en:'I need my fishing rod.'}},
+    {es:'Lago',en:'Lake',ex:{es:'El lago está muy tranquilo.',en:'The lake is very calm.'}},
+    {es:'Río',en:'River',ex:{es:'El río tiene muchos peces.',en:'The river has many fish.'}},
+    {es:'Anzuelo',en:'Hook',ex:{es:'Pongo la carnada en el anzuelo.',en:'I put bait on the hook.'}},
+    {es:'Bote',en:'Boat',ex:{es:'Fuimos en bote al lago.',en:'We went to the lake by boat.'}},
+    {es:'Capturar',en:'Catch',ex:{es:'Quiero capturar el pez más grande.',en:'I want to catch the biggest fish.'}},
+    {es:'Agua',en:'Water',ex:{es:'El agua está muy fría.',en:'The water is very cold.'}},
+    {es:'Grande',en:'Big',ex:{es:'¡El pez es muy grande!',en:'The fish is very big!'}}
+  ]},
+  jiujitsu:{label:'🥋 Jiu-Jitsu',color:'#E65100',bg:'#FFF3E0',words:[
+    {es:'Luchar',en:'Fight',ex:{es:'Ilias sabe luchar muy bien.',en:'Ilias knows how to fight very well.'}},
+    {es:'Cinturón',en:'Belt',ex:{es:'Quiero el cinturón negro.',en:'I want the black belt.'}},
+    {es:'Fuerte',en:'Strong',ex:{es:'Soy muy fuerte.',en:'I am very strong.'}},
+    {es:'Rápido',en:'Fast',ex:{es:'Ilias es más rápido que Ryano.',en:'Ilias is faster than Ryano.'}},
+    {es:'Atacar',en:'Attack',ex:{es:'¡Ataca primero!',en:'Attack first!'}},
+    {es:'Defender',en:'Defend',ex:{es:'Tengo que defender mi posición.',en:'I have to defend my position.'}},
+    {es:'Competencia',en:'Competition',ex:{es:'La competencia es el sábado.',en:'The competition is on Saturday.'}},
+    {es:'Caer',en:'Fall',ex:{es:'Ryano cae al suelo.',en:'Ryano falls to the ground.'}},
+    {es:'Ganar',en:'Win',ex:{es:'Ilias siempre gana.',en:'Ilias always wins.'}},
+    {es:'Negro',en:'Black',ex:{es:'El cinturón negro es el mejor.',en:'The black belt is the best.'}}
+  ]},
+  aventura:{label:'✈️ Aventura',color:'#6A1B9A',bg:'#F3E5F5',words:[
+    {es:'Avión',en:'Plane',ex:{es:'El avión vuela muy alto.',en:'The plane flies very high.'}},
+    {es:'Carro',en:'Car',ex:{es:'Mi carro favorito es rojo.',en:'My favorite car is red.'}},
+    {es:'Volar',en:'Fly',ex:{es:'Quiero volar aviones.',en:'I want to fly planes.'}},
+    {es:'Manejar',en:'Drive',ex:{es:'Mi padre sabe manejar bien.',en:'My father knows how to drive well.'}},
+    {es:'Motor',en:'Engine',ex:{es:'El motor del carro hace ruido.',en:'The car engine makes noise.'}},
+    {es:'Velocidad',en:'Speed',ex:{es:'¡Me encanta la velocidad!',en:'I love speed!'}},
+    {es:'Piloto',en:'Pilot',ex:{es:'Quiero ser piloto.',en:'I want to be a pilot.'}},
+    {es:'Nave',en:'Spacecraft',ex:{es:'La nave va a la luna.',en:'The spacecraft goes to the moon.'}},
+    {es:'Construir',en:'Build',ex:{es:'Construyo aviones de Lego.',en:'I build Lego planes.'}},
+    {es:'Rápido',en:'Fast',ex:{es:'El avión es muy rápido.',en:'The plane is very fast.'}}
+  ]},
+  escuela:{label:'🏫 Escuela',color:'#F57F17',bg:'#FFFDE7',words:[
+    {es:'Escuela',en:'School',ex:{es:'Mi escuela se llama Princeton Academy.',en:'My school is called Princeton Academy.'}},
+    {es:'Clase',en:'Class',ex:{es:'Me gusta mi clase de ciencias.',en:'I like my science class.'}},
+    {es:'Maestro',en:'Teacher',ex:{es:'Mi maestro es muy bueno.',en:'My teacher is very good.'}},
+    {es:'Estudiar',en:'Study',ex:{es:'Estudio para el examen.',en:'I study for the test.'}},
+    {es:'Amigo',en:'Friend',ex:{es:'Mi mejor amigo está en mi clase.',en:'My best friend is in my class.'}},
+    {es:'Aprender',en:'Learn',ex:{es:'Me gusta aprender español.',en:'I like to learn Spanish.'}},
+    {es:'Leer',en:'Read',ex:{es:'Leo un libro cada semana.',en:'I read a book every week.'}},
+    {es:'Uniforme',en:'Uniform',ex:{es:'Uso uniforme en la escuela.',en:'I wear a uniform at school.'}},
+    {es:'Recreo',en:'Recess',ex:{es:'En el recreo jugamos fútbol.',en:'At recess we play soccer.'}},
+    {es:'Lápiz',en:'Pencil',ex:{es:'Necesito un lápiz para la clase.',en:'I need a pencil for class.'}}
+  ]},
+  familia:{label:'👨‍👦 Familia',color:'#880E4F',bg:'#FCE4EC',words:[
+    {es:'Hermano',en:'Brother',ex:{es:'Ali es mi hermano mayor.',en:'Ali is my older brother.'}},
+    {es:'Mayor',en:'Older',ex:{es:'Ali es el mayor de los cinco.',en:'Ali is the oldest of the five.'}},
+    {es:'Menor',en:'Younger',ex:{es:'Ilias es el menor de todos.',en:'Ilias is the youngest of all.'}},
+    {es:'Familia',en:'Family',ex:{es:'Mi familia es muy grande.',en:'My family is very big.'}},
+    {es:'Padre',en:'Father',ex:{es:'Mi padre me enseña a pescar.',en:'My father teaches me to fish.'}},
+    {es:'Madre',en:'Mother',ex:{es:'Mi madre hace la mejor comida.',en:'My mother makes the best food.'}},
+    {es:'Cinco',en:'Five',ex:{es:'Somos cinco hermanos.',en:'We are five brothers.'}},
+    {es:'Juntos',en:'Together',ex:{es:'Los hermanos siempre están juntos.',en:'The brothers are always together.'}}
+  ]},
+  influencer:{label:'📱 Influencer',color:'#33691E',bg:'#F1F8E9',words:[
+    {es:'Cámara',en:'Camera',ex:{es:'Necesito la cámara para el video.',en:'I need the camera for the video.'}},
+    {es:'Video',en:'Video',ex:{es:'Mi video tiene mil vistas.',en:'My video has a thousand views.'}},
+    {es:'Famoso',en:'Famous',ex:{es:'Quiero ser famoso en YouTube.',en:'I want to be famous on YouTube.'}},
+    {es:'Seguidor',en:'Follower',ex:{es:'Tengo 10,000 seguidores.',en:'I have 10,000 followers.'}},
+    {es:'Grabar',en:'Record',ex:{es:'Voy a grabar un video hoy.',en:'I am going to record a video today.'}},
+    {es:'Compartir',en:'Share',ex:{es:'Comparte el video con tus amigos.',en:'Share the video with your friends.'}},
+    {es:'Viral',en:'Viral',ex:{es:'¡Mi video se hizo viral!',en:'My video went viral!'}},
+    {es:'Estrella',en:'Star',ex:{es:'Un día seré una estrella.',en:'One day I will be a star.'}}
+  ]}
+};
+
+var ILIAS_PRONOUNS=[
+  {es:'Yo',en:'I',ex:{es:'Yo juego fútbol.',en:'I play soccer.'}},
+  {es:'Tú',en:'You',ex:{es:'Tú eres mi amigo.',en:'You are my friend.'}},
+  {es:'Él',en:'He',ex:{es:'Él corre muy rápido.',en:'He runs very fast.'}},
+  {es:'Ella',en:'She',ex:{es:'Ella baila muy bien.',en:'She dances very well.'}},
+  {es:'Nosotros',en:'We',ex:{es:'Nosotros somos el mejor equipo.',en:'We are the best team.'}},
+  {es:'Ellos',en:'They',ex:{es:'Ellos juegan fútbol todos los días.',en:'They play soccer every day.'}},
+  {es:'Me',en:'Me / My',ex:{es:'A me gusta el fútbol.',en:'I like soccer.'}},
+  {es:'Te',en:'You (obj)',ex:{es:'Yo te llamo mañana.',en:'I will call you tomorrow.'}}
+];
+
+var TENSE_INTRO_DATA={
+  present:{
+    title:'🟢 Present Tense', color:'#00b894',
+    subtitle:'What is happening NOW or regularly',
+    explanation:'-ar verbs: remove -ar, add: yo→-o  tú→-as  él/ella→-a  nosotros→-amos  ellos→-an',
+    examples:[
+      {es:'Yo juego fútbol.',en:'I play soccer.',note:'yo + jugar → juego'},
+      {es:'Tú juegas muy bien.',en:'You play very well.',note:'tú + jugar → juegas'},
+      {es:'Él juega todos los días.',en:'He plays every day.',note:'él + jugar → juega'},
+      {es:'Nosotros jugamos juntos.',en:'We play together.',note:'nosotros + jugar → jugamos'},
+      {es:'Ellos juegan en el parque.',en:'They play in the park.',note:'ellos + jugar → juegan'}
+    ]
+  },
+  past:{
+    title:'🟠 Past Tense', color:'#f97316',
+    subtitle:'What ALREADY happened',
+    explanation:'-ar verbs in the past: yo→-é  tú→-aste  él/ella→-ó  nosotros→-amos  ellos→-aron',
+    examples:[
+      {es:'Yo jugué fútbol ayer.',en:'I played soccer yesterday.',note:'yo + jugar past → jugué'},
+      {es:'Tú jugaste muy bien.',en:'You played very well.',note:'tú + jugar past → jugaste'},
+      {es:'Él jugó toda la tarde.',en:'He played all afternoon.',note:'él + jugar past → jugó'},
+      {es:'Nosotros jugamos anoche.',en:'We played last night.',note:'nosotros + jugar past → jugamos'},
+      {es:'Ellos jugaron sin parar.',en:'They played non-stop.',note:'ellos + jugar past → jugaron'}
+    ]
+  },
+  future:{
+    title:'🔵 Future Tense', color:'#2196F3',
+    subtitle:'What WILL happen',
+    explanation:'Keep the full verb, add: yo→-é  tú→-ás  él/ella→-á  nosotros→-emos  ellos→-án',
+    examples:[
+      {es:'Yo jugaré mañana.',en:'I will play tomorrow.',note:'jugar + future → jugaré'},
+      {es:'Tú jugarás después.',en:'You will play later.',note:'jugar + future → jugarás'},
+      {es:'Él jugará el sábado.',en:'He will play on Saturday.',note:'jugar + future → jugará'},
+      {es:'Nosotros jugaremos juntos.',en:'We will play together.',note:'jugar + future → jugaremos'},
+      {es:'Ellos jugarán en el torneo.',en:'They will play in the tournament.',note:'jugar + future → jugarán'}
+    ]
+  }
+};
+
+// Learn system state
+var discPack=null, discWords=[], discIdx=0, discBatch=[];
+var discFCWords=[], discFCIdx=0;
+var matchLeft=[], matchRight=[], matchSelL=-1, matchSelR=-1, matchMatched=[];
+
+// ── WORD BANK ──
+function getWordBank(){try{return JSON.parse(localStorage.getItem(uKey('wbank'))||'[]');}catch(e){return[];}}
+function saveWordBank(b){try{localStorage.setItem(uKey('wbank'),JSON.stringify(b));}catch(e){}}
+function addToWordBank(word){
+  var b=getWordBank();
+  if(!b.find(function(w){return w.es===word.es&&w.pack===word.pack;})){b.push(word);saveWordBank(b);}
+}
+function removeFromWordBank(es,pack){
+  var b=getWordBank().filter(function(w){return !(w.es===es&&w.pack===pack);});
+  saveWordBank(b);
+}
+function getBankQuestions(){
+  var bank=getWordBank();
+  if(bank.length<4) return [];
+  var qs=[];
+  bank.forEach(function(w){
+    var wrongs=shuffle(bank.filter(function(x){return x.es!==w.es;})).slice(0,3).map(function(x){return x.es;});
+    if(wrongs.length<3) return;
+    var p=ILIAS_WORD_PACKS[w.pack]||{};
+    qs.push({cat:w.pack||'gaming',sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:w.es,answer:w.es,wrong:wrongs});
+  });
+  return qs;
+}
+
+// ── LEARN HUB ──
+function renderIliasLearn(){
+  var bank=getWordBank(), bankCount=bank.length;
+  var packKeys=Object.keys(ILIAS_WORD_PACKS);
+  var packs=packKeys.map(function(k){
+    var p=ILIAS_WORD_PACKS[k];
+    var learned=bank.filter(function(w){return w.pack===k;}).length;
+    var total=p.words.length, pct=Math.round(learned/total*100);
+    return '<div data-pack="'+k+'" onclick="doStartDiscovery(this.dataset.pack)" style="background:#fff;border-radius:12px;padding:12px;cursor:pointer;border:2px solid #e8d4f8;box-shadow:0 1px 4px #e0c8f0;transition:border-color .15s">'
+      +'<div style="font-size:13px;font-weight:700;color:'+p.color+';margin-bottom:6px">'+p.label+'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<div style="flex:1;height:5px;background:#f0e4ff;border-radius:10px;overflow:hidden">'
+      +'<div style="width:'+pct+'%;height:100%;background:'+p.color+';border-radius:10px"></div></div>'
+      +'<div style="font-size:10px;color:#a07cb8;white-space:nowrap">'+learned+'/'+total+'</div>'
+      +'</div></div>';
+  }).join('');
+
+  var scr=document.getElementById('screen-wordlist');
+  scr.innerHTML='<div class="wl-controls"></div><div class="wl-tabs"></div>'
+    +'<div style="padding:16px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+    +'<div style="font-size:20px;font-weight:900;color:#3a2050">🎓 Learn Words</div>'
+    +'<div style="font-size:12px;font-weight:700;color:#3aaa6a">'+bankCount+' words ⚡</div>'
+    +'</div>'
+    +'<div style="font-size:13px;color:#a07cb8;margin-bottom:16px">Choose a topic — tap each word to keep it!</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">'+packs+'</div>'
+    +(bankCount>0
+      ?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'
+        +'<button onclick="renderWordBankView()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.4">📦 My Words<br><span style=\"font-size:11px;font-weight:400\">'+bankCount+' saved</span></button>'
+        +(bankCount>=4
+          ?'<button onclick="startIliasQuiz()" style="background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:14px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.4">🎯 Practice<br><span style=\"font-size:11px;font-weight:400\">Quiz yourself</span></button>'
+          :'<button disabled style="background:#f3e4ff;color:#c9a8e8;border:none;border-radius:12px;padding:14px;font-size:13px;font-weight:700;cursor:default;line-height:1.4">🎯 Practice<br><span style=\"font-size:11px\">4+ words needed</span></button>')
+        +'</div>'
+        +(bankCount>=8
+          ?'<button onclick="renderIliasTenses()" style="width:100%;background:linear-gradient(135deg,#3a1060,#6b3fa0);color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">⚡ Tenses &amp; Pronouns</button>'
+          :'')
+      :'<div style="text-align:center;padding:20px;background:#fff;border-radius:14px;color:#a07cb8;font-size:13px"><div style=\"font-size:32px;margin-bottom:8px\">👋</div>Pick a topic above to learn your first words!</div>')
+    +'</div>';
+}
+
+// ── DISCOVERY ──
+function doStartDiscovery(pack){startDiscovery(pack);}
+function startDiscovery(packId){
+  var p=ILIAS_WORD_PACKS[packId], bank=getWordBank();
+  var unlearned=p.words.filter(function(w){return !bank.find(function(b){return b.es===w.es&&b.pack===packId;});});
+  if(!unlearned.length){
+    document.getElementById('screen-wordlist').innerHTML='<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">🏆</div><div style="font-size:18px;font-weight:700;color:#6b3fa0;margin-bottom:8px">All '+p.label+' words learned!</div><div style="font-size:13px;color:#a07cb8;margin-bottom:24px">Try another topic or practice what you know.</div><button onclick="renderIliasLearn()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer">← Back</button></div>';
+    return;
+  }
+  discPack=packId; discWords=unlearned; discIdx=0; discBatch=[];
+  renderDiscoveryCard();
+}
+
+function renderDiscoveryCard(){
+  if(discIdx>=discWords.length){showDiscoveryDone();return;}
+  var w=discWords[discIdx], p=ILIAS_WORD_PACKS[discPack];
+  var remaining=discWords.length-discIdx, learned=discBatch.length;
+  var showReview=learned>0&&learned%4===0;
+  document.getElementById('screen-wordlist').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<button onclick="renderIliasLearn()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="text-align:center;font-size:12px;color:#a07cb8">'+p.label+'<br><span style="color:#3aaa6a;font-weight:700">'+learned+' saved</span> · <span>'+remaining+' left</span></div>'
+    +'<div></div>'
+    +'</div>'
+    // Word card
+    +'<div style="background:linear-gradient(160deg,'+p.bg+',#fff);border:2px solid '+p.color+';border-radius:22px;padding:30px 20px;text-align:center;margin-bottom:14px;box-shadow:0 6px 20px rgba(0,0,0,.08)">'
+    +'<div style="font-size:11px;font-weight:700;color:'+p.color+';letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">NEW WORD</div>'
+    +'<div style="font-size:44px;font-weight:900;color:#2a1040;margin-bottom:10px">'+w.es+'</div>'
+    +'<div style="font-size:26px;color:'+p.color+';font-weight:700;margin-bottom:20px">= '+w.en+'</div>'
+    +'<div style="height:1px;background:rgba(0,0,0,.07);margin-bottom:16px"></div>'
+    +'<div style="font-size:15px;color:#2a1040;font-style:italic;margin-bottom:6px">"'+w.ex.es+'"</div>'
+    +'<div style="font-size:13px;color:'+p.color+';font-style:italic">"'+w.ex.en+'"</div>'
+    +'</div>'
+    // Buttons
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">'
+    +'<button onclick="discoverySkip()" style="background:#f3e4ff;color:#a07cb8;border:2px solid #e8d4f8;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer">Skip →</button>'
+    +'<button onclick="discoveryLearn()" style="background:'+p.color+';color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer">✓ Got it!</button>'
+    +'</div>'
+    +(showReview?'<button onclick="startFlashcards(discBatch)" style="width:100%;background:#fff;border:2px solid #6b3fa0;color:#6b3fa0;border-radius:12px;padding:11px;font-size:13px;font-weight:700;cursor:pointer">⚡ Quick review your '+learned+' new words!</button>':'')
+    +'</div>';
+}
+
+function discoverySkip(){discIdx++;renderDiscoveryCard();}
+function discoveryLearn(){
+  var w=discWords[discIdx], wordObj={es:w.es,en:w.en,pack:discPack,ex:w.ex};
+  addToWordBank(wordObj); discBatch.push(wordObj); discIdx++;
+  showLearnFlash('✓ Saved!');
+  renderDiscoveryCard();
+}
+function showLearnFlash(txt){
+  var el=document.createElement('div');
+  el.style.cssText='position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:900;color:#1a6b2a;background:#edfff3;padding:8px 18px;border-radius:10px;pointer-events:none;z-index:999;animation:gfp .5s ease-out forwards';
+  el.textContent=txt; document.body.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.remove();},600);
+}
+function showDiscoveryDone(){
+  var bank=getWordBank(), p=ILIAS_WORD_PACKS[discPack];
+  var packLearned=bank.filter(function(w){return w.pack===discPack;}).length;
+  document.getElementById('screen-wordlist').innerHTML=
+    '<div style="padding:16px;text-align:center">'
+    +'<div style="font-size:52px;margin-bottom:12px">'+(discBatch.length>0?'🎉':'✅')+'</div>'
+    +'<div style="font-size:20px;font-weight:900;color:#6b3fa0;margin-bottom:8px">'
+    +(discBatch.length>0?'You learned '+discBatch.length+' new words!':'Session complete!')+'</div>'
+    +'<div style="font-size:13px;color:#a07cb8;margin-bottom:20px">'+p.label+': '+packLearned+'/'+p.words.length+' total</div>'
+    +(discBatch.length>=2
+      ?'<button onclick="startFlashcards(discBatch)" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">⚡ Flashcard Review</button>'
+      +'<button onclick="startMatchGame(discBatch)" style="width:100%;background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">🎯 Match Game</button>'
+      :'')
+    +'<button onclick="startDiscovery(discPack)" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:2px solid #d8b4f8;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">▶ Keep Learning '+p.label+'</button>'
+    +'<button onclick="renderIliasLearn()" style="width:100%;background:none;color:#a07cb8;border:1px solid #e8d4f8;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">← All Topics</button>'
+    +'</div>';
+}
+
+// ── FLASHCARDS ──
+function startFlashcards(words){
+  discFCWords=shuffle((words||discBatch).slice()); discFCIdx=0;
+  renderFlashcard();
+}
+function renderFlashcard(){
+  if(discFCIdx>=discFCWords.length){
+    document.getElementById('screen-wordlist').innerHTML=
+      '<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">⭐</div><div style="font-size:20px;font-weight:900;color:#6b3fa0;margin-bottom:8px">Flashcards done!</div>'
+      +'<button onclick="startMatchGame(discFCWords)" style="width:100%;background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">🎯 Try the Match Game</button>'
+      +'<button onclick="renderIliasLearn()" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:2px solid #d8b4f8;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">← Back to Topics</button></div>';
+    return;
+  }
+  var w=discFCWords[discFCIdx];
+  document.getElementById('screen-wordlist').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<button onclick="renderIliasLearn()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="font-size:13px;color:#a07cb8">Card '+(discFCIdx+1)+' / '+discFCWords.length+'</div><div></div></div>'
+    +'<div id="fc-card" onclick="flipFC()" style="background:linear-gradient(135deg,#ede0ff,#f9f0ff);border:2px solid #d8b4f8;border-radius:22px;padding:44px 20px;text-align:center;cursor:pointer;min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 16px rgba(107,63,160,.12)">'
+    +'<div style="font-size:12px;color:#a07cb8;letter-spacing:1px;margin-bottom:14px">SPANISH → ?</div>'
+    +'<div style="font-size:44px;font-weight:900;color:#3a2050;margin-bottom:12px">'+w.es+'</div>'
+    +'<div id="fc-ans" style="opacity:0;transition:opacity .3s">'
+    +'<div style="font-size:26px;font-weight:700;color:#6b3fa0;margin-bottom:10px">= '+w.en+'</div>'
+    +'<div style="font-size:13px;color:#a07cb8;font-style:italic">'+w.ex.en+'</div></div>'
+    +'<div id="fc-hint" style="font-size:13px;color:#c9a8e8;margin-top:10px">Tap to reveal 👆</div>'
+    +'</div>'
+    +'<div id="fc-btns" style="display:none;grid-template-columns:1fr 1fr;gap:12px">'
+    +'<button onclick="fcNext(false)" style="background:#fff0f0;color:#a02020;border:2px solid #e87070;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer">🔁 Again</button>'
+    +'<button onclick="fcNext(true)" style="background:#edfff3;color:#1a6b2a;border:2px solid #3aaa6a;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer">✓ Got it!</button>'
+    +'</div></div>';
+}
+function flipFC(){
+  var ans=document.getElementById('fc-ans'), hint=document.getElementById('fc-hint'), btns=document.getElementById('fc-btns');
+  if(ans) ans.style.opacity='1';
+  if(hint) hint.style.display='none';
+  if(btns) btns.style.display='grid';
+}
+function fcNext(ok){if(!ok){discFCWords.push(discFCWords[discFCIdx]);}discFCIdx++;renderFlashcard();}
+
+// ── MATCH GAME ──
+function startMatchGame(words){
+  var pool=(words&&words.length>=4)?words:getWordBank();
+  if(pool.length<4){showLearnFlash('Need 4+ words!');return;}
+  var sel=shuffle(pool).slice(0,4);
+  matchLeft=sel.map(function(w){return{es:w.es,matched:false};});
+  matchRight=shuffle(sel.map(function(w){return{en:w.en,es:w.es,matched:false};}));
+  matchSelL=-1; matchSelR=-1; matchMatched=[];
+  renderMatchUI();
+}
+function renderMatchUI(){
+  var allDone=matchLeft.every(function(w){return w.matched;});
+  if(allDone){
+    document.getElementById('screen-wordlist').innerHTML=
+      '<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">🎯</div><div style="font-size:20px;font-weight:900;color:#6b3fa0;margin-bottom:8px">Perfect Match! ✓</div>'
+      +'<button onclick="startMatchGame(discFCWords.length?discFCWords:getWordBank())" style="width:100%;background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">🔄 Play again</button>'
+      +'<button onclick="renderIliasLearn()" style="width:100%;background:#f3e4ff;color:#6b3fa0;border:2px solid #d8b4f8;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">← Back</button></div>';
+    return;
+  }
+  var lHTML=matchLeft.map(function(w,i){
+    if(w.matched) return '<div style="padding:13px;border-radius:10px;background:#edfff3;border:2px solid #3aaa6a;color:#3aaa6a;font-size:15px;font-weight:700;text-align:center;opacity:.5">'+w.es+' ✓</div>';
+    var s=matchSelL===i;
+    return '<button onclick="mSelL('+i+')" style="padding:13px;border-radius:10px;background:'+(s?'#6b3fa0':'#fff')+';border:2px solid '+(s?'#6b3fa0':'#e8d4f8')+';color:'+(s?'#fff':'#3a2050')+';font-size:15px;font-weight:700;text-align:center;cursor:pointer;width:100%">'+w.es+'</button>';
+  }).join('');
+  var rHTML=matchRight.map(function(w,i){
+    if(w.matched) return '<div style="padding:13px;border-radius:10px;background:#edfff3;border:2px solid #3aaa6a;color:#3aaa6a;font-size:14px;font-weight:700;text-align:center;opacity:.5">'+w.en+' ✓</div>';
+    var s=matchSelR===i;
+    return '<button onclick="mSelR('+i+')" style="padding:13px;border-radius:10px;background:'+(s?'#a07cb8':'#fff')+';border:2px solid '+(s?'#a07cb8':'#e8d4f8')+';color:'+(s?'#fff':'#3a2050')+';font-size:14px;font-weight:700;text-align:center;cursor:pointer;width:100%">'+w.en+'</button>';
+  }).join('');
+  document.getElementById('screen-wordlist').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<button onclick="renderIliasLearn()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="font-size:14px;font-weight:700;color:#6b3fa0">Match the words! 🎯</div>'
+    +'<div style="font-size:12px;color:#a07cb8">'+matchMatched.length+'/4</div></div>'
+    +'<div style="font-size:12px;color:#a07cb8;text-align:center;margin-bottom:12px">Tap Spanish word, then its English meaning</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    +'<div style="display:flex;flex-direction:column;gap:8px">'+lHTML+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px">'+rHTML+'</div>'
+    +'</div></div>';
+}
+function mSelL(i){if(matchLeft[i].matched)return;matchSelL=i;checkPair();}
+function mSelR(i){if(matchRight[i].matched)return;matchSelR=i;checkPair();}
+function checkPair(){
+  renderMatchUI();
+  if(matchSelL<0||matchSelR<0) return;
+  if(matchLeft[matchSelL].es===matchRight[matchSelR].es){
+    matchLeft[matchSelL].matched=true; matchRight[matchSelR].matched=true;
+    matchMatched.push(matchSelL); matchSelL=-1; matchSelR=-1;
+    showLearnFlash('✓ Match!');
+    setTimeout(renderMatchUI,400);
+  } else {
+    matchSelL=-1; matchSelR=-1;
+    setTimeout(renderMatchUI,300);
+  }
+}
+
+// ── WORD BANK VIEW ──
+function renderWordBankView(){
+  var bank=getWordBank();
+  if(!bank.length){
+    document.getElementById('screen-wordlist').innerHTML='<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">📦</div><div style="font-size:18px;font-weight:700;color:#6b3fa0;margin-bottom:8px">No words yet!</div><button onclick="renderIliasLearn()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer">Start Learning →</button></div>';
+    return;
+  }
+  var byPack={};
+  bank.forEach(function(w){var k=w.pack||'other';if(!byPack[k])byPack[k]=[];byPack[k].push(w);});
+  var html='<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+    +'<button onclick="renderIliasLearn()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="font-size:20px;font-weight:900;color:#3a2050">📦 My Words ('+bank.length+')</div>'
+    +'</div>';
+  Object.keys(byPack).forEach(function(k){
+    var p=ILIAS_WORD_PACKS[k]||{label:k,color:'#6b3fa0'};
+    html+='<div style="font-size:11px;font-weight:700;color:'+p.color+';letter-spacing:.06em;text-transform:uppercase;padding:8px 0 4px">'+p.label+'</div>';
+    html+='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px #e0c8f0;margin-bottom:12px">';
+    byPack[k].forEach(function(w){
+      var safe_es=w.es.replace(/'/g,"\'"), safe_pk=w.pack;
+      html+='<div style="display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid #f3e8ff;gap:10px">'
+        +'<div style="flex:1"><div style="font-size:15px;font-weight:700;color:#3a2050">'+w.es+'</div><div style="font-size:12px;color:#a07cb8">= '+w.en+'</div></div>'
+        +'<button data-es="'+safe_es+'" data-pk="'+safe_pk+'" onclick="removeFromWordBank(this.dataset.es,this.dataset.pk);renderWordBankView()" style="background:none;border:none;color:#c9a8e8;cursor:pointer;font-size:20px;padding:4px">×</button>'
+        +'</div>';
+    });
+    html+='</div>';
+  });
+  html+='<button onclick="startIliasQuiz()" style="width:100%;background:#3aaa6a;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px">🎯 Practice These Words</button>';
+  html+='</div>';
+  document.getElementById('screen-wordlist').innerHTML=html;
+}
+
+// ── ILIAS QUIZ (from word bank) ──
+function startIliasQuiz(){
+  var qs=getBankQuestions();
+  if(qs.length<4){showLearnFlash('Learn 4+ words first!');return;}
+  qQueue=shuffle(qs).slice(0,Math.min(settings.quizLen,qs.length)).map(function(q){return{q:q,streak:0};});
+  qPos=0; qExpert=0; qAnswered=false;
+  openScreen('quiz','🎯 Word Bank Quiz');
+}
+
+// ── TENSES & PRONOUNS ──
+function renderIliasTenses(){
+  document.getElementById('screen-wordlist').innerHTML=
+    '<div style="padding:16px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+    +'<button onclick="renderIliasLearn()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+    +'<div style="font-size:20px;font-weight:900;color:#3a2050">⚡ Tenses &amp; Pronouns</div>'
+    +'</div>'
+    +'<div style="font-size:13px;color:#a07cb8;margin-bottom:16px">Start with who does the action, then how to say it in different tenses.</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    +'<button onclick="startPronounCards()" style="background:linear-gradient(135deg,#3a1060,#6b3fa0);color:#fff;border:none;border-radius:14px;padding:18px 10px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.5">👤 Pronouns<br><span style=\"font-size:11px;font-weight:400\">yo, tú, él, ella...</span></button>'
+    +'<button data-tense="present" onclick="doTenseIntro(this.dataset.tense)" style="background:linear-gradient(135deg,#006644,#00b894);color:#fff;border:none;border-radius:14px;padding:18px 10px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.5">🟢 Presente<br><span style=\"font-size:11px;font-weight:400\">I play, you play...</span></button>'
+    +'<button data-tense="past" onclick="doTenseIntro(this.dataset.tense)" style="background:linear-gradient(135deg,#b35000,#f97316);color:#fff;border:none;border-radius:14px;padding:18px 10px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.5">🟠 Pretérito<br><span style=\"font-size:11px;font-weight:400\">I played, you played...</span></button>'
+    +'<button data-tense="future" onclick="doTenseIntro(this.dataset.tense)" style="background:linear-gradient(135deg,#1565C0,#2196F3);color:#fff;border:none;border-radius:14px;padding:18px 10px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.5">🔵 Futuro<br><span style=\"font-size:11px;font-weight:400\">I will play...</span></button>'
+    +'</div></div>';
+}
+
+function startPronounCards(){
+  var cards=ILIAS_PRONOUNS, idx=0;
+  function show(){
+    if(idx>=cards.length){
+      document.getElementById('screen-wordlist').innerHTML='<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">⭐</div><div style="font-size:20px;font-weight:900;color:#6b3fa0;margin-bottom:8px">Pronouns done!</div><div style="font-size:13px;color:#a07cb8;margin-bottom:20px">Now pick a tense to practice!</div><button onclick="renderIliasTenses()" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">← Back to Tenses</button></div>';
+      return;
+    }
+    var w=cards[idx];
+    document.getElementById('screen-wordlist').innerHTML=
+      '<div style="padding:16px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<button onclick="renderIliasTenses()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+      +'<div style="font-size:12px;color:#a07cb8">Pronoun '+(idx+1)+'/'+cards.length+'</div><div></div></div>'
+      +'<div style="background:linear-gradient(135deg,#ede0ff,#f9f0ff);border:2px solid #6b3fa0;border-radius:22px;padding:40px 20px;text-align:center;margin-bottom:16px">'
+      +'<div style="font-size:50px;font-weight:900;color:#3a2050;margin-bottom:10px">'+w.es+'</div>'
+      +'<div style="font-size:26px;color:#6b3fa0;font-weight:700;margin-bottom:18px">= '+w.en+'</div>'
+      +'<div style="height:1px;background:rgba(0,0,0,.07);margin-bottom:14px"></div>'
+      +'<div style="font-size:15px;color:#2a1040;font-style:italic;margin-bottom:4px">"'+w.ex.es+'"</div>'
+      +'<div style="font-size:13px;color:#a07cb8;font-style:italic">"'+w.ex.en+'"</div>'
+      +'</div>'
+      +'<button id="pn-btn" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">'+(idx<cards.length-1?'Next →':'Done! ✓')+'</button>'
+      +'</div>';
+    document.getElementById('pn-btn').onclick=function(){idx++;show();};
+  }
+  show();
+}
+
+function doTenseIntro(key){showTenseIntro(key);}
+function showTenseIntro(key){
+  var t=TENSE_INTRO_DATA[key], c=t.color, idx=0;
+  function show(){
+    if(idx>=t.examples.length){
+      document.getElementById('screen-wordlist').innerHTML='<div style="padding:16px;text-align:center;padding-top:60px"><div style="font-size:52px;margin-bottom:12px">🎉</div><div style="font-size:18px;font-weight:900;color:#6b3fa0;margin-bottom:8px">'+t.title+' complete!</div><div style="font-size:13px;color:#a07cb8;margin-bottom:20px">Keep practicing in Stories and the Speed Game!</div><button onclick="renderIliasTenses()" style="width:100%;background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">← Back to Tenses</button></div>';
+      return;
+    }
+    var ex=t.examples[idx];
+    document.getElementById('screen-wordlist').innerHTML=
+      '<div style="padding:16px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<button onclick="renderIliasTenses()" style="background:none;border:none;color:#a07cb8;font-size:20px;cursor:pointer;padding:0">←</button>'
+      +'<div style="font-size:12px;color:#a07cb8">'+t.title+' · '+(idx+1)+'/'+t.examples.length+'</div><div></div></div>'
+      +(idx===0?'<div style="background:'+c+'18;border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;color:'+c+';font-weight:600">'+t.explanation+'</div>':'')
+      +'<div style="background:linear-gradient(160deg,#f0f9ff,#fff);border:2px solid '+c+';border-radius:22px;padding:30px 20px;text-align:center;margin-bottom:14px">'
+      +'<div style="font-size:24px;font-weight:900;color:#2a1040;margin-bottom:10px">'+ex.es+'</div>'
+      +'<div style="font-size:20px;color:'+c+';font-weight:700;margin-bottom:14px">'+ex.en+'</div>'
+      +'<div style="background:'+c+'22;border-radius:8px;padding:7px 14px;display:inline-block;font-size:12px;font-weight:700;color:'+c+'">'+ex.note+'</div>'
+      +'</div>'
+      +'<button id="ts-btn" style="width:100%;background:'+c+';color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">'+(idx<t.examples.length-1?'Next →':'Done! ✓')+'</button>'
+      +'</div>';
+    document.getElementById('ts-btn').onclick=function(){idx++;show();};
+  }
+  show();
+}
+
 // 4. SETTINGS & CONFIG
 // ═══════════════════════════════════════
 var LANGS = [
@@ -695,6 +1555,13 @@ var settings = {advanceSec:2,quizLen:20,langCode:'es',gameStartSec:30,gameRightB
 
 function getLang(){return LANGS.filter(function(l){return l.code===settings.langCode;})[0]||LANGS[0];}
 
+// ── User helpers ──
+function isLearnSpanish(){return currentUser==='Aamir'||currentUser==='Ilias';}
+function getWlSections(){return currentUser==='Ilias'?ILIAS_WL_SECTIONS:WL_SECTIONS;}
+function getActiveStories(){return currentUser==='Ilias'?ILIAS_STORIES:STORIES;}
+function getIliasCatClr(cat){return ILIAS_CAT_CLR[cat]||{bg:'#f0f0f0',color:'#333',label:cat};}
+
+
 // ═══════════════════════════════════════
 // 5. UTILITIES  (function declarations — NOT const arrows)
 // ═══════════════════════════════════════
@@ -704,7 +1571,11 @@ function shuffle(arr){
   return a;
 }
 
-function getQ(){return currentUser==='Aamir' ? AAMIR_Q : ALL_Q;}
+function getQ(){
+  if(currentUser==='Aamir') return AAMIR_Q;
+  if(currentUser==='Ilias') return ILIAS_Q;
+  return ALL_Q;
+}
 
 function getPraise(){
   return currentUser==='Aamir'
@@ -730,6 +1601,12 @@ function selectUser(name,initial,avCls,sub){
   document.getElementById('pill-name').textContent = name;
   document.getElementById('home-title').textContent = name + "'s App";
   document.getElementById('home-sub').textContent = sub;
+  var wlLbl=document.getElementById('wl-home-lbl');
+  var wlDesc=document.getElementById('wl-home-desc');
+  if(wlLbl&&wlDesc){
+    if(name==='Ilias'){wlLbl.textContent='🎓 Learn Words';wlDesc.textContent='Discover new words — zero to hero!';}
+    else{wlLbl.textContent='Word List';wlDesc.textContent='All your words with ✅ tracking';}
+  }
   loadWl();
   showHome();
 }
@@ -785,7 +1662,7 @@ function goHome(){
 // ═══════════════════════════════════════
 // 8. WORD LIST
 // ═══════════════════════════════════════
-var wlS = WL_SECTIONS.map(function(s){
+var wlS = (typeof getWlSections==="function"?getWlSections():WL_SECTIONS).map(function(s){
   var total = s.groups.reduce(function(a,g){return a+g.words.length;},0);
   return new Array(total).fill('');
 });
@@ -794,16 +1671,17 @@ var wlHideEs = false, wlHideEn = false, wlTab = 0;
 function loadWl(){
   try{
     var d = localStorage.getItem(uKey('wl_v2'));
+    var secs = getWlSections();
     if(d){
       var p = JSON.parse(d);
-      if(Array.isArray(p)&&p.length===WL_SECTIONS.length) wlS=p;
+      if(Array.isArray(p)&&p.length===secs.length) wlS=p;
       else resetWl();
     } else resetWl();
   }catch(e){resetWl();}
 }
 
 function resetWl(){
-  wlS = WL_SECTIONS.map(function(s){
+  wlS = getWlSections().map(function(s){
     var total = s.groups.reduce(function(a,g){return a+g.words.length;},0);
     return new Array(total).fill('');
   });
@@ -868,6 +1746,7 @@ function wlMkTbl(items,start,si){
 }
 
 function wlRender(){
+  if(currentUser==='Ilias'){renderIliasLearn();return;}
   var ctrlHTML = '<button class="wl-btn '+(wlHideEs?'hiding':'')+'" id="wl-es" onclick="wlToggle(\'es\')">'
     +(wlHideEs?'Mostrar Español':'Esconder Español')+'</button>'
     +'<button class="wl-btn '+(wlHideEn?'hiding':'')+'" id="wl-en" onclick="wlToggle(\'en\')">'
@@ -922,6 +1801,9 @@ function renderQ(){
   if(isAamir){
     var t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};
     badgeHTML='<span style="background:'+t.bg+';color:'+t.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+t.label+'</span>';
+  } else if(currentUser==='Ilias'){
+    var tc=getIliasCatClr(q.cat);
+    badgeHTML='<span style="background:'+tc.bg+';color:'+tc.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+tc.label+'</span>';
   } else {
     var cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
     var cl2={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
@@ -1231,7 +2113,11 @@ function renderSuggest(){
     +'<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
     +'</div>';
 
-  var goal=isAamir?'learning Spanish verb conjugations (presente, pretérito, futuro) as an English speaker':'learning English as a Spanish speaker';
+  var goal = currentUser==='Aamir'
+    ? 'learning Spanish verb conjugations (presente, pretérito, futuro) as an English speaker'
+    : currentUser==='Ilias'
+    ? 'a 10-year-old boy learning Spanish as a beginner. His interests are: soccer, Roblox gaming, jiu-jitsu, fishing, cars, planes, Legos, and becoming an influencer. Suggest age-appropriate vocabulary words related to these topics'
+    : 'learning English as a Spanish speaker';
   var uniqueExisting=[]; existing.forEach(function(e){if(uniqueExisting.indexOf(e)<0)uniqueExisting.push(e);});
   var prompt='A language learner is '+goal+'. They already know these words/concepts: '+uniqueExisting.slice(0,50).join(', ')+'.\n\n'
     +'Suggest exactly 15 new words they should learn next. Choose high-frequency, practical words appropriate for their level.\n\n'
@@ -1644,13 +2530,14 @@ var storySubs = false;
 function buildPicker(){
   document.getElementById('story-reader').style.display='none';
   document.getElementById('story-picker').style.display='';
-  var isAamir = currentUser==='Aamir';
+  var isSpanish = isLearnSpanish();
+  var stories = getActiveStories();
   var byLv={1:[],2:[],3:[]};
-  STORIES.forEach(function(st,idx){byLv[st.level].push({st:st,idx:idx});});
+  stories.forEach(function(st,idx){byLv[st.level].push({st:st,idx:idx});});
   var lvInfo=[null,
-    {label:'⭐ Level 1',desc:isAamir?'Cortas y sencillas':'Short &amp; simple'},
-    {label:'⭐⭐ Level 2',desc:isAamir?'Pasado, futuro, verbos irregulares':'Past, future &amp; irregular verbs'},
-    {label:'⭐⭐⭐ Level 3',desc:isAamir?'Vocabulario nuevo':'New vocabulary'}
+    {label:'⭐ Level 1',desc:isSpanish?'Cortas y sencillas':'Short &amp; simple'},
+    {label:'⭐⭐ Level 2',desc:isSpanish?'Pasado, futuro, verbos irregulares':'Past, future &amp; irregular verbs'},
+    {label:'⭐⭐⭐ Level 3',desc:isSpanish?'Vocabulario nuevo':'New vocabulary'}
   ];
   var html='';
   [1,2,3].forEach(function(lv){
@@ -1660,8 +2547,8 @@ function buildPicker(){
       +'<div style="font-size:11px;color:#a07cb8;margin-bottom:8px">'+info.desc+'</div>'
       +'</div><div class="picker-grid">';
     byLv[lv].forEach(function(item){
-      var mainTitle=isAamir?item.st.title:item.st.sub;
-      var subTitle=isAamir?item.st.sub:item.st.title;
+      var mainTitle=isSpanish?item.st.title:item.st.sub;
+      var subTitle=isSpanish?item.st.sub:item.st.title;
       html+='<div class="story-card" onclick="openStory('+item.idx+')">'
         +'<div class="sc-emoji">'+item.st.emoji+'</div>'
         +'<div class="sc-title">'+mainTitle+'</div>'
@@ -1676,25 +2563,24 @@ function buildPicker(){
 
 function openStory(i){
   storySubs=false;
-  var st=STORIES[i];
-  var isAamir=currentUser==='Aamir';
+  var st=getActiveStories()[i];
+  var isSpanish=isLearnSpanish();
   document.getElementById('story-picker').style.display='none';
   var rdr=document.getElementById('story-reader');
 
   var chHTML=st.chapters.map(function(ch,ci){
-    // Chapter title: Aamir reads Spanish, Rosa reads English
-    var chTitle=isAamir?ch.title:(ch.titleEn||ch.title);
+    var chTitle=isSpanish?ch.title:(ch.titleEn||ch.title);
     return '<div class="ch"><div class="ch-title">'+chTitle+'</div>'
       +ch.lines.map(function(ln,li){
         var lineId='ln_'+i+'_'+ci+'_'+li;
         // Subtitle: the full sentence in the NATIVE language
-        var subtitle=isAamir?ln.en:ln.es;
+        var subtitle=isSpanish?ln.en:ln.es;
         var mainLine=ln.s.map(function(seg,si){
           if(seg.p!==undefined) return '<span>'+seg.p+'</span>';
           var wid='w_'+i+'_'+ci+'_'+li+'_'+si;
           // Main display: target language. Tap reveals native language.
-          var mainTxt=isAamir?seg.s:seg.e;
-          var otherTxt=isAamir?seg.e:seg.s;
+          var mainTxt=isSpanish?seg.s:seg.e;
+          var otherTxt=isSpanish?seg.e:seg.s;
           return '<span class="w" id="'+wid+'"'
             +' data-main="'+mainTxt.replace(/"/g,'&quot;')+'"'
             +' data-other="'+otherTxt.replace(/"/g,'&quot;')+'"'
@@ -1705,10 +2591,10 @@ function openStory(i){
       }).join('')+'</div>';
   }).join('');
 
-  var backLbl=isAamir?'← Historias':'← Stories';
-  var tapHint=isAamir?'Toca cualquier <span>frase</span> para ver en inglés'
+  var backLbl=isSpanish?'← Historias':'← Stories';
+  var tapHint=isSpanish?'Toca cualquier <span>frase</span> para ver en inglés'
     :'Tap any <span>phrase</span> to see it in Spanish';
-  var hideLbl=isAamir?'Ocultar subtítulos':'Hide subtitles';
+  var hideLbl=isSpanish?'Ocultar subtítulos':'Hide subtitles';
 
   rdr.innerHTML=
     '<div class="story-bar">'
@@ -1753,6 +2639,7 @@ try{
   var last=localStorage.getItem('lastUser');
   if(last==='Rosa') selectUser('Rosa','R','av-rosa','🌹 Learning English');
   else if(last==='Aamir') selectUser('Aamir','A','av-aamir','⚡ Spanish tenses');
+  else if(last==='Ilias') selectUser('Ilias','I','av-ilias','⚽ Learning Spanish');
 }catch(e){}
 </script>
 </body>
