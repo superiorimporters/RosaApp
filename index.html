@@ -263,7 +263,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-arrow">→</div>
       </div>
     </div>
-    <div class="app-ver">v4.8.0 · Jun 11, 2026 · 10:10 AM ET</div>
+    <div class="app-ver">v4.9.1 · Jun 11, 2026 · 10:26 AM ET</div>
   </div>
 </div>
 
@@ -282,7 +282,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-avatar pill-av" id="pill-av" style="width:28px;height:28px;font-size:13px"></div>
         <div><div class="pill-name" id="pill-name"></div><div class="pill-switch">tap to switch</div></div>
       </div>
-      <div class="ver-tag"><b>v4.8.0</b><br>Jun 11 · 10:10 AM ET</div>
+      <div class="ver-tag"><b>v4.9.1</b><br>Jun 11 · 10:26 AM ET</div>
     </div>
     <div class="home-header">
       <div class="logo">🌟</div>
@@ -3556,7 +3556,12 @@ function getBankQuestions(forGame){
       var wrongs=shuffle(working.filter(function(x){return x.es!==w.es;})).slice(0,3).map(function(x){return x.es;});
       if(wrongs.length<3) return;
       var pl=(ILIAS_WORD_PACKS[w.pack]&&ILIAS_WORD_PACKS[w.pack].label)||w.pack||'';
-      qs2.push({cat:w.pack||'gaming',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:pl,answer:w.es,wrong:wrongs,isReview:w.status==='e'});
+      if(isLearnSpanish()){
+        qs2.push({cat:w.pack||'gaming',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:w.en,answer:w.es,wrong:wrongs,isReview:w.status==='e'});
+      } else {
+        var ewrongs=shuffle(working.filter(function(x){return x.en!==w.en;})).slice(0,3).map(function(x){return x.en;});
+        qs2.push({cat:w.pack||'bank',gameWord:w.es,sentence:'How do you say "'+w.es+'" in English?',hint:w.es,answer:w.en,wrong:ewrongs,isReview:w.status==='e'});
+      }
     });
     return qs2;
   }
@@ -3581,7 +3586,12 @@ function getBankQuestions(forGame){
     var wrongs=shuffle(wrongPool).slice(0,3).map(function(x){return x.es;});
     if(wrongs.length<3) return;
     var pl=(ILIAS_WORD_PACKS[w.pack]&&ILIAS_WORD_PACKS[w.pack].label)||w.pack||'';
-    qs.push({cat:w.pack||'gaming',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:pl,answer:w.es,wrong:wrongs,isReview:!!w.isReview});
+    if(isLearnSpanish()){
+      qs.push({cat:w.pack||'bank',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:w.en,answer:w.es,wrong:wrongs,isReview:!!w.isReview});
+    } else {
+      var ewrongs=shuffle(working.filter(function(x){return x.en!==w.en;})).slice(0,3).map(function(x){return x.en;});
+      qs.push({cat:w.pack||'bank',gameWord:w.es,sentence:'How do you say "'+w.es+'" in English?',hint:w.es,answer:w.en,wrong:ewrongs,isReview:!!w.isReview});
+    }
   });
   return qs;
 }
@@ -4567,7 +4577,7 @@ function renderAdminHome(){
     var s=getUserStats(u), uLog=log.filter(function(e){return e.user===u;});
     var col=uColors[u]||'#6b3fa0';
     var extra='';
-    if(u==='Ilias'){try{var bk=JSON.parse(localStorage.getItem('Ilias_wbank')||'[]');extra='<span style="background:#f3e4ff;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;color:#6b3fa0;margin-right:4px">'+bk.length+' words</span>';}catch(e){}}
+    try{var bk=getWordBank();extra='<span style="background:#f3e4ff;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;color:#6b3fa0;margin-right:4px">'+bk.length+' words</span>';}catch(e){}
     var qb=getUserBest(u,'quiz');
     if(qb!==null) extra+='<span style="background:#edfff3;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;color:#1a6b2a">Best: '+qb+'%</span>';
     return '<div data-user="'+u+'" onclick="doAdminUser(this.dataset.user)" style="background:#fff;border-radius:14px;padding:14px;cursor:pointer;border:2px solid #e8d4f8;margin-bottom:10px">'
@@ -4755,45 +4765,32 @@ function renderAdminUser(user){
 
 // Get flat word list for current user
 function getActiveWordList(){
-  if(currentUser==='Ilias') return getWordBank();
-  // Rosa & Aamir: WL_SECTIONS + custom words
-  var words=[];
-  getWlSections().forEach(function(sec){
-    sec.groups.forEach(function(g){
-      g.words.forEach(function(w){
-        words.push({es:w[0],en:w[1],cat:sec.id||'verb'});
-      });
-    });
-  });
-  getUserWords().forEach(function(w){
-    words.push({es:w.es,en:w.en,cat:w.cat||'verb'});
-  });
-  return words;
+  return getWordBank(); // unified: all users use word bank
 }
 
 // Generate quiz questions from any word array
 // Speed game question pool - includes expert words at reduced rate
 function getGameQ(){
-  if(currentUser==='Ilias'){
-    var bank=getWordBank();
-    if(bank.length<4) return [];
-    // Expert words: 30% chance of inclusion
-    var pool=bank.filter(function(w){
-      return w.status!=='e' || Math.random()<0.3;
-    });
-    if(pool.length<4) pool=bank; // fallback: use all
-    var seen={};
-    var qs=[];
-    pool.forEach(function(w){
-      if(seen[w.es]) return; seen[w.es]=true;
+  var bank=getWordBank();
+  if(bank.length<4) return [];
+  var learnSp=isLearnSpanish();
+  var pool=bank.filter(function(w){ return w.status!=='e'||Math.random()<0.3; });
+  if(pool.length<4) pool=bank;
+  var seen={}, qs=[];
+  pool.forEach(function(w){
+    var key=learnSp?w.es:w.en;
+    if(seen[key]) return; seen[key]=true;
+    if(learnSp){
       var wrongs=shuffle(bank.filter(function(x){return x.es!==w.es;})).slice(0,3).map(function(x){return x.es;});
       if(wrongs.length<3) return;
-      var pLabel=(ILIAS_WORD_PACKS[w.pack]&&ILIAS_WORD_PACKS[w.pack].label)||w.pack||'';
-      qs.push({cat:w.pack||'gaming',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:pLabel,answer:w.es,wrong:wrongs});
-    });
-    return qs;
-  }
-  return getQ(); // Rosa/Aamir: same pool for game
+      qs.push({cat:w.pack||'bank',gameWord:w.en,sentence:'¿Cómo se dice "'+w.en+'" en español?',hint:w.en,answer:w.es,wrong:wrongs,isExpert:w.status==='e'});
+    } else {
+      var wrongs=shuffle(bank.filter(function(x){return x.en!==w.en;})).slice(0,3).map(function(x){return x.en;});
+      if(wrongs.length<3) return;
+      qs.push({cat:w.pack||'bank',gameWord:w.es,sentence:'How do you say "'+w.es+'" in English?',hint:w.es,answer:w.en,wrong:wrongs,isExpert:w.status==='e'});
+    }
+  });
+  return qs;
 }
 
 function generateWordQuestions(words){
@@ -4833,26 +4830,14 @@ function generateWordQuestions(words){
 
 // Add story words to the right storage for current user
 function addWordsToUserList(wordArray, storyTitle){
-  var added=0;
-  if(currentUser==='Ilias'){
-    var bank=getWordBank();
-    wordArray.forEach(function(w){
-      if(!bank.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();})){
-        bank.push({es:w.es,en:w.en,pack:'stories',status:''});
-        added++;
-      }
-    });
-    saveWordBank(bank);
-  } else {
-    var custom=getUserWords();
-    wordArray.forEach(function(w){
-      if(!custom.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();})){
-        custom.push({es:w.es,en:w.en,cat:'story'});
-        added++;
-      }
-    });
-    saveUserWords(custom);
-  }
+  var bank=getWordBank(), added=0;
+  wordArray.forEach(function(w){
+    if(w.es&&w.en&&!bank.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();})){
+      bank.push({es:w.es,en:w.en,pack:storyTitle||'stories',status:'',correct:0,wrong:0,streak:0});
+      added++;
+    }
+  });
+  saveWordBank(bank);
   logActivity(currentUser,'story_words_added',{count:added,title:storyTitle||''});
   return added;
 }
@@ -4863,7 +4848,7 @@ function showUniversalVocabOffer(storyIdx){
   if(!story) return;
   var extracted=extractStoryWords(story);
   if(!extracted.length) return;
-  var existing = currentUser==='Ilias' ? getWordBank() : getUserWords();
+  var existing = getWordBank();
   var newWords=extracted.filter(function(w){
     return !existing.find(function(b){return b.es.toLowerCase()===w.es.toLowerCase();});
   });
@@ -4917,14 +4902,9 @@ function getQ(){
     });
     return AAMIR_Q.concat(custom);
   }
-  if(currentUser==='Ilias'){
-    var bq=getBankQuestions(false);
-    return bq.length>=4?bq:[];
-  }
-  // Rosa: generate from WL_SECTIONS + custom words
-  var words=getActiveWordList();
-  var qs=generateWordQuestions(words);
-  return qs.length>=4?qs:ALL_Q;
+  // All users: use word bank questions (direction-aware via getBankQuestions)
+  var bq=getBankQuestions(false);
+  return bq.length>=4?bq:[];
 }
 
 function getPraise(){
@@ -5036,7 +5016,7 @@ function selectUser(name,initial,avCls,sub){
   var wlLbl=document.getElementById('wl-home-lbl');
   var wlDesc=document.getElementById('wl-home-desc');
   if(wlLbl&&wlDesc){
-    if(name==='Ilias'){wlLbl.textContent='📦 My Word List';wlDesc.textContent='See all your words with ✅ checkmarks';}
+    if(wlLbl){wlLbl.textContent='📦 My Word List';if(wlDesc)wlDesc.textContent='See all your words with ✅ checkmarks';}
     else{wlLbl.textContent='Word List';wlDesc.textContent='All your words with ✅ tracking';}
   }
   // Log session + update stats
@@ -5081,7 +5061,7 @@ function openScreen(id,title){
   document.getElementById('nav-title').textContent = title;
   document.getElementById('nav-back').style.display = '';
   document.getElementById('nav-home').style.display = '';
-  if(id==='quiz'){if(currentUser==='Ilias')startIliasQuiz();else startQuiz();}
+  if(id==='quiz') startIliasQuiz(); // unified round quiz for all users
   if(id==='challenge')startChallenge();
   if(id==='wordlist')wlRender();
   if(id==='words')renderWordsManager();
@@ -5253,7 +5233,7 @@ function renderAamirWordList(){
 var aamirTab=0;
 
 function wlRender(){
-  if(currentUser==='Ilias'){renderWordBankTable();return;}
+  renderWordBankTable(); return; // unified: all users see word bank
   if(currentUser==='Aamir'){renderAamirWordList();return;}
   var ctrlHTML = '<button class="wl-btn '+(wlHideEs?'hiding':'')+'" id="wl-es" onclick="wlToggle(\'es\')">'
     +(wlHideEs?'Mostrar Español':'Esconder Español')+'</button>'
@@ -5376,13 +5356,9 @@ function renderQ(){
   if(isAamir){
     var t=TENSE_CLR[q.cat]||{bg:'#f0f0f0',color:'#333',label:q.cat};
     badgeHTML='<span style="background:'+t.bg+';color:'+t.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+t.label+'</span>'+reviewBadge;
-  } else if(currentUser==='Ilias'){
+  } else {
     var tc=getIliasCatClr(q.cat);
     badgeHTML='<span style="background:'+tc.bg+';color:'+tc.color+';font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">'+tc.label+'</span>'+reviewBadge;
-  } else {
-    var cm={verb:'cat-verb',adj:'cat-adj',noun:'cat-noun',conn:'cat-conn'};
-    var cl2={verb:'Verbo',adj:'Adjetivo',noun:'Sustantivo',conn:'Conector'};
-    badgeHTML='<span class="q-cat '+(cm[q.cat]||'cat-verb')+'">'+(cl2[q.cat]||q.cat)+'</span>';
   }
   var opts=shuffle([q.answer].concat(q.wrong));
   var dots=[0,1,2].map(function(i){
@@ -5634,15 +5610,7 @@ function deleteWord(i){
 
 function confirmResetWords(){
   if(!confirm('Delete ALL your words and start over?\n\nThis cannot be undone.')) return;
-  if(currentUser==='Ilias'){
-    try{localStorage.removeItem('Ilias_wbank');}catch(e){}
-  } else {
-    saveUserWords([]);
-    try{
-      localStorage.removeItem(uKey('wl_v2'));
-      localStorage.removeItem(uKey('wstats'));
-    }catch(e){}
-  }
+  try{localStorage.removeItem(uKey('wbank'));saveWordBank([]);}catch(e){}
   renderWordsManager();
   alert('Done! All words cleared. Start fresh from stories or add words manually.');
 }
@@ -5654,21 +5622,8 @@ var aiQuizQuestions=[],aiQIdx=0,aiAnswered=false,aiAttempts=0,aiResults=[];
 
 function renderAIQuiz(){
   // Get words from the right source: word bank (Ilias) or custom words (Rosa/Aamir)
-  var words=[];
-  if(currentUser==='Ilias'){
-    var bank=getWordBank();
-    words=bank.map(function(w){return {es:w.es,en:w.en,cat:'verb'};});
-  } else {
-    words=getUserWords();
-    // Also pull from word list sections for Rosa/Aamir
-    try{
-      getWlSections().forEach(function(sec){
-        if(sec.items) sec.items.forEach(function(item){
-          if(item.es&&item.en) words.push({es:item.es,en:item.en,cat:sec.cat||'verb'});
-        });
-      });
-    }catch(e){}
-  }
+  var bank=getWordBank();
+  var words=bank.map(function(w){return {es:w.es,en:w.en,cat:w.pack||'verb'};});
   var isAamir=currentUser==='Aamir';
   if(words.length<3){
     document.getElementById('aiquiz-area').innerHTML =
@@ -6034,7 +5989,7 @@ function gKeyHandler(e){
 }
 
 function renderGQ(){
-  var pool=(currentUser==='Ilias'?getGameQ():getQ()), q, att=0;
+  var pool=getGameQ(), q, att=0; // unified word bank game for all users
   if(!pool||pool.length===0){
     clearInterval(gTimer);
     document.getElementById('game-area').innerHTML=
@@ -6157,74 +6112,42 @@ function buildChart(results){
 // ═══════════════════════════════════════════════════
 // WORD MASTERY TRACKING
 // 10 correct answers → auto Expert
-// Stored in bank.correct (Ilias) or uKey('wstats') (Rosa/Aamir)
+// All users use the word bank — unified streak/expert tracking
 // ═══════════════════════════════════════════════════
-var EXPERT_THRESHOLD = 10;
-
-function getWordStats(){
-  try{return JSON.parse(localStorage.getItem(uKey('wstats'))||'{}');}catch(e){return{};}
-}
-function saveWordStats(s){
-  try{localStorage.setItem(uKey('wstats'),JSON.stringify(s));}catch(e){}
-}
 
 function trackWordResult(answerEs, isCorrect, isReview){
   if(!answerEs) return;
   var key=answerEs.toLowerCase();
-  var STREAK_THRESHOLD=3; // 3 in a row = Expert
+  var STREAK_THRESHOLD=3; // 3 correct in a row = Expert
 
-  if(currentUser==='Ilias'){
-    var bank=getWordBank();
-    var w=bank.find(function(x){return x.es&&x.es.toLowerCase()===key;});
-    if(w){
-      if(!w.correct) w.correct=0;
-      if(!w.wrong)   w.wrong=0;
-      if(!w.streak)  w.streak=0;
-      if(isCorrect){
-        w.correct++;
-        w.streak++;
-        if(w.streak>=STREAK_THRESHOLD && w.status!=='e'){
-          w.status='e'; w.streak=0;
-          saveWordBank(bank);
-          showMasteryToast(w.es);
-          return;
-        }
-      } else {
-        w.wrong++;
-        w.streak=0; // reset streak on any wrong answer
-        if(w.status==='e'){
-          // Expert word answered wrong → always demote back to working
-          w.status='';
-          saveWordBank(bank);
-          showDemoteToast(w.es);
-          return;
-        }
-      }
-      saveWordBank(bank);
-    }
-  } else {
-    var stats=getWordStats();
-    if(!stats[key]) stats[key]={correct:0,wrong:0,streak:0};
+  var bank=getWordBank();
+  var w=bank.find(function(x){return x.es&&x.es.toLowerCase()===key;});
+  if(w){
+    if(!w.correct) w.correct=0;
+    if(!w.wrong)   w.wrong=0;
+    if(!w.streak)  w.streak=0;
     if(isCorrect){
-      stats[key].correct++;
-      stats[key].streak=(stats[key].streak||0)+1;
-      if(stats[key].streak>=STREAK_THRESHOLD){
-        markWlWordExpert(answerEs);
-        showMasteryToast(answerEs);
-        stats[key].streak=0;
+      w.correct++;
+      w.streak++;
+      if(w.streak>=STREAK_THRESHOLD && w.status!=='e'){
+        w.status='e'; w.streak=0;
+        saveWordBank(bank);
+        showMasteryToast(w.es);
+        return;
       }
     } else {
-      var wasExpert=(wlS&&getWlExpertStatus&&getWlExpertStatus(answerEs))||stats[key].wasExpert;
-      stats[key].wrong++;
-      stats[key].streak=0;
-      // Demote expert on any wrong answer
-      markWlWordWorking(answerEs);
-      if(wasExpert) showDemoteToast(answerEs);
+      w.wrong++;
+      w.streak=0;
+      if(w.status==='e'){
+        w.status='';
+        saveWordBank(bank);
+        showDemoteToast(w.es);
+        return;
+      }
     }
-    saveWordStats(stats);
+    saveWordBank(bank);
   }
 }
-
 function showDemoteToast(es){
   var el=document.createElement('div');
   el.style.cssText='position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#e65100,#f97316);color:#fff;font-size:15px;font-weight:700;padding:12px 24px;border-radius:16px;pointer-events:none;z-index:9999;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.25)';
