@@ -263,7 +263,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-arrow">→</div>
       </div>
     </div>
-    <div class="app-ver">v4.9.1 · Jun 11, 2026 · 10:26 AM ET</div>
+    <div class="app-ver">v4.9.5 · Jun 11, 2026 · 1:14 PM ET</div>
   </div>
 </div>
 
@@ -282,7 +282,7 @@ tr.challenge td{background:#fff4f0!important}
         <div class="user-avatar pill-av" id="pill-av" style="width:28px;height:28px;font-size:13px"></div>
         <div><div class="pill-name" id="pill-name"></div><div class="pill-switch">tap to switch</div></div>
       </div>
-      <div class="ver-tag"><b>v4.9.1</b><br>Jun 11 · 10:26 AM ET</div>
+      <div class="ver-tag"><b>v4.9.5</b><br>Jun 11 · 1:14 PM ET</div>
     </div>
     <div class="home-header">
       <div class="logo">🌟</div>
@@ -3361,6 +3361,34 @@ var ILIAS_STORIES=[
       {s:[pp('"Next time you do your part," Ilias tells him. "I will not cover for you again."')],en:'"Next time you do your part," Ilias tells him. "I will not cover for you again."',es:'"La próxima vez haz tu parte," le dice Ilias. "No te voy a cubrir otra vez."'}
     ]}
   ]}
+,
+  {level:2,emoji:'🐟',title:'La Ballena que Nunca Llegó',sub:'The Whale That Never Came',
+   desc:'Ilias is sure he will catch a whale. Past tense + fishing vocab: carrete, sedal, carnada, gusanos, lanzar, señuelo, enojado.',
+   chapters:[
+    {title:'La Gran Preparación',titleEn:'The Big Preparation',lines:[
+      {s:[pw('Ilias woke up certain','Ilias se despertó seguro'),pp(' of one thing.')],en:'Ilias woke up certain of one thing.',es:'Ilias se despertó seguro de una cosa.'},
+      {s:[pp('"Today I will catch a '),pw('whale','ballena'),pp('," he said.')],en:'"Today I will catch a whale," he said.',es:'"Hoy voy a atrapar una ballena," dijo.'},
+      {s:[pw('He checked his reel','Revisó su carrete'),pp(' and '),pw('his fishing line','su sedal'),pp('.')],en:'He checked his reel and his fishing line.',es:'Revisó su carrete y su sedal.'},
+      {s:[pw('He dug up worms','Sacó gusanos'),pp(' from the garden for '),pw('bait','carnada'),pp('.')],en:'He dug up worms from the garden for bait.',es:'Sacó gusanos del jardín para la carnada.'},
+      {s:[pp('"'),pw('Worms','Los gusanos'),pp(' are the best '),pw('bait','carnada'),pp(' for big fish," he told Ali.')],en:'"Worms are the best bait for big fish," he told Ali.',es:'"Los gusanos son la mejor carnada para peces grandes," le dijo a Ali.'}
+    ]},
+    {title:'El Gran Lanzamiento',titleEn:'The Big Cast',lines:[
+      {s:[pw('He arrived at the river','Llegó al río'),pp(' with his full equipment.')],en:'He arrived at the river with his full equipment.',es:'Llegó al río con todo su equipo.'},
+      {s:[pw('He attached the lure','Puso el señuelo'),pp(' next to the bait. Double power.')],en:'He attached the lure next to the bait. Double power.',es:'Puso el señuelo junto a la carnada. Doble poder.'},
+      {s:[pp('"'),pw('Casting','Lanzar'),pp(' technique is everything," he said seriously.')],en:'"Casting technique is everything," he said seriously.',es:'"La técnica de lanzar lo es todo," dijo en serio.'},
+      {s:[pw('He cast the line','Lanzó el sedal'),pp(' as far as he could.')],en:'He cast the line as far as he could.',es:'Lanzó el sedal tan lejos como pudo.'},
+      {s:[pw('The reel spun fast','El carrete giró rápido'),pp('.')],en:'The reel spun fast.',es:'El carrete giró rápido.'}
+    ]},
+    {title:'La Ballena... o No',titleEn:'The Whale... or Not',lines:[
+      {s:[pw('He waited one hour','Esperó una hora'),pp('. Then the line moved.')],en:'He waited one hour. Then the line moved.',es:'Esperó una hora. Luego el sedal se movió.'},
+      {s:[pp('"THIS IS IT!" he shouted.')],en:'"THIS IS IT!" he shouted.',es:'"¡ESTO ES!" gritó.'},
+      {s:[pw('He pulled the line hard','Jaló el sedal con fuerza'),pp('. The reel screamed.')],en:'He pulled the line hard. The reel screamed.',es:'Jaló el sedal con fuerza. El carrete chirrió.'},
+      {s:[pw('Out of the water came','Del agua salió'),pp(' a tiny, furious goldfish.')],en:'Out of the water came a tiny, furious goldfish.',es:'Del agua salió un pequeño y furioso pez dorado.'},
+      {s:[pw('The goldfish stared at him','El pez dorado lo miró'),pp(' with pure '),pw('anger','enojo'),pp('.')],en:'The goldfish stared at him with pure anger.',es:'El pez dorado lo miró con puro enojo.'},
+      {s:[pp('"...'),pw('I thought you were a whale','Pensé que eras una ballena'),pp('," said Ilias quietly.')],en:'"...I thought you were a whale," said Ilias quietly.',es:'"...Pensé que eras una ballena," dijo Ilias en voz baja.'},
+      {s:[pw('He put the angry goldfish back','Devolvió el enojado pez dorado'),pp(' and went home.')],en:'He put the angry goldfish back and went home.',es:'Devolvió el enojado pez dorado al agua y se fue a casa.'}
+    ]}
+  ]}
 ];
 
 
@@ -5938,7 +5966,7 @@ function swS(d){try{localStorage.setItem(uKey('gws'),JSON.stringify(d));}catch(e
 function lHi(){try{return JSON.parse(localStorage.getItem(uKey('ghi'))||'[]');}catch(e){return[];}}
 function sHi(d){try{localStorage.setItem(uKey('ghi'),JSON.stringify(d));}catch(e){}}
 
-var gTimer=null,gTime=0,gMaxTime=0,gScore=0,gLastHint='';
+var gTimer=null,gTime=0,gMaxTime=0,gScore=0,gLastHint='',gRunning=false;
 var gCurrentIsReview=false;
 var gQStart=0,gResults=[],gHistory=[],gWordsRight,gStreak=0,gMaxStreak=0;
 var gNewWords=0,gSuperBonus=0,gClutchSaves=0,gNewHints,gSuperHints;
@@ -5951,6 +5979,7 @@ function ePen(){var p=gPen(gScore),c=clv();return c>=2?parseFloat((p*.5).toFixed
 
 function goToWordList(){openScreen('wordlist','📦 My Words');}
 function startGame(){
+  gRunning=true;
   clearInterval(gTimer);
   document.removeEventListener('keydown',gKeyHandler);
   // For Ilias - only use word bank; check they have enough words
@@ -6066,7 +6095,7 @@ function pickG(btn,chosen,correct,displayWord){
     else if(clv()>=2){gClutchSaves++;showPop(clv()===3?'🚨 MEGA SAVE!<br>+'+bon+'s':'🚨 CLUTCH!<br>+'+bon+'s',clv()===3?'bpop-mega':'bpop-clutch');flashBg('#6600cc');}
     else{var fl=document.getElementById('g-flash');if(fl){fl.textContent='+'+bon+'s';fl.className='g-flash pos';setTimeout(function(){fl.className='g-flash';},650);}}
     ws[displayWord].right++; swS(ws);
-    trackWordResult(correct, true, gCurrentIsReview);
+    trackWordResult(correct, true, gCurrentIsReview); // expert can accumulate — toast suppressed by gRunning
     gTime=Math.min(gTime+(bon+extra)*1000,gMaxTime*4);
     setTimeout(renderGQ,360);
   } else {
@@ -6077,7 +6106,15 @@ function pickG(btn,chosen,correct,displayWord){
     var fl2=document.getElementById('g-flash');if(fl2){fl2.textContent='-'+pen+'s';fl2.className='g-flash neg';setTimeout(function(){fl2.className='g-flash';},650);}
     if(settings.flashOnWrong)flashBg('#ff2222');
     if(settings.shakeOnWrong){var w2=document.getElementById('g-ans-wrap');if(w2){w2.classList.add('shake-it');setTimeout(function(){w2.classList.remove('shake-it');},500);}}
-        trackWordResult(correct, false, gCurrentIsReview);
+    // Wrong: reset streak to 0 for BOTH the correct word AND the one they chose (both got confused)
+    (function(){
+      var bank=getWordBank();
+      [correct, chosen].forEach(function(esWord){
+        var w=bank.find(function(x){return x.es&&x.es.toLowerCase()===esWord.toLowerCase();});
+        if(w){ if(!w.wrong)w.wrong=0; w.wrong++; w.streak=0; }
+      });
+      saveWordBank(bank);
+    })();
     gTime=Math.max(0,gTime-pen*1000);
     if(gTime<=0)setTimeout(function(){clearInterval(gTimer);document.removeEventListener('keydown',gKeyHandler);gameOver();},500);
     else setTimeout(renderGQ,560);
@@ -6149,6 +6186,7 @@ function trackWordResult(answerEs, isCorrect, isReview){
   }
 }
 function showDemoteToast(es){
+  if(gRunning) return; // never block the speed game screen
   var el=document.createElement('div');
   el.style.cssText='position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#e65100,#f97316);color:#fff;font-size:15px;font-weight:700;padding:12px 24px;border-radius:16px;pointer-events:none;z-index:9999;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.25)';
   el.innerHTML='🔄 Back to practice!<br><span style="font-size:12px;font-weight:400">'+es+' — streak reset</span>';
@@ -6198,6 +6236,7 @@ function markWlWordExpert(es){
 }
 
 function showMasteryToast(es){
+  if(gRunning) return; // never block the speed game screen
   var el=document.createElement('div');
   el.style.cssText='position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#6b3fa0,#3aaa6a);color:#fff;font-size:15px;font-weight:700;padding:12px 24px;border-radius:16px;pointer-events:none;z-index:9999;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.25)';
   el.innerHTML='🏆 3 IN A ROW → EXPERT!<br><span style="font-size:13px;font-weight:400">'+es+' is now on review only</span>';
@@ -6206,6 +6245,7 @@ function showMasteryToast(es){
 }
 
 function gameOver(){
+  gRunning=false;
   clearInterval(gTimer); document.removeEventListener('keydown',gKeyHandler);
   document.getElementById('g-popup').innerHTML='';
   var corrR=gResults.filter(function(r){return r.correct;});
@@ -7291,12 +7331,15 @@ function buildFlashDeck(){
   var bank=getWordBank();
   var ratings=getFcRatings();
   var drill=getFcDrill();
-  if(flashFilter==='expert')      flashCards=bank.filter(function(w){return w.status==='e';});
-  else if(flashFilter==='hard')   flashCards=bank.filter(function(w){return w.status==='c';});
-  else if(flashFilter==='work')   flashCards=bank.filter(function(w){return !w.status;});
-  else if(flashFilter==='drill')  flashCards=bank.filter(function(w){return drill.indexOf(w.es)>=0;});
-  else if(flashFilter==='again')  flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]==='learning';});
-  else                            flashCards=bank.slice();
+  if(flashFilter==='expert')       flashCards=bank.filter(function(w){return w.status==='e';});
+  else if(flashFilter==='hard')    flashCards=bank.filter(function(w){return w.status==='c';});
+  else if(flashFilter==='work')    flashCards=bank.filter(function(w){return !w.status;});
+  else if(flashFilter==='drill')   flashCards=bank.filter(function(w){return drill.indexOf(w.es)>=0;});
+  else if(flashFilter==='active')  flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]==='challenging';});
+  else if(flashFilter==='known')   flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]==='known';});
+  else if(flashFilter==='pause')   flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]==='pause';});
+  else if(flashFilter==='again')   flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]==='learning';});
+  else                             flashCards=bank.filter(function(w){return ratings[(w.es||'').toLowerCase()]!=='pause';}); // All = excludes Not Now
   // Shuffle
   for(var i=flashCards.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=flashCards[i];flashCards[i]=flashCards[j];flashCards[j]=t;}
   flashIdx=0; flashFlipped=false;
@@ -7353,14 +7396,139 @@ function paintFlash(){
   var ratings=getFcRatings();
   var drill=getFcDrill();
 
-  // Counts for filter buttons
+  // ── COUNTS for filter tabs ────────────────────────────────────
   var allC=bank.length;
   var expC=bank.filter(function(w){return w.status==='e';}).length;
   var hardC=bank.filter(function(w){return w.status==='c';}).length;
   var workC=bank.filter(function(w){return !w.status;}).length;
   var drillC=drill.length;
   var knownC=Object.keys(ratings).filter(function(k){return ratings[k]==='known';}).length;
-  var learningC=Object.keys(ratings).filter(function(k){return ratings[k]==='learning';}).length;
+  var activeC=Object.keys(ratings).filter(function(k){return ratings[k]==='challenging';}).length;
+  var pauseC=Object.keys(ratings).filter(function(k){return ratings[k]==='pause';}).length;
+
+  if(!flashCards.length){
+    el.innerHTML='<div class="flash-wrap"><p style="color:#a07cb8;text-align:center;padding:40px 20px">No words in this folder yet.<br><br><button onclick="setFlashFilter(\'all\')" style="background:#6b3fa0;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">Show all words</button></p></div>';
+    return;
+  }
+
+  var w=flashCards[flashIdx];
+  var isSpanish=isLearnSpanish();
+  var front=isSpanish?w.es:w.en;
+  var back=isSpanish?w.en:w.es;
+  var myRating=ratings[(w.es||'').toLowerCase()];
+
+  // ── CARD COLOURS ──────────────────────────────────────────────
+  var cardBg=w.status==='e'?'#f0fff6':w.status==='c'?'#fffbf0':'#fdf4ff';
+  var cardBorder=w.status==='e'?'#9adebe':w.status==='c'?'#f0d090':'#d8b4f8';
+  var accentColor=w.status==='e'?'#1a6b2a':w.status==='c'?'#b07820':'#6b3fa0';
+  var accentBg=w.status==='e'?'#edfff4':w.status==='c'?'#fffbec':'#f5efff';
+
+  var diffBadge=w.status==='e'
+    ?'<span style="position:absolute;top:10px;right:12px;font-size:10px;background:#edfff4;color:#1a6b2a;font-weight:700;padding:3px 8px;border-radius:10px">🏆 Expert</span>'
+    :w.status==='c'
+    ?'<span style="position:absolute;top:10px;right:12px;font-size:10px;background:#fff3d4;color:#b07820;font-weight:700;padding:3px 8px;border-radius:10px">⚠️ Hard</span>'
+    :'<span style="position:absolute;top:10px;right:12px;font-size:10px;background:#f3e4ff;color:#6b3fa0;font-weight:700;padding:3px 8px;border-radius:10px">📖 Working</span>';
+
+  // ── MY FOLDER BADGE (top-left) ────────────────────────────────
+  var myBadge=myRating==='known'
+    ?'<span style="position:absolute;top:10px;left:12px;font-size:10px;background:#edfff4;color:#1a6b2a;font-weight:700;padding:3px 8px;border-radius:10px">✅ Know it</span>'
+    :myRating==='challenging'
+    ?'<span style="position:absolute;top:10px;left:12px;font-size:10px;background:#fff8e0;color:#b07820;font-weight:700;padding:3px 8px;border-radius:10px">⚠️ Active</span>'
+    :myRating==='pause'
+    ?'<span style="position:absolute;top:10px;left:12px;font-size:10px;background:#f5f5f5;color:#888;font-weight:700;padding:3px 8px;border-radius:10px">✕ Not now</span>'
+    :'';
+
+  var ex=findExampleSentence(w.es);
+  var escapedEs=(w.es||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  var exHtml='';
+  if(ex){
+    var highlighted=ex.es.replace(new RegExp('('+escapedEs+')','i'),
+      '<b style="color:'+accentColor+';background:'+accentBg+';border-radius:4px;padding:0 3px">$1</b>');
+    exHtml='<div style="background:#f5f0ff;border:1px solid #d8b4f8;border-radius:10px;padding:9px 12px;font-size:11px;color:#3a2050;width:100%;text-align:left">'+
+      '<span style="font-size:9px;color:#a07cb8;font-weight:700;display:block;margin-bottom:3px">📖 FROM YOUR STORIES</span>'+
+      '<i>'+highlighted+'</i><br>'+
+      '<span style="color:#a07cb8;font-size:10px">'+ex.en+'</span>'+
+      '</div>';
+  }
+
+  // ── CARD CONTENT ──────────────────────────────────────────────
+  var cardHTML;
+  if(!flashFlipped){
+    cardHTML='<div onclick="flipFlashCard()" style="border-radius:20px;padding:40px 24px;text-align:center;cursor:pointer;min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;background:'+cardBg+';border:2.5px solid '+cardBorder+';position:relative;box-shadow:0 4px 18px rgba(0,0,0,.08)">'+
+      diffBadge+myBadge+
+      '<div style="font-size:42px;font-weight:900;color:#3a2050;letter-spacing:-0.5px;margin-top:'+(myRating?'16':'0')+'px">'+front+'</div>'+
+      '<div style="font-size:12px;color:#c9a8e8;font-weight:600">tap to reveal answer ↓</div>'+
+      '</div>';
+  } else {
+    var esWord=isSpanish?front:back;
+    var enWord=isSpanish?back:front;
+    cardHTML='<div onclick="flipFlashCard()" style="border-radius:20px;padding:20px 20px;text-align:center;cursor:pointer;min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;background:'+cardBg+';border:2.5px solid '+cardBorder+';position:relative;box-shadow:0 4px 18px rgba(0,0,0,.08)">'+
+      diffBadge+myBadge+
+      '<div style="font-size:38px;font-weight:900;color:'+accentColor+';background:'+accentBg+';border-radius:12px;padding:8px 20px;width:90%;letter-spacing:-0.5px;margin-top:'+(myRating?'16':'4')+'px">'+esWord+'</div>'+
+      '<div style="font-size:34px;font-weight:900;color:#1a6b2a;background:#edfff4;border-radius:12px;padding:8px 20px;width:90%;letter-spacing:-0.5px">'+enWord+'</div>'+
+      exHtml+
+      '<div style="font-size:10px;color:#c9a8e8">tap to flip back</div>'+
+      '</div>';
+  }
+
+  // ── FILTER TABS — auto-folders ────────────────────────────────
+  var filters=[
+    {f:'all',    l:'📚 All',      n:allC},
+    {f:'active', l:'🎯 Active',   n:activeC},
+    {f:'known',  l:'✅ Know It',  n:knownC},
+    {f:'pause',  l:'✕ Not Now',  n:pauseC},
+  ];
+  if(drillC>0) filters.push({f:'drill', l:'📛 Drill', n:drillC});
+
+  var filterHTML=filters.map(function(f){
+    return '<div class="flash-fchip'+(flashFilter===f.f?' active':'')+
+      '" onclick="setFlashFilter(\''+f.f+'\')" style="flex-shrink:0">'+f.l+
+      (f.n>0?' <span style="background:rgba(255,255,255,.35);border-radius:8px;padding:0 5px;font-size:10px">'+f.n+'</span>':'')+
+      '</div>';
+  }).join('');
+
+  // ── SUMMARY BAR ───────────────────────────────────────────────
+  var summaryParts=[];
+  if(knownC)     summaryParts.push('<span style="color:#1a6b2a;font-weight:700">✅ '+knownC+'</span>');
+  if(activeC)    summaryParts.push('<span style="color:#b07820;font-weight:700">⚠️ '+activeC+' active</span>');
+  if(pauseC)     summaryParts.push('<span style="color:#888;font-weight:700">✕ '+pauseC+' paused</span>');
+  var summary=summaryParts.length?'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;font-size:11px;margin-bottom:4px">'+summaryParts.join('')+'</div>':'';
+
+  // ── 4 BUTTONS — always visible ────────────────────────────────
+  var bottomHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">'+
+    '<button onclick="markFlashCard(\'known\')" style="padding:13px 6px;border-radius:12px;border:2px solid #9adebe;font-size:13px;font-weight:700;cursor:pointer;background:#edfff4;color:#1a6b2a">✅ Know it</button>'+
+    '<button onclick="markFlashCard(\'challenging\')" style="padding:13px 6px;border-radius:12px;border:2px solid #f0d090;font-size:13px;font-weight:700;cursor:pointer;background:#fffbec;color:#b07820">⚠️ Active</button>'+
+    '<button onclick="navFlash(1)" style="padding:13px 6px;border-radius:12px;border:1.5px solid #d8b4f8;font-size:13px;font-weight:700;cursor:pointer;background:#fdf4ff;color:#6b3fa0">⏭ Skip</button>'+
+    '<button onclick="markFlashCard(\'pause\')" style="padding:13px 6px;border-radius:12px;border:1.5px solid #d8d8d8;font-size:13px;font-weight:700;cursor:pointer;background:#f7f7f7;color:#888">✕ Not now</button>'+
+    '</div>'+
+    '<div style="text-align:center;margin-top:10px">'+
+    '<button onclick="confirmResetFc()" style="background:none;border:none;font-size:11px;color:#c9a8e8;cursor:pointer;text-decoration:underline;padding:4px">Reset my flashcard progress</button>'+
+    '</div>';
+
+  // ── DRILL COMPLETE CHECK ──────────────────────────────────────
+  var drillDone='';
+  if(flashFilter==='drill' && drillC>0){
+    var drillKnown=flashCards.filter(function(wrd){return ratings[(wrd.es||'').toLowerCase()]==='known';}).length;
+    if(drillKnown===flashCards.length && flashCards.length>0){
+      drillDone='<div style="background:#edfff4;border:1.5px solid #9adebe;border-radius:14px;padding:16px;text-align:center;margin-top:10px">'+
+        '<div style="font-size:15px;font-weight:700;color:#1a6b2a;margin-bottom:10px">🎉 You know all '+drillKnown+' drill words!</div>'+
+        '<button onclick="startGame()" style="background:#6b3fa0;color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer">▶ Back to Speed Game</button>'+
+        '</div>';
+    }
+  }
+
+  el.innerHTML=
+    '<div class="flash-wrap">'+
+    '<div class="flash-filters">'+filterHTML+'</div>'+
+    summary+
+    '<div style="text-align:center;font-size:11px;color:#a07cb8;font-weight:600;margin-bottom:6px">'+
+      (flashIdx+1)+' of '+flashCards.length+
+    '</div>'+
+    cardHTML+
+    bottomHTML+
+    drillDone+
+    '</div>';
 
   if(!flashCards.length){
     el.innerHTML='<div class="flash-wrap"><p style="color:#a07cb8;text-align:center;padding:40px 20px">No words in this filter yet.<br><br><button onclick="setFlashFilter(\'all\')" style="background:#6b3fa0;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">Show all words</button></p></div>';
